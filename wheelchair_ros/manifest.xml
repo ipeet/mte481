@@ -1,0 +1,10 @@
+<package>
+  <description brief="wheelchair_ros">
+    Ros package MTE 481 Group 2
+  </description>
+
+  <author>Group 2</author>
+  <license>GPL</license>
+  <review status="unreviewed" notes=""/>
+  <depend package="roscpp"/>
+</package>
