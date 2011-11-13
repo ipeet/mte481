@@ -56,7 +56,6 @@ vector<Sonar::Reading> Sonar::readSonar() {
   }
 
   /* Clear the command, which is echoed back */
-  int i = 0;
   do {
     if (! read(m_serialFd, buf, 1)) {
       throw new Serial::Exception(strerror(errno));
@@ -64,6 +63,7 @@ vector<Sonar::Reading> Sonar::readSonar() {
   } while (buf[0] != '\n');
 
   /* Read in the actual response text. */
+  int i = 0;
   do {
     if (! read(m_serialFd, buf + i, 1)) {
       throw new Serial::Exception(strerror(errno));
@@ -82,7 +82,7 @@ vector<Sonar::Reading> Sonar::readSonar() {
   int chan = 0;  // tracks which channel / field we're on
   uint16_t imask = m_adcMask; // records which channels should have input
   char* bufp = strchr(buf, ' '); // track where we are in the buffer
-  if (*bufp) ++bufp; // If char not found, keep null pointer.
+  if (bufp) ++bufp; // If char not found, keep null pointer.
   while (bufp && *bufp && imask) {
     /* iterate as long as we haven't reached the end of the string, and 
      * we're expecting to find more values */
@@ -94,7 +94,7 @@ vector<Sonar::Reading> Sonar::readSonar() {
       ret.push_back(Reading(chan, val));
       // Advance to beginning of next CSV field
       bufp = strchr(bufp, ',');
-      if (*bufp) ++bufp;
+      if (bufp) ++bufp;
     } else { // Don't expect value in current CSV field
       // Advance to next CSV field
       ++bufp;

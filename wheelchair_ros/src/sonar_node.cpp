@@ -26,6 +26,7 @@
 #include <unistd.h>
 
 #include "wheelchair_ros/sonar.h"
+#include "sensor_msgs/Range.h"
 #include "ros/ros.h"
 
 using namespace std;
@@ -35,21 +36,45 @@ int main(int argc, char *argv[]) {
   ros::NodeHandle node;
 
   const char* dev = "/dev/ttyACM0";
+  uint16_t sonarChans = 0x17;
+  ros::Rate rate (20);
 
+  /* Create a Range publisher for each channel */
+  vector<ros::Publisher> publishers;
+  int chan = 0;
+  uint16_t imask = sonarChans;
+  const int bufSize = 32;
+  char buf[bufSize];
+  while (imask) {
+    if (imask & 0x1) {
+      snprintf(buf, bufSize, "range%d", chan);
+      publishers.push_back(node.advertise<sensor_msgs::Range>(buf, 100));
+    }
+    ++chan;
+    imask = imask >> 1;
+  }
+
+  /* Open ubw and start reading data */
   try {
-    Sonar sonar (dev, 0x17);
+    Sonar sonar (dev, sonarChans);
     sonar.clear();
     cout << "Opened serial device: " << dev << endl; 
-  
+ 
     while (ros::ok()) {
       vector<Sonar::Reading> readings = sonar.readSonar();
-      for (int i=0; i<readings.size(); ++i) {
-        cout << readings[i].channel << ": " << readings[i].value << endl;
+      for (unsigned i=0; i<readings.size(); ++i) {
+        sensor_msgs::Range range;
+        range.radiation_type = sensor_msgs::Range::ULTRASOUND;
+        range.field_of_view = 0.3;
+        range.min_range = 0.1524;
+        range.max_range = 6.477;
+        range.range = readings[i].value * 0.0254 / 4.0;
+        publishers[i].publish(range);
       }
-      sleep(1);
+      rate.sleep();
     }
   } catch (Serial::Exception * e) {
-    cerr << e->msg << endl;
+    cerr << "Serial::Exception:" << e->msg << endl;
   }
 
   return 1;
