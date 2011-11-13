@@ -1,8 +1,7 @@
 /******************************************************************************
- * can_node.cpp
+ * sonar_node.cpp
  *
- * ROS node which communicates with the wheelchair motor controllers over
- * CAN.
+ * ROS node which communicates with the ultrasonic rangefinders.
  ******************************************************************************
  * This program is distributed under the of the GNU Lesser Public License. 
  *
@@ -23,21 +22,25 @@
 #include <iostream>
 #include <cstdlib>
 
-#include "wheelchair_ros/can.h"
+#include "wheelchair_ros/serial.h"
 #include "ros/ros.h"
 
 using namespace std;
 
 int main(int argc, char *argv[]) {
-  ros::init(argc, argv, "can_node");
+  ros::init(argc, argv, "sonar_node");
   ros::NodeHandle node;
 
+  const char* dev = "/dev/ttyACM0";
+
   try {
-    Can can ("/dev/ttyUSB0");
-  } catch (Can::CanException * e) {
-    cerr << e->msg << endl;
+    Serial ubw (dev);
+  } catch (Serial::SerialException * e) {
+    cerr << "Serial failed: " << e->msg << endl;
     exit(1);
   }
+
+  cout << "Opened serial device: " << dev << endl; 
 
   while (ros::ok());
 

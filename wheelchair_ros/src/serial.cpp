@@ -1,8 +1,8 @@
 /******************************************************************************
- * can.cpp
+ * serial.cpp
  * Copyright 2011 Iain Peet
  *
- * Communicates with the Can dongle.
+ * Provides basic termios serial communication logic.
  ******************************************************************************
  * This program is distributed under the of the GNU Lesser Public License. 
  *
@@ -29,60 +29,60 @@
 #include <termios.h>
 #include <unistd.h>
 
-#include "wheelchair_ros/can.h"
+#include "wheelchair_ros/serial.h"
 
-Can::Can(const char* canDev) : m_canDev(canDev), m_canFd(-1)
+Serial::Serial(const char* serialDev) : m_serialDev(serialDev), m_serialFd(-1)
 {
-  openCan();
+  openSerial();
 }
 
-Can::~Can()
+Serial::~Serial()
 {
-  closeCan();
+  closeSerial();
 }
 
-void Can::openCan()
+void Serial::openSerial()
 {
-  if (m_canFd != -1) return; //already open.
+  if (m_serialFd != -1) return; //already open.
 
   /* Open the serial dev */
-  m_canFd = open(m_canDev, O_RDWR | O_NOCTTY | O_NONBLOCK);
-  if (m_canFd < 0) {
-    throw new CanException(strerror(errno));
+  m_serialFd = open(m_serialDev, O_RDWR | O_NOCTTY | O_NONBLOCK);
+  if (m_serialFd < 0) {
+    throw new SerialException(strerror(errno));
   }
-  if (!isatty(m_canFd)) {
-    closeCan();
-    throw new CanException("Device is not a TTY.");
+  if (!isatty(m_serialFd)) {
+    closeSerial();
+    throw new SerialException("Device is not a TTY.");
   }
 
   /* Set up serial config goop */
-  struct termios canTcAttr;
-  if (tcgetattr(m_canFd, &canTcAttr)) {
-    closeCan();
-    throw new CanException(strerror(errno));
+  struct termios serialTcAttr;
+  if (tcgetattr(m_serialFd, &serialTcAttr)) {
+    closeSerial();
+    throw new SerialException(strerror(errno));
   }
-  m_initialTcAttr = canTcAttr;
-  canTcAttr.c_iflag = 0;
-  canTcAttr.c_oflag = 0;
-  canTcAttr.c_cflag = CREAD | CLOCAL | CS8;
-  canTcAttr.c_lflag = 0;
-  cfsetispeed(&canTcAttr, B115200);
-  cfsetospeed(&canTcAttr, B115200);
-  if (tcsetattr(m_canFd, TCSANOW, &canTcAttr)) {
-    closeCan();
-    throw new CanException(strerror(errno));
+  m_initialTcAttr = serialTcAttr;
+  serialTcAttr.c_iflag = 0;
+  serialTcAttr.c_oflag = 0;
+  serialTcAttr.c_cflag = CREAD | CLOCAL | CS8;
+  serialTcAttr.c_lflag = 0;
+  cfsetispeed(&serialTcAttr, B115200);
+  cfsetospeed(&serialTcAttr, B115200);
+  if (tcsetattr(m_serialFd, TCSANOW, &serialTcAttr)) {
+    closeSerial();
+    throw new SerialException(strerror(errno));
   } 
 }
 
-void Can::closeCan()
+void Serial::closeSerial()
 {
   // NB: called by destructor, shouldn't throw exceptions.
-  if (m_canFd == -1) return; // already closed.
+  if (m_serialFd == -1) return; // already closed.
 
-  if (tcsetattr(m_canFd, TCSANOW, &m_initialTcAttr)) {
+  if (tcsetattr(m_serialFd, TCSANOW, &m_initialTcAttr)) {
     perror("tcsetattr");
   }
-  close(m_canFd);
-  m_canFd = -1;
+  close(m_serialFd);
+  m_serialFd = -1;
 }
 

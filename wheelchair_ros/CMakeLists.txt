@@ -8,4 +8,4 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-rosbuild_add_executable(can_node src/can.cpp src/can_node.cpp)
+rosbuild_add_executable(sonar_node src/serial.cpp src/sonar_node.cpp)
