@@ -46,20 +46,20 @@ void Serial::openSerial()
   if (m_serialFd != -1) return; //already open.
 
   /* Open the serial dev */
-  m_serialFd = open(m_serialDev, O_RDWR | O_NOCTTY | O_NONBLOCK);
+  m_serialFd = open(m_serialDev, O_RDWR | O_NOCTTY);
   if (m_serialFd < 0) {
-    throw new SerialException(strerror(errno));
+    throw new Exception(strerror(errno));
   }
   if (!isatty(m_serialFd)) {
     closeSerial();
-    throw new SerialException("Device is not a TTY.");
+    throw new Exception("Device is not a TTY.");
   }
 
   /* Set up serial config goop */
   struct termios serialTcAttr;
   if (tcgetattr(m_serialFd, &serialTcAttr)) {
     closeSerial();
-    throw new SerialException(strerror(errno));
+    throw new Exception(strerror(errno));
   }
   m_initialTcAttr = serialTcAttr;
   serialTcAttr.c_iflag = 0;
@@ -70,7 +70,7 @@ void Serial::openSerial()
   cfsetospeed(&serialTcAttr, B115200);
   if (tcsetattr(m_serialFd, TCSANOW, &serialTcAttr)) {
     closeSerial();
-    throw new SerialException(strerror(errno));
+    throw new Exception(strerror(errno));
   } 
 }
 

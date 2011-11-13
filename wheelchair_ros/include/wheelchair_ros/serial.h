@@ -27,17 +27,15 @@
 
 class Serial {
 public:
-  class SerialException {
+  class Exception {
   public:
-    SerialException(const char* m): msg(m) 
+    Exception(const char* m): msg(m) 
       {}
     const char* msg;
   };
 
 private:
   const char* m_serialDev;
-  // The POSIX file descriptor for the dongle's serial line
-  int m_serialFd;
   // The original termios state for the TTY
   struct termios m_initialTcAttr;
 
@@ -45,9 +43,13 @@ private:
   void openSerial();
   void closeSerial();
 
+protected:
+  // The POSIX file descriptor for the dongle's serial line
+  int m_serialFd;
+
 public:
   Serial(const char* serialDev);
-  ~Serial();
+  virtual ~Serial();
 };
 
 

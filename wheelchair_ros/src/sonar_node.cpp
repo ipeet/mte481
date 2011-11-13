@@ -20,9 +20,12 @@
  *****************************************************************************/
 
 #include <iostream>
+#include <vector>
 #include <cstdlib>
 
-#include "wheelchair_ros/serial.h"
+#include <unistd.h>
+
+#include "wheelchair_ros/sonar.h"
 #include "ros/ros.h"
 
 using namespace std;
@@ -34,16 +37,21 @@ int main(int argc, char *argv[]) {
   const char* dev = "/dev/ttyACM0";
 
   try {
-    Serial ubw (dev);
-  } catch (Serial::SerialException * e) {
-    cerr << "Serial failed: " << e->msg << endl;
-    exit(1);
+    Sonar sonar (dev, 0x17);
+    sonar.clear();
+    cout << "Opened serial device: " << dev << endl; 
+  
+    while (ros::ok()) {
+      vector<Sonar::Reading> readings = sonar.readSonar();
+      for (int i=0; i<readings.size(); ++i) {
+        cout << readings[i].channel << ": " << readings[i].value << endl;
+      }
+      sleep(1);
+    }
+  } catch (Serial::Exception * e) {
+    cerr << e->msg << endl;
   }
 
-  cout << "Opened serial device: " << dev << endl; 
-
-  while (ros::ok());
-
-  return 0;
+  return 1;
 }
 
