@@ -1,0 +1,94 @@
+% MTE 481 - Preliminary Design Presentation
+% Group 2
+%
+% A neat PDF slideshow.
+
+%%%%%%%%%%%%
+% Preamble %
+%%%%%%%%%%%%
+\documentclass{beamer}
+\mode<presentation>
+
+\usepackage{graphicx}
+
+\title{MTE 481 - Design Project}
+\subtitle{Object Avoidance and Navigation for Powered Wheelchairs}
+\author{Iain Peet \and Rowan Head-Marsden \and Jordan Valentin}
+
+%%%%%%%%
+% Body %
+%%%%%%%%
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{Introduction}
+  \begin{figure}
+    \centering
+    \includegraphics[width=6cm]{wheelchair.jpg} 
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Need Statement}
+  Powered wheelchairs can improve the mobility of the physically handicapped, but 
+  alertness and control are required for safe operation.
+  Additional assistive technology is needed in order to afford the same benefits
+  to the more severely disabled.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Objectives \& Constraints}
+  \begin{itemize}
+    \item Improve the safety of powered wheelchairs, for the occupand and for nearby pedestrians. \\
+    \item Make powered wheelchairs accessible to people who would otherwise be denied due to safety concerns. \\
+    \item Assist wheelchair users with difficult tasks, such as precise positioning and movement in constrained spaces.  \\
+    \item Avoid requiring a specialized, controlled operating environment. \\
+    \item It must be possible to integrate with existing wheelchairs. \\
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Criteria}
+  \begin{itemize}
+    \item Risk of human harm.\\
+    \item Tolerance of human error.\\
+    \item Robustness against physical damage.\\
+    \item Ability to operate in a variety of environments. \\
+    \item Price.\\
+    \item Electrical power consumption.\\
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Design Concept}
+  \begin{itemize}
+    \item Use sensor(s) as inputs to a computer-controlled system. \\
+    \item Take user input into this system. \\
+    \item Combine the user input and sensor readings to determine output to motor controllers. \\
+    \item Produce collision-free movement of chair (whether by warnings, automated avoidance, etc.) \\
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Kinect Testing}
+ \begin{figure}
+  \centering
+  \includegraphics[scale=0.4]{group_pointcloud.png}
+  \caption{An example of Kinect point cloud data.}
+ \end{figure}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Kinect Testing}
+ \begin{figure}
+  \centering
+  \includegraphics[scale=0.35]{group_occupancy.png}
+  \caption{Occupancy grid data extracted from previous pointcloud.}
+ \end{figure}
+\end{frame}
+
+\end{document}
