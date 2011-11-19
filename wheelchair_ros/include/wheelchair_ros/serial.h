@@ -1,8 +1,8 @@
 /******************************************************************************
- * can.h
+ * serial.h
  * Copyright 2011 Iain Peet
  *
- * Provides a class for interfacing with a CAN dongle.
+ * Provides basic termios serial communication logic.
  ******************************************************************************
  * This program is distributed under the of the GNU Lesser Public License. 
  *
@@ -20,36 +20,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *****************************************************************************/
 
-#ifndef CAN_H_
-#define CAN_H_
+#ifndef SERIAL_H_
+#define SERIAL_H_
 
 #include <termios.h>
 
-class Can {
+class Serial {
 public:
-  class CanException {
+  class Exception {
   public:
-    CanException(const char* m): msg(m) 
+    Exception(const char* m): msg(m) 
       {}
     const char* msg;
   };
 
 private:
-  const char* m_canDev;
-  // The POSIX file descriptor for the dongle's serial line
-  int m_canFd;
+  const char* m_serialDev;
   // The original termios state for the TTY
   struct termios m_initialTcAttr;
 
   /* Functions managing the dongle's file descriptor. */
-  void openCan();
-  void closeCan();
+  void openSerial();
+  void closeSerial();
+
+protected:
+  // The POSIX file descriptor for the dongle's serial line
+  int m_serialFd;
 
 public:
-  Can(const char* canDev);
-  ~Can();
+  Serial(const char* serialDev);
+  virtual ~Serial();
 };
 
 
-#endif //CAN_H_
+#endif //SERIAL_H_
 
