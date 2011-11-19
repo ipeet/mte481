@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
   ros::NodeHandle node;
 
   const char* dev = "/dev/ttyACM0";
-  uint16_t sonarChans = 0x17;
+  uint16_t sonarChans = 0x18;
   ros::Rate rate (20);
 
   /* Create a Range publisher for each channel */
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
         range.field_of_view = 0.3;
         range.min_range = 0.1524;
         range.max_range = 6.477;
-        range.range = readings[i].value * 0.0254 / 4.0;
+        range.range = readings[i].value * 0.0254 / 2.0;
         publishers[i].publish(range);
       }
       rate.sleep();
