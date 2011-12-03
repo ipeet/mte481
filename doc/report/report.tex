@@ -121,12 +121,6 @@ The constraints of the design are as follows:
 \section{Sensor Selection}
 % TODO(rowan)
 
-\section{Sensor Configuration}
-% TODO(iain)
-
-\section{Sensor Configuration Selection}
-%TODO(iain)
-
 
 \chapter{Detailed Design}
 
@@ -135,6 +129,42 @@ The constraints of the design are as follows:
 
 \section{Mechanical Design}
 %TODO(rowan)
+
+\section{Sensor Configuration}
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.1]{testing.jpg}
+ \caption{The sensor test set-up.}
+\end{figure}
+
+\section{Rangefinder Configuration}
+SONAR sensors which were available on-hand were used to test a number of configurations.  The sensors used were the MaxBotix LV-EZ4.  These sensors are designed to be sensitive to object only within a cylindrical region of about 60 cm diameter \cite{lv-ez4}.  
+
+Figures \ref{sonar_1} - \ref{sonar_3} show the results of testing with the LV-EZ4.  Unsurprisingly, area coverage is poor with the narrow-beam sensor.  The best results are observed in figure \ref{sonar_2}, where the forward field is fully covered.
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.6]{SONAR_Config1.png}
+ \caption{SONAR test configuration 1.}
+ \label{sonar_1}
+\end{figure}
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.6]{SONAR_Config2.png}
+ \caption{SONAR test configuration 2.}
+ \label{sonar_2}
+\end{figure}
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.6]{SONAR_Config3.png}
+ \caption{SONAR test configuration 3.}
+ \label{sonar_3}
+\end{figure}
+
+\clearpage
+Considering the poor coverage provided by the narrow-beam LV-EZ4 sensors, it is recommended that wider range sensors be used.  For cylindrical objects, the EZ0 model of the same series is sensitive within a cone of approximately $60^\circ$ \cite{lv-ez0}.  Note that, although region of sensitivity depends on object shape, observations indicate that.
 
 \section{Systems Integration}
 %TODO(iain/jordan)
@@ -196,6 +226,9 @@ Total&&&789\\
 
  % NB: cite these with \cite{item}
 
+ \bibitem{lv-ez0}
+   \emph{LV-EZ0 Datasheet}, MaxBotix Inc, 2011
+ 
  \bibitem{lv-ez4}
    \emph{LV-EZ4 Datasheet}, MaxBotix Inc, 2011
 \bibitem{kinect_accuary}
