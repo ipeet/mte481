@@ -208,6 +208,21 @@ As shown in the previous section, the design in this report does not appear to i
 
 \chapter{Proposed Solution}
 
+\section{Sensor Selection}
+
+Using the criteria mentioned earlier in the report along with their respective weightings, a decision-making matrix was formed and is shown in Table \ref{tab:decision_matrix}.
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.45]{decision_matrix}\\
+ \caption{Decision Making Matrix}
+ \label{tab:decision_matrix}
+\end{figure}
+
+The decision making matrix shows the best sensors according to the projects criteria and weightings, as seen in Table \ref{tab:decision_matrix}. The lowest value was the best in this case since for a number of the criteria lower values represented a better performance such as cost, weight, size, power consumption. This means that the best two sensors were the Xbox Kinect and Sonar. 
+
+These sensors are close in weighting, but operate very differently in practice. The Kinect gives a very large amount of data, both range and bearing, about its field of view. The sonar sensors give less information but are quite cheap. The final solution, since these sensors are weighted so closely, was to use a combination of the two sensors. The Kinect provides accurate and resonably precision data in the direction of movement of the chair, and the sonar sensors provide more coarse collision data about the periphery to prevent collisions from the side.
+
 \section{Mechanical Designs}
 \subsection{Design \#1}
 \begin{figure}[hbt]
@@ -264,21 +279,6 @@ Design 3 & Sensor range maximized. Sensor position optimal.&Small amount of extr
 \end{figure}
 
 Based on the list of benefits and disadvantes, and the weightings of the criteria as shown in Figure \ref{fig:criteria_weighting}, the third design is selected as the final mechanical design.
-
-\section{Sensor Selection}
-
-Using the criteria mentioned earlier in the report along with their respective weightings, a decision-making matrix was formed and is shown in Table \ref{tab:decision_matrix}.
-
-\begin{figure}[hbt]
- \centering
- \includegraphics[scale=0.45]{decision_matrix}\\
- \caption{Decision Making Matrix}
- \label{tab:decision_matrix}
-\end{figure}
-
-The decision making matrix shows the best sensors according to the projects criteria and weightings, as seen in Table \ref{tab:decision_matrix}. The lowest value was the best in this case since for a number of the criteria lower values represented a better performance such as cost, weight, size, power consumption. This means that the best two sensors were the Xbox Kinect and Sonar. 
-
-These sensors are close in weighting, but operate very differently in practice. The Kinect gives a very large amount of data, both range and bearing, about its field of view. The sonar sensors give less information but are quite cheap. The final solution, since these sensors are weighted so closely, was to use a combination of the two sensors. The Kinect provides accurate and resonably precision data in the direction of movement of the chair, and the sonar sensors provide more coarse collision data about the periphery to prevent collisions from the side.
 
 \chapter{Detailed Design}
 
