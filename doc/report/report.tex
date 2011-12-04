@@ -89,7 +89,7 @@ Once this was complete we developed a model of the wheel chair and came up with 
 
 There is a discussion of how the Kinect will work and what the Kinect is along with how it could later be replaced with another system to avoid patent infringement. A discussion of possible tools for the software is also listed including a description of why ROS (robot Operating System) was used for the project.
 
-A schedule has been designed in order to meet the presentation deadline for the completion of the project by March 4th in order to allow time for the preparation of the demo on March 19th. Also a budget of approximately 750$ was laid out for the prototype with an expectation that the final cost will be somewhat lower. 
+A schedule has been designed in order to meet the presentation deadline for the completion of the project by March 4th in order to allow time for the preparation of the demo on March 19th. Also a budget of approximately \$750 was laid out for the prototype with an expectation that the final cost will be somewhat lower. 
 
 Based on our observations and our work in progress a set of recommendations were laid for moving forward including the introduction of new wider beam angle ultrasonic sensors, Solutions for dealing with the motor controller, and interface design suggestions.
 
@@ -103,14 +103,12 @@ Based on our observations and our work in progress a set of recommendations were
 \chapter{Introduction}
 
 \section{Background}
-Powered wheelchairs have obvious benefits for the mobility of the physically disabled.  As relatively heavy, powered vehicles, operation of these wheelchairs also carries obvious risk.  Thus, operators must be capable of safe operations.
+Powered wheelchairs have obvious benefits for the mobility of the physically disabled.  Operation of any relatively heavy powered vehicle carries safety risk.  Operators must be capable of safe operation.
 
-Irene Ruel, a physiotherapist in the employ of the British Columbia Interior Health Authority, who has previously been responsible for powered wheelchair assessments in an extended care facilities, was consulted regarding this problem.  By her account, the risk that powered wheelchair operators will collide with other patients is a serious concern, which frequently results in the denial of requests for powered wheelchairs.
+Irene Ruel, a physiotherapist in the employ of the British Columbia Interior Health Authority, who has previously been responsible for powered wheelchair assessments in an extended care facilities, was consulted regarding this problem.  By her account, the risk that powered wheelchair operators will collide with other patients is a serious concern.  This risk frequently results in the denial of requests for powered wheelchairs.
 
 \section{Need Statement}
-Access to powered wheelchairs may be restricted due to concerns about a patient's capability for safe operation.
-
-Powered wheelchairs can improve the mobility of the physically handicapped, but alertness and control are required for safe operation.  Additional assistive technology is needed in order to afford the same benefits to the more severely disabled.
+Access to powered wheelchairs may be restricted due to concerns regarding a patient's capability for safe operation.
 
 \section{Objectives and Constraints}
 The objectives of this design problem are as follows:
@@ -121,7 +119,7 @@ The objectives of this design problem are as follows:
  \item \emph{Assist with difficult tasks}. Some tasks, such as precise positioning and movement in constrained spaces, are difficult even for unimpaired operators.   A system which can assist with such tasks would be helpful.
 \end{itemize}
 
-The constraints of the design are as follows:
+The constraints of this design are as follows:
 
 \begin{itemize}
  \item \emph{Insensitive to operating environment}.  Realistic operating environments will be varied, and subject to change.  The usefulness of a safety system will be severely degraded if it depends on a specialized, controlled environment.
@@ -155,7 +153,7 @@ Power Consumption measure how much an addition will add to the power consumption
 The amount of computational intelligence required to handle the data that is coming in from the sensor. This is to make distinction between sensors similar to a Kinect which uses USB and would be plugged into a lab top that will be needed to interpret the data versus something like a sonar sensor that could be tuned and used on FPGA. This will run opposite the Quantity of Useful Data.
 
 \subsection{Quantity of useful Data}
-This was selected to distinguish things like sonar which provide simply a distance mapping for a cone versus something like the lydar that provides a depth map using a large number of points. The more data we get from a sensor the more we can make use of it to recognize and avoid obstacles. This runs as the opposite of processing requirements, since more data requires more processing power to interpret the data.
+This was selected to distinguish things like sonar which provide simply a distance mapping for a cone versus something like LIDAR, which provides a high-resolution, narrow-beam distance scan. The more data we get from a sensor the more we can make use of it to recognize and avoid obstacles. This runs as the opposite of processing requirements, since more data requires more processing power to interpret the data.
 
 \subsection{Range}
 The range for the detection of objects is fairly important to us. While range beyond 7-8 meters is not particularly useful, we want range from about 0 to 8 meters optimally. For this we assume they are working in optimal conditions which we said to be indoors and with normal lighting. Certain sensors we consider have significantly reduced range in other conditions.
@@ -182,7 +180,7 @@ By automating the chair, the user loses the sense of control given by being able
 \subsubsection{Powered Wheelchair}
 \begin{figure}[hbt]
  \centering
- \includegraphics[scale=0.25]{patents2}
+ \includegraphics[scale=0.4]{patents2}
  \caption{Similar patent \#2 \cite{patent:power_wheelchair}}
 \end{figure}
 
@@ -195,7 +193,7 @@ While our design is similar we do not intend to physically block the user from m
 \subsubsection{Wheelchair and Method for Correcting the Guidance of a Wheelchair}
 \begin{figure}[hbt]
  \centering
- \includegraphics[scale=0.25]{patents2}
+ \includegraphics[scale=0.4]{patents3}
  \caption{Similar patent \#3 \cite{patent:wheelchair_method}}
 \end{figure}
 
