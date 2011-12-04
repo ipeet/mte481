@@ -29,7 +29,7 @@
 
  \begin{LARGE}
   \textbf{
-    Fourth Year Design Project \\[0.0cm]
+    Design Project - Wheelchair Collision Avoidance \\[0.0cm]
     Final Design Report
   }
  \end{LARGE}
@@ -53,11 +53,15 @@ Waterloo, Ontario \\
 
 To Whom It May Concern:
 
-Lorem ipsum dolor est... \\[0.5cm]
+This report entitled “Design Project - Wheelchair Collision Avoidance” is being prepared for the MTE 481 project by Group 2 and and describes the design of a powered wheel chair collision avoidance system.  The powered wheel chair collision avoidance system that is being designed as a fourth year project by students within the Mechatronics engineering program is designed to provide a affordable solution for the disabled or impaired who are not able to use a wheel chair due to perceived dangers to themselves or others.
+
+We would like to thank Professor Amir Khajepour from the mechanical engineering department who has loaned us a powered wheel chair and provided us with space to work on our project.  
+
+This report was written for the MTE 481 project by the members of group 2 and has not received previous academic credit. \\[0.5cm]
 
 Sincerely, \\[1cm]
 
-Iain Peet \hspace{2.5cm} Jordan Valentin \hspace{2.5cm} Rowan Head-Marsden
+Rowan Head-Marsden \hspace {1.5cm} Iain Peet \hspace{1.5cm} Jordan Valentin
 \clearpage
 
 % Resume page numbering
@@ -145,8 +149,27 @@ The range for the detection of objects is fairly important to us. While range be
 Precision is fairly important since we are detecting obstacles and we would like to know how far away they are, noise and disturbances are acceptable to a small degree so long as we can identify them as noise and not a fast moving obstacle. In addition to this it’s important that some sensors have decreased precision at increased range. This is noted as a small reduction in their score.
 
 \section{Patents}
-% TODO(jordan)
+\subsection{Existing Similar Patents}
 
+\subsubsection{Computer Controlled Power Wheelchair Navigation System}
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.15]{patents}
+ \caption{Similar patent \#1 \cite{patent:computer_controlled}}
+\end{figure}
+
+The first patent (full patent number, author, and other details listed in \cite{patent:computer_controlled}), entitled \it{Computer Controlled Power Wheelchair Navigation System}, discusses a patent for wheelchair collision avoidance using cameras, proximity sensors, and microphones.
+
+The chair moves through a marked location and "learns" paths within a home. This makes it less flexible (it cannot operate in unknown environments), and it is unclear how well it works for dynamic obstacles such as people (the objective of our design is to avoid collisions in general, especially with other human beings. Secondly, this device is voice-activated and moves in an automated fashion to the commanded area.
+
+By automating the chair, the user loses the sense of control given by being able to control its movements as wished using a joystick. This is another key difference between this patented design and the goals of this project.
+
+%\cite{patent:power_wheelchair}
+%\cite{patent:wheelchair_method}
+%\cite{patent:computer_controlled}
+
+\subsubsection{Wheelchair and Method for Correcting the Guidance of a Wheelchair}
+\subsubsection{Powered Wheelchair}
 
 \chapter{Proposed Solution}
 
