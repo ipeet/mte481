@@ -195,8 +195,11 @@ Referring to the three designs mentioned above, a list of benefits and disadvant
 Design \# & Benefits & Disadvantages & Rating\\
 \hline
 Design 1 &Sensor range optimal. Sensor positioning optimal. User interference minimized & User interferes with sensor readings& Unacceptable\\
+\hline
 Design 2 & Simplistic design. Sensor interference minimized. User interference minimized. & Sensor has shorter range. Sensor has less precision. & Acceptable\\
+\hline
 Design 3 & Sensor range maximized. Sensor position optimal.&Small amount of extra mechanical work. Small inconveniences to user in set up. & Acceptable (best)\\
+\hline
 \end{tabular}
 \caption{Mechanical Design Selection}
 \label{tab:MechDesSel}
@@ -249,15 +252,15 @@ A key set of dimensions to be considered in shown in Figure \ref{fig:Chair_Dims}
 \item Distance from the ground to the sonar sensor
 \end{enumerate}
 
-Based on NASA specifications for the 95th percentile male \ref{NASA} and female we can get what the dimension \it{a} should be. A should be at least 12.3cm to accommodate your basic 95th percentile male. To accommodate the 5th percentile male we need 12.0cm. This means that our current design should be as shown in Appendix \ref{app_mech}. Since our final design model has a height of 18.42 cm there we have a safety factor of 1.49.
+Based on NASA specifications for the 95th percentile male \cite{NASA} and female we can get what the dimension \it{a} should be. A should be at least 12.3cm to accommodate your basic 95th percentile male. To accommodate the 5th percentile male we need 12.0cm. This means that our current design should be as shown in Appendix \ref{mech_drawings}. Since our final design model has a height of 18.42 cm there we have a safety factor of 1.49.
 
-The distance B would be important when the Kinect interferes with the person sitting in the chair. Again relying on the information from \ref{NASA} for 95th percentile male and 5th percentile female, we can construct the data shown in Table \ref{tab:anthro_data}.
+The distance B would be important when the Kinect interferes with the person sitting in the chair. Again relying on the information from \cite{NASA} for 95th percentile male and 5th percentile female, we can construct the data shown in Table \ref{tab:anthro_data}.
 
 \begin{figure}[h]
 \centering
 \begin{tabular}{|l|c|c|c|}
 \hline
-Person & Size of Stomach/Chest & Distance to Kinect & Safety Factor (given dimensions shown in Appendix \ref{app_mech}) \\
+Person & Size of Stomach/Chest & Distance to Kinect & Safety Factor (given dimensions shown in Appendix \ref{mech_drawings}) \\
 5th Percentile Male&21.8&	41.0&1.88\\
 \hline
 95th Percentile Male&28.2&41.0&1.45\\
@@ -424,9 +427,26 @@ Note that figure \ref{tab:BOM} shows the expected cost for the prototype system.
 \chapter{Conclusions and Recommendations}
 %TODO(?)
 
-\chapter*{Appendix A}
-\addcontentsline{toc}{chapter}{Appendix A - Patents}
-%TODO(jordan)
+\chapter*{Appendix A} \label{mech_drawings}
+\addcontentsline{toc}{chapter}{Appendix A - Mechanical Drawings}
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.5]{Drawing_Left}
+ \caption{Left Arm Drawing}
+\end{figure}
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.5]{Drawing_Right}
+ \caption{Right Arm Drawing}
+\end{figure}
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.5]{Drawing_Table}
+ \caption{Sensor Table Drawing}
+\end{figure}
+
 
 \begin{thebibliography}{9}
  \addcontentsline{toc}{chapter}{Bibliography}
