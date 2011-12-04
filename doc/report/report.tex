@@ -189,7 +189,7 @@ The disadvantages to this are that it is moderately more complicated mechanicall
 \section{Mechanical Design Selection} \label{MechDesSel}
 Referring to the three designs mentioned above, a list of benefits and disadvantages was compilied for each design as shown in Table \ref{tab:MechDesSel}.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \begin{tabular}{|l|c|c|c|}
 \hline
@@ -230,11 +230,11 @@ These sensors are close in weighting, but operate very differently in practice. 
 \section{System-Level Design}
 \begin{figure}[hbt]
  \centering
- \includegraphics[scale=0.5]{System_Level}
+ \includegraphics[scale=0.7]{System_Level}
  \caption{System Level Design}\label{fig:highlevel}
 \end{figure}
 
-%TODO(?)
+Figure \ref{fig:highlevel} shows an overview of the complete system.  Pre-existing wheelchair components are highlighted in yellow, off-the-shelf components in blue, and specially designed elements in green.  The control PCB has the dual responsibility of interacting with the wheelchair motor controller and interfacing with the ultrasonic rangefinders.  The high level control software interprets sensor data, determining whether user commands are likely to result in collision, and passing velocity commands to the control PCB as appropriate.
 
 \section{Mechanical Design}
 A drawing of the final design is shown in Figure \ref{fig:WheelChair_Final}. In order to properly size the height of the tray and the sensor placements a more detailed design must be performed.
@@ -257,7 +257,7 @@ Based on NASA specifications for the 95th percentile male \cite{NASA} and female
 
 The distance B would be important when the Kinect interferes with the person sitting in the chair. Again relying on the information from \cite{NASA} for 95th percentile male and 5th percentile female, we can construct the data shown in Table \ref{tab:anthro_data}.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \begin{tabular}{|l|c|c|c|}
 \hline
