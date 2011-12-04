@@ -79,17 +79,17 @@ Rowan Head-Marsden \hspace {1.5cm} Iain Peet \hspace{1.5cm} Jordan Valentin
 
 \chapter*{Executive Summary}
 \addcontentsline{toc}{chapter}{Summary}
-The proposed collision avoidance system for a powered wheel chair is designed to be used by people who in elder care facilities would be placed in wheel chairs however there is some concern for their own safety. This means that if the system could guarantee the safety of the user it would be useful and enhance the lives of a number of people. 
+The proposed collision avoidance system for a powered wheel chair is designed to be used by people who are in elder care facilities and would be placed in wheel chairs however there is some concern for their own safety. This means that if the system could guarantee the safety of the user it would be useful and enhance the lives of these people. 
 
-Based on the objectives we have a set of constraints were imposed upon the problem mandating that this must improve the safety of wheel chairs. A set of criteria were laid out to evaluate the designs that we came up with using measures from the perspective of Costs, Mechanical, and Sensing Capabilities. Based on this we evaluated a set of sensors and decided that the Kinect sensor from Microsoft and an array of sonar sensors would be optimal.
+Based on the objectives we have a set of constraints were imposed upon the problem mandating that this must improve the safety of wheel chairs. A set of criteria were laid out to evaluate the designs that had been developed, using measures from the perspective of Costs, Mechanical Capabilities, and Sensing Capabilities. Based on this we evaluated a set of sensors and decided that the Kinect sensor from Microsoft and an array of sonar sensors would be optimal.
 
-Once this was complete we developed a model of the wheel chair and came up with multiple mountings that would suit the needs described earlier in the report. From these each ones benefits and drawbacks were considered. A final design decision was reached regarding the mechanical design and a airplane table tray design was decided to be the final solution moving forward.
+Once this was complete we developed a model of the wheel chair and came up with multiple mountings that would suit the needs described earlier in the report. From these, a discussion of each ones benefits and drawbacks was considered. A final design decision was reached regarding the mechanical design and an airplane table tray design was decided to be the final solution moving forward.
 
- A detailed design section then describes how well the desired design suits the average human being. Analysis is performed to determine the best orientation of sensors for the purposes of figuring out the range and capabilities of the sonar sensors in various orientations. 
+ A detailed design section then describes how well the desired mechanical design suits the average human being. Analysis is performed to determine the best orientation of sensors for the purposes of figuring out the range and capabilities of the sonar sensors in those orientations. 
 
-There is a discussion of how the Kinect will work and what the Kinect is along with how it could later be replaced with another system to avoid licensing restrictions. A discussion of possible tools for the software is also listed including a description of why ROS (robot Operating System) was used for the project.
+There is a discussion of how the Kinect will work and what the Kinect is along with how it could later be replaced with another system to avoid patent infringement. A discussion of possible tools for the software is also listed including a description of why ROS (robot Operating System) was used for the project.
 
-A schedule has been designed in order to meet the presentation deadline for the completion of the project by march 4th in order to allow time for the preparation of the demo on march 19th. Also a budget of approximately \$750 CAD was laid out for the prototype with an expectation that marginal cost will be less than \$500 for volume production. 
+A schedule has been designed in order to meet the presentation deadline for the completion of the project by March 4th in order to allow time for the preparation of the demo on March 19th. Also a budget of approximately 750$ was laid out for the prototype with an expectation that the final cost will be somewhat lower. 
 
 Based on our observations and our work in progress a set of recommendations were laid for moving forward including the introduction of new wider beam angle ultrasonic sensors, Solutions for dealing with the motor controller, and interface design suggestions.
 
@@ -167,7 +167,7 @@ Precision is fairly important since we are detecting obstacles and we would like
 \subsubsection{Computer Controlled Power Wheelchair Navigation System}
 \begin{figure}[hbt]
  \centering
- \includegraphics[scale=0.15]{patents}
+ \includegraphics[scale=0.25]{patents}
  \caption{Similar patent \#1 \cite{patent:computer_controlled}}
 \end{figure}
 
@@ -177,12 +177,34 @@ The chair moves through a marked location and "learns" paths within a home. This
 
 By automating the chair, the user loses the sense of control given by being able to control its movements as wished using a joystick. This is another key difference between this patented design and the goals of this project.
 
-%\cite{patent:power_wheelchair}
-%\cite{patent:wheelchair_method}
-%\cite{patent:computer_controlled}
+\subsubsection{Powered Wheelchair}
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.25]{patents2}
+ \caption{Similar patent \#2 \cite{patent:power_wheelchair}}
+\end{figure}
+
+The second patent (full patent number, author, and other details listed in \cite{patent:power_wheelchair}), entitled \emph{Powered Wheelchair}, discusses a patent for a powered wheelchair with very general collision avoidance specifications.
+
+The patent discusses a "obstacle-detecting sensor" that results in the blocking of a particular input to the chair.
+
+While our design is similar we do not intend to physically block the user from moving the joystick in the direction of travel of a collision. Also, this patent appears to be so general that is fails to discuss any method of sensing or the methods by which obstacles and detected and then blocked. The goals of this design project are very specific in comparison, and do not use any sensors or methods mentioned in this patent. Thus our design is unlikely to infringe on this patent.
 
 \subsubsection{Wheelchair and Method for Correcting the Guidance of a Wheelchair}
-\subsubsection{Powered Wheelchair}
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.25]{patents2}
+ \caption{Similar patent \#3 \cite{patent:wheelchair_method}}
+\end{figure}
+
+The third patent (full patent number, author, and other details listed in \cite{patent:wheelchair_method}), entitled \emph{Wheelchair and Method for Correcting the Guidance of a Wheelchair}, discusses a patent for wheelchair collision avoidance system.
+
+It works with two arrays of ultrasound sensors, and decomponses the user commands into forward/backwards linear components and angular components resulting from left/right commands. It determines what space is free in front of the wheelchair and attempts to plan a path.
+
+This patent is similar to our design in that it allows the user control over the wheelchair in terms of motion commands. It is different in its specific implementation, the fact it tries to plan a path through free space rather than rely totally on user input and simply deny movement in unsafe directions, and also in its choice of sensors for collision avoidance.
+
+\subsection{Patentability of this Design}
+As shown in the previous section, the design in this report does not appear to infringe on existing patents. That said, many of the sensors and techniques used to implement collision avoidance are not unique and are commonly used in the robotics field for this purpose. It is the specific application of our design to helping the disabled in wheelchairs and the implementation method that are unique. This would limit the patenability of our design since there is no obvious new or novel compoent, and thus the authors will not be a pursuing a patent for this design.
 
 \chapter{Proposed Solution}
 
