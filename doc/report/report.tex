@@ -1,4 +1,4 @@
-\documentclass[oneside,final]{report}
+\documentclass[oneside,final,a4paper]{report}
 
 \usepackage{graphicx}
 \usepackage[parfill]{parskip}
@@ -6,8 +6,11 @@
 
 \graphicspath{{images/}}
 
+\oddsidemargin 0in
+\evensidemargin 0in
+\textwidth 6.5in 
+
 \begin{document}
- 
 
 % ================ Front Matter ================
 % Suppress page number for title page and letter of submittal
@@ -335,7 +338,7 @@ Figure \ref{schedule} shows the prototype production gantt chart.  It may be see
 
 \section{Bill of Materials}
 \vspace{0.5cm}
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \begin{tabular}{|l|c|c|c|}
 \hline
@@ -400,7 +403,8 @@ Note that figure \ref{tab:BOM} shows the expected cost for the prototype system.
   \emph{Computer Controlled Power Wheelchair Navigation System.} \\
   U.S. Patent 2008/7383107B2, Jun. 3, 2008.
  \bibitem{MSP430_USB}
-  A. Dannenberg. (2006, October). \emph{MSP430 Connectivity Using TUSB3410}, http://www.ti.com/lit/an/slaa276a/slaa276a.pdf
+  A. Dannenberg. (2006, October). \emph{MSP430 Connectivity Using TUSB3410},\\
+  http://www.ti.com/lit/an/slaa276a/slaa276a.pdf
  \bibitem{primesense}
   \emph{Our Full 3D Sensing Solution}, \\
   \mbox{http://www.primesense.com/en/technology/115-the-primesense-3d-sensing-solution} \\
