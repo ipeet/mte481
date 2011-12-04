@@ -70,6 +70,7 @@ Rowan Head-Marsden \hspace {1.5cm} Iain Peet \hspace{1.5cm} Jordan Valentin
 \pagenumbering{roman}
 
 % ==== Table of Contents
+\setcounter{tocdepth}{1}
 \tableofcontents
 
 % ==== List of Figures
@@ -275,7 +276,7 @@ A key set of dimensions to be considered in shown in Figure \ref{fig:Chair_Dims}
 \item Distance from the ground to the sonar sensor
 \end{enumerate}
 
-Based on NASA specifications for the 95th percentile male \cite{NASA} and female we can get what the dimension \it{a} should be. A should be at least 12.3cm to accommodate your basic 95th percentile male. To accommodate the 5th percentile male we need 12.0cm. This means that our current design should be as shown in Appendix \ref{mech_drawings}. Since our final design model has a height of 18.42 cm there we have a safety factor of 1.49.
+Based on NASA specifications for the 95th percentile male \cite{NASA} and female we can get what the dimension $a$ should be. A should be at least 12.3cm to accommodate your basic 95th percentile male. To accommodate the 5th percentile male we need 12.0cm. This means that our current design should be as shown in Appendix \ref{mech_drawings}. Since our final design model has a height of 18.42 cm there we have a safety factor of 1.49.
 
 The distance B would be important when the Kinect interferes with the person sitting in the chair. Again relying on the information from \cite{NASA} for 95th percentile male and 5th percentile female, we can construct the data shown in Table \ref{tab:anthro_data}.
 
@@ -392,17 +393,37 @@ With the LV-EZ0 sensors, it is expected that it will be possible to achieve good
 \section{Hardware Design}
 \begin{figure}[hbt]
  \centering
- \includegraphics[scale=0.5]{Hardware_Diagram}
+ \includegraphics[scale=0.9]{Hardware_Diagram}
  \caption{Hardware Design}\label{fig:hardware}
 \end{figure}
 
 \section{Software Design}
 \begin{figure}[hbt]
  \centering
- \includegraphics[scale=0.5]{Software_Diagram}
+ \includegraphics[scale=0.9]{Software_Diagram}
  \caption{Software Design}\label{fig:software}
 \end{figure}
-%TODO(iain/jordan)
+
+Figure \ref{fig:software} shows an overview of the intended software architecture.  Software will be built on the Robot Operating System (ROS) \cite{ROS}, which is a distributed message passing system capable of running on Linux systems.  ROS systems are organized into a network of simple nodes, which co-operate to produce complex aggregate behaviour. 
+
+\subsubsection{Node 1: Ranging}
+The ranging node is responsible with communicating with the micro-controller in order to obtain range data from the ultrasonic rangefinders.  It publishes parsed range data.
+
+\subsubsection{Node 2: Point Cloud}
+The point cloud node communicates with the Kinect, in order to obtain depth map data.  It publishes point cloud data.
+
+\subsubsection{Node 3: Collision Map Generator}
+The collision map generator node is responsible for interpreting poinrt cloud and rangefinder data.  These data are projected into a 2-D occupancy grid in the vehicle frame.  In the simplest case, collision map generation is stateless, and ignores previous data in the interpretation of new sensor data.  If this does not provide sufficient accuracy, the collision map generator might also use state estimates to project old information forward, improving estimates.  
+
+This node subscribes to point cloud and rangefinder data, and publishes collision maps.
+
+\subsubsection{Node 4: Joystick}
+The joystick node is responsible for communicating with the joystick, in order to obtain speed and direction commands from the user.  It publishes joystick state.
+
+\subsubsection{Node 5: Speed / Direction Limiter}
+The speed / direction limiter node is responsible for communicating with the motor controller in order to set wheel velocities.  It uses a collision map and a wheelchair motion model to assess whether a particular command is likely to lead to a collision.  If necessary, it adjusts user commands in order to avert collisions.
+
+This node subscribes to collision map and joystick command data.  It does not publish anything.
 
 \chapter{Schedule and Budget}
 
