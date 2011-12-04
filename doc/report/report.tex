@@ -442,6 +442,27 @@ These three options are being investigated, and the method used to integrate wit
  \caption{Hardware Design}\label{fig:hardware}
 \end{figure}
 
+In order to interface the software with both the wheelchair and the set of sensors used, a small custom PCB will need to be manufactured. This PCB will have three main functions, as shown in Figure \ref{fig:hardware}.
+
+\subsection{Regulators}
+A wheelchair is typically powered off two (sealed or gel) lead acid batteries, for a typical supply voltage of 24-30 Volts. From this voltage a 12 V, 1 Amp supply is required for the Kinect sensor \cite{kinect_power}, and an additional supply of 5 V is required for the sonar sensors and microcontroller on board the PCB.
+
+To perform this task two buck regulators will be used, similar to a sample design shown in Figure \ref{fig:webbench} for a 12 V rail. This design was completed using Webbench Power Architect from National Semiconductor, and allows the easy selection of a regulator to produce a desired output voltage with a given current rating. A similar design will also be completed for a 5 V rail, and then the components fine-tuned and integrated into the PCB.
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.5]{Power_Supply}
+ \caption{Power Supply Design for 12 V Rail}\label{fig:webbench}
+\end{figure}
+
+\subsection{Wheelchair Interface}
+The wheelchair interface will data from a microcontroller on the board, and set the operation of the motor controllers accordingly. The board will not determine the best output for the motors based on the collision map data, this will be done in the software, and the laptop will simply tell this value to the microcontroller on the PCB to be relayed to the motor controller. This section will be finalized based on the interface required for the motor controllers used, and might consist of a serial link via  CAN-bus or a similar protocol, or analog voltage interface (0-5 Volts or similar).
+
+\subsection{USB Interface to Laptop}
+A microcontroller will be used to establish a bi-directional USB link to the laptop. The microcontroller will aggregate range information from the sonar sensors, either read in as an analog signal using an analog-to-digital converter or via a RS-232 serial link (depending on sensor model used), and forward this on to the laptop and control software. The microcontroller will then receive commands to be relayed to be relayed to the motor controller, which will be accomplish via the circuitry in the wheelchair interface section shown in Figure \ref{fig:hardware}.
+
+A good choice for microcontroller to be used would be the MSP 430 by Texas Instruments. A sample circuit including bi-directional USB interfacing is shown in an Application Note by TI \cite{MSP430_USB}, and the authors have some experience designing hardware using this microcontroller.
+
 \section{Software Design}
 \begin{figure}[hbt]
  \centering
@@ -520,20 +541,20 @@ Note that figure \ref{tab:BOM} shows the expected cost for the prototype system.
 \addcontentsline{toc}{chapter}{Appendix A - Mechanical Drawings}
 \begin{figure}[hbt]
  \centering
- \includegraphics[scale=0.5]{Drawing_Left}
- \caption{Left Arm Drawing}
+ \includegraphics[scale=0.65]{Drawing_Left}
+ \caption{Secondary Sonar Sensor Mounting}
 \end{figure}
 
 \begin{figure}[hbt]
  \centering
  \includegraphics[scale=0.5]{Drawing_Right}
- \caption{Right Arm Drawing}
+ \caption{Sensor and Kinect Mounting}
 \end{figure}
 
 \begin{figure}[hbt]
  \centering
- \includegraphics[scale=0.5]{Drawing_Table}
- \caption{Sensor Table Drawing}
+ \includegraphics[scale=0.65]{Drawing_Table}
+ \caption{Table Kinect Mounting}
 \end{figure}
 
 
@@ -542,18 +563,10 @@ Note that figure \ref{tab:BOM} shows the expected cost for the prototype system.
 
  % NB: cite these with \cite{item}
 
- \bibitem{lv-ez0}
-  MaxBotix Inc, \emph{LV-EZ0 Datasheet},  2011
- \bibitem{lv-ez4}
-  MaxBotix Inc, \emph{LV-EZ4 Datasheet},  2011
- \bibitem{kinect_prec}
-  L. Yiping. \\
-  \emph{openni\_kinect/kinect\_accuracy}, http://www.ros.org/wiki/openni\_kinect/kinect\_accuracy\\
-  Jun. 27, 2011.
- \bibitem{kinect_power }
-  M. Wise.  \emph{Adding a Kinect to an iRobot Create} \\
-  http://www.ros.org/wiki/kinect/Tutorials/Adding\%20a\%20Kinect\%20to\%20an\%20iRobot\%20Create\\
-  May 2, 2011.
+ \bibitem{patent:computer_controlled}
+  L. Fehr, S. Skaar, G. Del Castillo. \\
+  \emph{Computer Controlled Power Wheelchair Navigation System.} \\
+  U.S. Patent 2008/7383107B2, Jun. 3, 2008.
  \bibitem{patent:power_wheelchair}
   G. Griggs, T. Dutta, G. Fernie. \emph{Powered Wheelchair},\\
   U.S. Patent 2010/0082182A1, Apr. 1, 2010.
@@ -561,14 +574,10 @@ Note that figure \ref{tab:BOM} shows the expected cost for the prototype system.
   T. Smithers, U. Urriticoechea, U. Campos. \\
   \emph{Wheelchair and Method for Correcting the Guidance of a Wheelchair.} \\
   U.S. Patent 2011/0130940A1, Jun. 2, 2011.
- \bibitem{patent:computer_controlled}
-  L. Fehr, S. Skaar, G. Del Castillo. \\
-  \emph{Computer Controlled Power Wheelchair Navigation System.} \\
-  U.S. Patent 2008/7383107B2, Jun. 3, 2008.
- \bibitem{MSP430_USB}
-  A. Dannenberg. (2006, October). \emph{MSP430 Connectivity Using TUSB3410},\\
-  http://www.ti.com/lit/an/slaa276a/slaa276a.pdf
- \bibitem{primesense}
+ \bibitem{NASA}
+  NASA. \emph{NASA-STD-3000. Anthropometry and Biomechanics.}\\
+  http://msis.jsc.nasa.gov/sections/section03.htm, Jul. 1995.
+\bibitem{primesense}
   \emph{Our Full 3D Sensing Solution}, \\
   \mbox{http://www.primesense.com/en/technology/115-the-primesense-3d-sensing-solution} \\
   2011.
@@ -576,15 +585,28 @@ Note that figure \ref{tab:BOM} shows the expected cost for the prototype system.
   http://www.openni.org/
  \bibitem{ROS}
   http://www.ros.org/
+ \bibitem{point_clouds}
+  http://pointclouds.org/
  \bibitem{wheelchair_data}
   Invacare. \emph{Nutron R51LXP. Invacare Product Catalogue.} \\
   http://www.invacare.ca/cgi-bin/imhqprd/inv\_catalog/prod\_cat\_detail.jsp?s=0\&prodID=R51LXP\\
  Jan. 2011.
- \bibitem{NASA}
-  NASA. \emph{NASA-STD-3000. Anthropometry and Biomechanics.}\\
-  http://msis.jsc.nasa.gov/sections/section03.htm, Jul. 1995.
- \bibitem{point_clouds}
-  http://pointclouds.org/
+\bibitem{kinect_prec}
+  L. Yiping. \\
+  \emph{openni\_kinect/kinect\_accuracy}, http://www.ros.org/wiki/openni\_kinect/kinect\_accuracy\\
+  Jun. 27, 2011.
+ \bibitem{lv-ez4}
+  MaxBotix Inc, \emph{LV-EZ4 Datasheet},  2011
+ \bibitem{lv-ez0}
+  MaxBotix Inc, \emph{LV-EZ0 Datasheet},  2011
+ \bibitem{kinect_power}
+  M. Wise.  \emph{Adding a Kinect to an iRobot Create} \\
+  http://www.ros.org/wiki/kinect/Tutorials/Adding\%20a\%20Kinect\%20to\%20an\%20iRobot\%20Create\\
+  May 2, 2011.
+ \bibitem{MSP430_USB}
+  A. Dannenberg. (2006, October). \emph{MSP430 Connectivity Using TUSB3410},\\
+  http://www.ti.com/lit/an/slaa276a/slaa276a.pdf
+
 \end{thebibliography}
 
 
