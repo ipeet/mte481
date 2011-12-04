@@ -425,7 +425,17 @@ With the LV-EZ0 sensors, it is expected that it will be possible to achieve good
 
 
 \section{Systems Integration}
-%TODO(iain/jordan)
+The collision and avoidance software and hardware will need to be integrated with the existing wheelchair for the prototype.
+
+In general, each wheelchair comes from a different manufacturer and could use a different set of joystick, motor controller, and motor. In practice, there seems to be a small number of companies that provide joystick/motor controller combinations to many wheelchair manufacturers, such as Dynamic Controllers.
+
+The chair provided for the prototype is an Invacare chair, using the Dynamic Controls SHARK drive system. The motor controller is model \# DK-PMC08. While no information is provided by the manufacturer (as stated by the manufacturer when the authors attempted to contact Dynamic Controls) about the control protocol used between the joystick and the motor controller, previous systems appeared to be based on CAN-bus (Controller Area Network), a protocol often used in automotive and safety-critical applications). It is possible the authors could reverse engineer this protocol and use it to communicate with the motor controller for purposes of the symposium prototype model.
+
+The joystick itself is coupled inductively to the control board (the control board is housed inside the joystick module, and sends controls over a serial link to the motor controller). A signal excites a coil on the end of the joystick, and this signal is coupled onto four inductors on the control PCB (front/rear/left/right directions) that will change with the joystick's orientation. Only two are strictly required, but four are used for redundancy to eliminate chair movement in the case of a signal fault. Some support is being provided by the manufacturer, Dynamic Controls, to pursue the option of integrating the collision avoidance system by emulating the analog signals seen by the control PCB by the joystick.
+
+A third integration option is to simply replace the Dynamic Controls motor controller with off-the-shelf motor controllers at a fairly low price. This will add some cost to the user if their motor controllers must be replaced when they install a collision-avoidance system, but it is possible this option could be used purely for a prototype with the expectation that the final design would be more integrated with a common wheelchair motor controller.
+
+These three options are being investigated, and the method used to integrate with the prototype unit will be finalized by January of 2012.
 
 \section{Hardware Design}
 \begin{figure}[hbt]
