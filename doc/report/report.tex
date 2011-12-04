@@ -2,6 +2,7 @@
 
 \usepackage{graphicx}
 \usepackage[parfill]{parskip}
+\usepackage[section] {placeins}
 
 \graphicspath{{images/}}
 
@@ -104,7 +105,50 @@ The constraints of the design are as follows:
 \end{itemize}
 
 \section{Criteria}
-% TODO(rowan)
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.5]{CriteriaWeighting}
+ \caption{Criteria Weighting} \label{fig:criteria_weighting}
+\end{figure}
+
+\subsection{Weight}
+Weight is an important criterion as a number of powered wheel chairs have weight limitations. This should be as small as possible since the weight capacity of a chair like the Invacare Neutron R51LXP is 300 pounds \cite{wheelchair_data}. This means that for any weight we add on to the wheel chair we reduce the potential carrying load of the wheel chair and with it our potential market.
+
+\subsection{Size}
+Size is a minor criterion we considered, with an excessively large bulky attachment it would reduce the mobility of the wheel chair and decrease the number of places the wheel chair can travel to. It may also get in the way of the user when operating the wheel chair. This made it important to have some size criteria for measuring the strength of a design.
+
+\subsection{Durability}
+While most of the system should not be placed under continuous strain or be at high risk of damage, it is important to consider how durable the design is as there will be wear and tear from use of this system on a wheel chair and damage occurred from movement around the wheel chair.
+
+\subsection{Price}
+Price is an important factor for our consideration since we plan to market it to the end users and not to corporations that may have larger budgets. This then made it the most important ranking and with the very large difference in sensor costs it made for a very important factor in determining which route to take.
+
+\subsection{Power Consumption}
+Power Consumption measure how much an addition will add to the power consumption of the wheel chair. Many of these chairs are run off of an onboard battery and draining this battery quickly will significantly reduce its usefulness to the users. 
+
+\subsection{Processing Requirements}
+The amount of computational intelligence required to handle the data that is coming in from the sensor. This is to make distinction between sensors similar to a Kinect which uses USB and would be plugged into a lab top that will be needed to interpret the data versus something like a sonar sensor that could be tuned and used on FPGA. This will run opposite the Quantity of Useful Data.
+
+\subsection{Quantity of useful Data}
+This was selected to distinguish things like sonar which provide simply a distance mapping for a cone versus something like the lydar that provides a depth map using a large number of points. The more data we get from a sensor the more we can make use of it to recognize and avoid obstacles. This runs as the opposite of processing requirements, since more data requires more processing power to interpret the data.
+
+\subsection{Range}
+The range for the detection of objects is fairly important to us. While range beyond 7-8 meters is not particularly useful, we want range from about 0 to 8 meters optimally. For this we assume they are working in optimal conditions which we said to be indoors and with normal lighting. Certain sensors we consider have significantly reduced range in other conditions.
+
+\subsection{Precision}
+Precision is fairly important since we are detecting obstacles and we would like to know how far away they are, noise and disturbances are acceptable to a small degree so long as we can identify them as noise and not a fast moving obstacle. In addition to this it’s important that some sensors have decreased precision at increased range. This is noted as a small reduction in their score.
+
+\subsection{Decision Making Matrix}
+    \begin{table}[hbt]
+        \caption{Decision Making Matrix}
+        \centering
+        \begin{tabular}{cc}
+        \includegraphics[scale=0.35]{decision_matrix}\\
+        \end{tabular}
+        \label{decision_matrix}
+    \end{table}
+
+After deciding on all the important criteria and the weightings a value was assigned for each part and a decision making matrix was formed to show the best sensors, as seen in Table \ref{decision_matrix}. The lowest value was the best in this case since for a number of the criteria lower values represented a better performance such as cost, weight, size, power consumption. This means that the best two sensors were the Xbox Kinect and Sonar. These were closely enough rated however each had very different strengths. In the end it was decided that we would use both of them to address the problem instead of selecting one and proceeding.
 
 \section{Patents}
 % TODO(jordan)
@@ -113,7 +157,21 @@ The constraints of the design are as follows:
 \chapter{Proposed Solution}
 
 \section{Mechanical Designs}
-% TODO(rowan)
+\subsection{Initial Design}
+One option was to mount the Kinect up above the user so that the user could sit in the chair with no impedances. The sensor would then have a forward looking vision viewing overtop of the user sitting in the seat. This design had the advantages of being easy to implement and much similar to the approach taken with manpowered wheel chairs with a second person pushing the chair in the appropriate direction. In addition to this the design has no inconveniences for the user since everything is mounted outside of a region where they mount or dismount. In addition to that it maintains the ability for the arms to be pushed backwards so that the user can exit via the side of the wheel chair for movements like switching from a wheel chair on to a bed or toilet.
+
+The main disadvantage of this mounting form is that the Kinect needs to be mounted about 1m above the seat in order to meet the 95th percentile marker for males. This means that the data taken from the Kinect will need to have a transform applied to it in order to be useful to the users. Another added disadvantage is that with the Kinect mounted 1m up we add 1 m to the distance the Kinect sees all obstacles at. This is a significant reduction of the Kinects range and with it there is a reduction in the Kinects precision. One final thing is that parts of the image need to be ignored in this configuration since the Kinect cant be allowed to interpret the user as an obstacle. The 95th percentile length for the legs is that they will stick out 55cm from the buttocks. This means that there will be a fair bit of lost data and very high proximity obstacles will be invisible to the sensor.
+
+\subsection{Alternative Design}
+The second design Idea was to place the Kinect sensor on the bottom of the chair.  This had the advantages of being placed out of the way so the Kinect was still not in the way of the user however it places the Kinect at the same level as we would like it for sensing obstacles (i.e. no transforms needed).It also has the advantage of being very close to the front of the chair providing the best range and precision. Lastly it also maintains the freedom of mobility that the user has with respect to pulling up the arms and exiting to a side.
+
+The disadvantage to this is that when a user sits in the chair they often place their legs in such a way that they block the vision of the Kinect. This would effectively make all the sensors blind when the user sits in a specific orientation. Since we can’t allow this, the design was ruled out as a possible solution for where to place the Kinect sensor.
+
+\subsection{Final Design}
+Our final design made use of a concept similar to the trays found on airplanes or trains. The folding table can be lowered into position with the mounted Kinect on top of it. This has the advantage of no interference with the sensor, with it mounted at the front of the chair it makes optimal use of range and precision of the Kinect. With the sensor roughly on level with what we need it is possible to consider the occupancy map generated by the Kinect without needing to perform any transforms to get the correct orientation.
+
+The disadvantages to this are that it is moderately more complicated mechanically since the Kinect mounting needs to be designed and made separately. There are also minor inconveniences to the user when they are attempting to get into or out of the wheel chair. It does not allow the user to move out of the chair via one of the other two sides to the chair the way the other designs do. 
+
 
 \section{Mechanical Design Selection}
 % TODO(rowan)
@@ -138,7 +196,17 @@ The constraints of the design are as follows:
 \end{figure}
 
 \subsection{Kinect Configuration}
-The Kinect sensor, based on the 
+The Kinect sensor, based on the Primesense PS1080 System on Chip \cite{primesense}, provides a new type of depth sensing sensor. Previously projects requiring depth sensing measurements of both range and bearing (unlike ultrasonic or infrared rangers which give only range information) could use a laser rangefinder (LIDAR) or stereo-vision cameras. Laser rangefinders are both highly accurate and precise, but this comes at a very high monetary cost -- not reasonable for use in wheelchair collision avoidance technology that will be marketed to individuals and not research labs. Stereo-vision cameras require complex algorithms and lots of processing power to correspond features in images in order to identify disparities and get depth information out of this. This works out to a certain practical range -- limited by the spacing of the cameras being used and their resolution -- and is only good in areas with good lighting conditions and lots of unique features to correspond. Since the sensor is fairly new it makes sense to understand how it works, and what its accuracy and precision is, before determining the best final configuration.
+
+The Primsense depth-sensor solution is shown in Figure \ref{primesense_solution}. The Kinect presents something of a combination between the lidar and the stereo vision depth mapping techniques, sending out coded infrared light (similar to a lidar) and reading back the response on a standard CMOS image sensor (which keeps things very cheap). The solution does all its processing on board the PS1080, and sends the fully-processed depth map information back to the host. The result is reasonable accuracy and precision (for this application), and low price. Note that while the Xbox Kinect from Microsoft is being used for the prototype of this collision aviodance project, there are other manufacturers of depth sensors using the Primesense technology on the market that could eventually be used to reduce cost for production purposes.
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.35]{PrimeSensor_Depth_Diagram}
+ \caption{The Primesense system \cite{primesense}} \label{primesense_solution}
+\end{figure}
+
+The Kinect comes with a set of camera calibration parameters, and the software available from OpenNI \cite{OpenNI} and the Robot Operating System (ROS) \cite{ROS} package that supports the Kinect have gone to great lengths to provide a good calibration for the depth camera. The result is that the accuracy of the sensor is within  $\pm 1$ 1 cm of the true measurement, and with custom calibration with $\pm 1$ mm over its range of operation \cite{kinect_accuracy}.
 
 
 \section{Rangefinder Configuration}
@@ -169,7 +237,7 @@ Figures \ref{sonar_1} - \ref{sonar_3} show the results of testing with the LV-EZ
 
 Considering the poor coverage provided by the narrow-beam LV-EZ4 sensors, it is recommended that wider range sensors be used.  For cylindrical objects, the EZ0 model of the same series is sensitive within a cone of approximately $60^\circ$ \cite{lv-ez0}.  Note that, although region of sensitivity depends on object shape, observations indicate that humans are well approximated by large cylindrical dowels.  
 
-With the LV-EZ0 eensors, it is expected that it will be possible to achieve good lateral visibility. Figure \ref{sonar_final} shows the coverage we expect with these sensors.
+With the LV-EZ0 sensors, it is expected that it will be possible to achieve good lateral visibility. Figure \ref{sonar_final} shows the coverage we expect with these sensors.
 
 \begin{figure}[hbt]
  \centering
@@ -243,23 +311,30 @@ Note that figure \ref{tab:BOM} shows the expected cost for the prototype system.
 
  \bibitem{lv-ez0}
    \emph{LV-EZ0 Datasheet}, MaxBotix Inc, 2011
- 
  \bibitem{lv-ez4}
    \emph{LV-EZ4 Datasheet}, MaxBotix Inc, 2011
-\bibitem{kinect_accuary}
-L. Yiping. “openni\_kinect/kinect\_accuracy” Internet: http://www.ros.org/wiki/openni\_kinect/kinect\_accuracy, Jun. 27, 2011.
-\bibitem{kinect_power }
-	M. Wise. “Adding a Kinect to an iRobot Create.” Internet: http://www.ros.org/wiki/kinect/Tutorials/Adding\%20a\%20Kinect\%20to\%20an\%20iRobot\%20Create, May 2, 2011.
-\bibitem{patent:power_wheelchair}
-	G. Griggs, T. Dutta, G. Fernie. “Powered Wheelchair.” U.S. Patent 2010/0082182A1, Apr. 1, 2010.
-\bibitem{patent:wheelchair_method}
-	T. Smithers, U. Urriticoechea, U. Campos. “Wheelchair and Method for Correcting the Guidance of a Wheelchair.” U.S. Paten 2011/0130940A1, Jun. 2, 2011.
-\bibitem{patent:computer_controlled}
-	L. Fehr, S. Skaar, G. Del Castillo. “Computer Controlled Power Wheelchair Navigation System.” U.S. Paten 2008/7383107B2, Jun. 3, 2008.
-\bibitem{MSP430_USB}
-	A. Dannenberg. (2006, October). MSP430 Connectivity Using TUSB3410. Available: http://www.ti.com/lit/an/slaa276a/slaa276a.pdf
-\bibitem{primesense}
-	"Our Full 3D Sensing Solution." Internet: http://www.primesense.com/en/technology/115-the-primesense-3d-sensing-solution, 2011.
+ \bibitem{kinect_accuary}
+  L. Yiping. “openni\_kinect/kinect\_accuracy” Internet: http://www.ros.org/wiki/openni\_kinect/kinect\_accuracy, Jun. 27, 2011.
+ \bibitem{kinect_power }
+  M. Wise. “Adding a Kinect to an iRobot Create.” Internet: http://www.ros.org/wiki/kinect/Tutorials/Adding\%20a\%20Kinect\%20to\%20an\%20iRobot\%20Create, May 2, 2011.
+ \bibitem{patent:power_wheelchair}
+  G. Griggs, T. Dutta, G. Fernie. “Powered Wheelchair.” U.S. Patent 2010/0082182A1, Apr. 1, 2010.
+ \bibitem{patent:wheelchair_method}
+  T. Smithers, U. Urriticoechea, U. Campos. “Wheelchair and Method for Correcting the Guidance of a Wheelchair.” U.S. Paten 2011/0130940A1, Jun. 2, 2011.
+ \bibitem{patent:computer_controlled}
+  L. Fehr, S. Skaar, G. Del Castillo. “Computer Controlled Power Wheelchair Navigation System.” U.S. Patent 2008/7383107B2, Jun. 3, 2008.
+ \bibitem{MSP430_USB}
+  A. Dannenberg. (2006, October). MSP430 Connectivity Using TUSB3410. Available: http://www.ti.com/lit/an/slaa276a/slaa276a.pdf
+ \bibitem{primesense}
+  "Our Full 3D Sensing Solution." Internet: http://www.primesense.com/en/technology/115-the-primesense-3d-sensing-solution, 2011.
+ \bibitem{OpenNI}
+  Insert generic reference to OpenNI website or package.
+ \bibitem{ROS}
+  Insert generic reference to ROS website or package.
+ \bibitem{wheelchair_data}
+  Invacare. "Nutron R51LXP. Invacare Product Catalogue." Internet: http://www.invacare.ca/cgi-bin/imhqprd/inv\_catalog/prod\_cat\_detail.jsp?s=0\&prodID=R51LXP\&catOID=-536887496, Jan. 2011.
+ \bibitem{NASA}
+  NASA. "NASA-STD-3000. Anthropometry and Biomechanics." Internet: http://msis.jsc.nasa.gov/sections/section03.htm, Jul. 1995.
 \end{thebibliography}
 
 
