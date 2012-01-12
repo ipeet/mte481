@@ -1,0 +1,31 @@
+{# Base page template for the site.  Provides header and footer, #}
+{# with the empty content block which should be filled by child templates #}
+<html>
+  <head>
+   <title>MTE482 - Group 2 - {{ title }}</title>
+   <link rel="stylesheet" href="/static/style.css" type="text/css">
+  </head>
+  <body>
+    <div class="header">
+      <h1>MTE 482 - Group 2 - {{ title }}</h1>
+      <h2>Project Website</h2>
+    </div>
+    <div class="navigation">
+      <table><tr>
+      {% for page in page_list %}
+        {% if page.name == name %}
+          <td id="curpage">{{ page.title }}</td>
+        {% else %}
+          <td><a href="/{{ page.name }}">{{ page.title }}</a></td>
+        {% endif %}
+      {% endfor %}
+      </tr></table>
+    </div>
+    <div class="content">
+     {% block content %}{% endblock %}
+    </div>
+    <div class="footer">
+     Copyright 2012 - Iain Peet, Rowan Head-Marsden, Jordan Valentin
+    </div>
+  </body>
+</html>
