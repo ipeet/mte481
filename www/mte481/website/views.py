@@ -9,7 +9,7 @@ from django.shortcuts import render_to_response
 page_list = [
   {'name': 'about', 'title': 'Overview'},
   {'name': 'design', 'title': 'Design Details'},
-  {'name': 'group', 'title': 'Team Members'}
+  {'name': 'group', 'title': 'Team Members'},
 ]
 
 def root(request):
