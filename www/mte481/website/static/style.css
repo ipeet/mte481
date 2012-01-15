@@ -1,2 +1,28 @@
 /* Styling applied to the entire site */
 
+<style type="text/css">
+body
+{
+background-color:rgb(10,10,10);
+color:rgb(220,220,220);
+}
+p,li,h2
+{
+margin-right:30%;
+margin-left:100px;
+}
+p.header,li.header,h1.header,h2.header
+{
+background-color:rgb(10,10,10);
+color:rgb(220,220,220);
+}
+p.sidenote
+{
+position:absolute;
+margin-right:5%;
+margin-left:75%;
+border-style:outset;
+border-width:5px;
+border-color:green;
+}
+</style>
