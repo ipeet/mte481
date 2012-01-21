@@ -81,6 +81,8 @@ div {
 .content em {
   margin: 0;
 }
+.content p {
+}
 .content h1 {
   background-color: {{ palette.heading }};
   color: {{ palette.heading_text }};
@@ -121,3 +123,21 @@ div {
   text-align: center;
 }
 
+@media screen and (max-width: 860px) {
+  .header {
+    position: static;
+    height: auto;
+  }
+  .header_content {
+    height: auto;
+  }
+  .navigation {
+    position: static; 
+    width: 100%
+  }
+  .navigation li {
+    display: list-item;
+  }
+  .content img {float: none; }
+  .content :nth-child(even) img { float:none; }
+}
