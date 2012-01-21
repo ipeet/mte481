@@ -12,15 +12,15 @@
       <h1>MTE 482 - Group 2</h1>
       <h2>{{ title }}</h2>
       <div class="navigation">
-        <table><tr>
+        <ul>
         {% for page in page_list %}
           {% if page.name == name %}
-            <td id="curpage">{{ page.title }}</td>
+            <li id="curpage">{{ page.title }}</li>
           {% else %}
-            <td><a href="/{{ page.name }}">{{ page.title }}</a></td>
+            <li><a href="/{{ page.name }}">{{ page.title }}</a></li>
           {% endif %}
         {% endfor %}
-        </tr></table>
+        </ul>
       </div>
     </div></div>
     <div class="content">

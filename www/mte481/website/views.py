@@ -33,7 +33,6 @@ def page(request, page):
   if title is None:
     raise Http404
 
-
   return render_to_response(page+'.html', 
       {'name': page, 'title': title, 'page_list': page_list})
 
@@ -55,7 +54,7 @@ style_args = {
     'text_nav': '#fff',
   },
   'page_width': '70%',
-  'head_height': '128px',
+  'head_height': '105px',
 }
 
 def style(request, style):

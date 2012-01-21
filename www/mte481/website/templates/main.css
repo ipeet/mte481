@@ -22,19 +22,50 @@ div {
 }
 .header_content {
   width: {{ page_width }};
+  height: {{ head_height }};
   margin: 0 auto;
   background-color: {{ palette.bg_head_content }};
   color: {{ palette.text_head }};
 }
-.header_content h1 {
+.header h1 {
   margin: 0;
+  padding: 6px 0 0 20px;
 }
+.header h2 {
+  margin: 0 20px;
+  text-align: right;
+}
+
+{# Navigation Styling #}
 .navigation {
+  position: absolute;
+  bottom: 0px;            
+  width: {{ page_width }};
   background-color: {{ palette.bg_nav }};
   color: {{ palette.text_nav }};
 }
+.navigation ul {
+  margin: 0;
+  padding: 5px 0;
+}
+.navigation li {
+  display: inline;
+  list-style-type: none;           
+  padding: 6px 0;
+}
+#curpage {
+  color: {{ palette.bg_nav }};
+  background-color: {{ palette.text_nav }};
+  padding: 6px 10px;
+}
 .navigation a {
   color: {{ palette.text_nav }};
+  padding: 6px 10px;
+  text-decoration: none;
+}
+.navigation a:hover {
+  color: {{ palette.bg_nav }};
+  background-color: {{ palette.text_nav }};
 }
 
 {# Content styling #}
