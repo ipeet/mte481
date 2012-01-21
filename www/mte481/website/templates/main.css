@@ -9,6 +9,7 @@ div {
   background-color: {{ palette.bg_text }};
 }
 
+{# Header styling #}
 .header {
   position: fixed;
   left: 0;
@@ -36,23 +37,34 @@ div {
   color: {{ palette.text_nav }};
 }
 
+{# Content styling #}
 .content {
-  padding-top: {{ head_height }};
+  padding: {{ head_height }} 0 10px 0;
   width: {{ page_width }};
   margin: 0 auto;
 }
+.sidenote {
+  width: 33%;
+  margin: 0;           
+  float: right;
+}
+.content * {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.content ul {
+  padding-left: 30px;
+}
+.content li {
+  margin: 0;
+}
 
+{# Page footer #}
 .footer {
   background-color: {{ palette.bg }};
 }
 .footer p {
   margin: 20 0 0 0;
   text-align: center;
-}
-
-p.sidenote {
-  width: 25%;
-  padding: 20px;
-  float: right;
 }
 
