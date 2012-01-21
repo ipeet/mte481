@@ -107,7 +107,7 @@ div {
   background-color: {{ palette.bg }};
 }
 .footer p {
-  margin: 20 0 0 0;
+  margin: 20px 0 0 0;
   text-align: center;
 }
 
