@@ -10,8 +10,13 @@ div {
 }
 
 .header {
+  position: fixed;
+  left: 0;
+  top: 0;
   padding: 0;
   margin: 0;
+  width: 100%;
+  height: {{ head_height }};        
   background-color: {{ palette.bg_head }};
 }
 .header_content {
@@ -32,14 +37,16 @@ div {
 }
 
 .content {
+  padding-top: {{ head_height }};
   width: {{ page_width }};
   margin: 0 auto;
 }
 
 .footer {
-  background-color: {{ palette.bg_head }};
+  background-color: {{ palette.bg }};
 }
 .footer p {
+  margin: 20 0 0 0;
   text-align: center;
 }
 

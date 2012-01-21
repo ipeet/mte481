@@ -55,6 +55,7 @@ style_args = {
     'text_nav': '#fff',
   },
   'page_width': '70%',
+  'head_height': '128px',
 }
 
 def style(request, style):
