@@ -44,8 +44,16 @@ style_list = [
 # Parameters for stylesheets to use:
 style_args = {
   'palette': {
-    'background': '#444',
+    'bg': '#6e84d6',
+    'bg_head': '#4867d6',
+    'bg_head_content': '#1435ad',
+    'bg_text': '#fff',
+    'bg_nav': '#2c3e82',
+    'text': '#000',
+    'text_head': '#fff',
+    'text_nav': '#fff',
   },
+  'page_width': '70%',
 }
 
 def style(request, style):
