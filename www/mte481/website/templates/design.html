@@ -1,19 +1,30 @@
 {% extends "page.html" %}
 {% block content %}
 <h1>Design Details</h1>
-<h2>System Model</h2>
-<img src="static/System_Level.png" width="400" height="340" alt="some_text" align=float/>
-<p>In the illustration of the system model pre-existing wheelchair components are highlighted in yellow, of-the-shelf components in blue and specially designed elements in green. The control PCB has the dual responsibility of interacting with the wheelchair </p>
-<h2>Mechanical Design</h2>
-<img src="static/Wheel_Chair.png" width="445" height="380" alt="some_text" align=float/>
-<p>The mechanical design will consist of five parts that can be mounted on to a wide variety of wheel chairs easily. The desired effect is to make this modular and applicable to a wide variety of wheel chairs so that we do not alianate parts of the market.All pieces will be made out of aluminum for the demo however a plastic would be more suitable for full development so that it has more elasticity.</p>
-<p>The mechanical design is made so that it can be fastened to the side of the chair using bolts. The central tray is hinged at one side so that the user can raise or lower the tray in order to allow the user to enter and exit the chair easily. The sensors are offset from the base of the chair slightly to avoid detecting wheels and edges but remain within a small distance of the chairs edge to not reduce mobility to drasticly</p>
-<h2>Software Design</h2>
-<img src="static/Software_Diagram.png" width="445" height="380" alt="some_text" align=float/>
-<p>Software will be built on the Robot Operating System (ROS), which is a distributed message passing system capable of running on Linux systems. ROS systems are organized into a network of simple nodes, which co-operate to produce complex aggregate behaviour.</p>
-<h2>Electircal Design<h2>
-<img src="static/Hardware_Diagram.png" width="445" height="380" alt="some_text" align=float/>
-<h2>Sonar Sensors</h2>
-<img src="static/SONAR_Config_Final.png" width="445" height="380" alt="some_text" align=float/>
-<p>Using some wide range sensors and a good orientation of the two sensors we are able to see most close proximity obstacles that would be of concern to a driver. This makes it possible for us to help in the guidance of the system while turning.
+<div>
+  <img src="static/System_Level.png" width="400" height="340" alt="some_text" align=float/>
+  <h2>System Model</h2>
+  <p>In the illustration of the system model pre-existing wheelchair components are highlighted in yellow, of-the-shelf components in blue and specially designed elements in green. The control PCB has the dual responsibility of interacting with the wheelchair </p>
+</div>
+<div>
+  <img src="static/Wheel_Chair.png" width="445" height="380" alt="some_text" align=float/>
+  <h2>Mechanical Design</h2>
+  <p>The mechanical design will consist of five parts that can be mounted on to a wide variety of wheel chairs easily. The desired effect is to make this modular and applicable to a wide variety of wheel chairs so that we do not alianate parts of the market.All pieces will be made out of aluminum for the demo however a plastic would be more suitable for full development so that it has more elasticity.</p>
+  <p>The mechanical design is made so that it can be fastened to the side of the chair using bolts. The central tray is hinged at one side so that the user can raise or lower the tray in order to allow the user to enter and exit the chair easily. The sensors are offset from the base of the chair slightly to avoid detecting wheels and edges but remain within a small distance of the chairs edge to not reduce mobility to drasticly</p>
+</div>
+<div>
+  <img src="static/Software_Diagram.png" width="445" height="380" alt="some_text" align=float/>
+  <h2>Software Design</h2>
+  <p>Software will be built on the Robot Operating System (ROS), which is a distributed message passing system capable of running on Linux systems. ROS systems are organized into a network of simple nodes, which co-operate to produce complex aggregate behaviour.</p>
+</div>
+<div>
+  <img src="static/Hardware_Diagram.png" width="445" height="380" alt="some_text" align=float/>
+  <h2>Electircal Design<h2>
+</div>
+<div>
+  <img src="static/SONAR_Config_Final.png" width="445" height="380" alt="some_text" align=float/>
+  <h2>Sonar Sensors</h2>
+  <p>Using some wide range sensors and a good orientation of the two sensors we are able to see most close proximity obstacles that would be of concern to a driver. This makes it possible for us to help in the guidance of the system while turning.
+</div>
+<div>{# Forces containing div to be long enough to contain last float #}</div>
 {% endblock %}

@@ -74,7 +74,7 @@ div {
   width: {{ page_width }};
   margin: 0 auto;
 }
-.content * {
+.content p, h2, h3, ul, table {
   margin-left: 20px;
   margin-right: 20px;
 }
@@ -93,6 +93,9 @@ div {
 .content li {
   margin: 0;
 }
+.content div {
+  clear: both;
+}
 .sidenote {
   width: 33%;
   margin-top: 0;
@@ -100,6 +103,13 @@ div {
   padding: 0 5px;
   float: right;
   border: 2px solid {{ palette.border }};
+}
+.content img {
+  margin: 10px;
+  float: right;
+}
+.content :nth-child(even) img {
+  float: left;
 }
 
 {# Page footer #}
