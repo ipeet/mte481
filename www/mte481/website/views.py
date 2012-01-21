@@ -8,6 +8,7 @@ from django.shortcuts import render_to_response
 # The title is used in the html <title>, and also for navigation.
 page_list = [
   {'name': 'about', 'title': 'Overview'},
+  {'name': 'progress', 'title':'Progress'},
   {'name': 'design', 'title': 'Design Details'},
   {'name': 'group', 'title': 'Team Members'},
 ]
