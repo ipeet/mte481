@@ -6,7 +6,8 @@ from django.conf.urls.defaults import patterns, include, url
 
 urlpatterns = patterns('',
     url(r'^$', 'mte481.website.views.root'),
-    url(r'^(?P<page>[^/]+/?)$', 'mte481.website.views.page')
+    url(r'^(?P<page>[^/]+)/?$', 'mte481.website.views.page'),
+    url(r'^styles/(?P<style>[^./]+).css$', 'mte481.website.views.style'),
     # Examples:
     # url(r'^$', 'mte481.views.home', name='home'),
     # url(r'^mte481/', include('mte481.foo.urls')),
