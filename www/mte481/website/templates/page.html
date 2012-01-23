@@ -17,7 +17,7 @@
           {% if page.name == name %}
             <li id="curpage">{{ page.title }}</li>
           {% else %}
-            <li><a href="/{{ page.name }}">{{ page.title }}</a></li>
+            <li><span><a href="/{{ page.name }}">{{ page.title }}</a></span></li>
           {% endif %}
         {% endfor %}
         </ul>

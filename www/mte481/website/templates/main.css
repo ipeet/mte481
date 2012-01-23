@@ -11,7 +11,9 @@ div {
 
 {# Header styling #}
 .header {
+  {% if fixed_ui %}
   position: fixed;
+  {% endif %}
   left: 0;
   top: 0;
   padding: 0;
@@ -38,7 +40,9 @@ div {
 
 {# Navigation Styling #}
 .navigation {
+  {% if fixed_ui %}
   position: absolute;
+  {% endif %}
   bottom: 0px;            
   width: {{ page_width }};
   background-color: {{ palette.bg_nav }};
@@ -70,18 +74,20 @@ div {
 
 {# Content styling #}
 .content {
+  {% if fixed_ui %}
   padding: {{ head_height }} 0 10px 0;
+  {% else %}
+  padding: 5px 0 10px 0;
+  {% endif %}
   width: {{ page_width }};
   margin: 0 auto;
 }
-.content p, h2, h3, ul, table {
+.content p, .content h2, .content h3, .content ul, .content table {
   margin-left: 20px;
   margin-right: 20px;
 }
 .content em {
   margin: 0;
-}
-.content p {
 }
 .content h1 {
   background-color: {{ palette.heading }};
@@ -95,8 +101,38 @@ div {
 .content li {
   margin: 0;
 }
-.content div {
+.section {
   clear: both;
+  margin: 8px;         
+  padding: 0 10px;
+  border-left: 2px solid {{ palette.border }};
+}
+.section:nth-child(odd) {
+  border-right: 2px solid {{ palette.border }};
+  border-left: none;
+}
+.section p, .section h2, .section h3, .section ul, .section table {
+  margin-left: 0;
+  margin-right: 0;
+}
+.section h2 {
+  float: right;
+}
+.section p {
+  clear: right;
+}
+.section img {
+  margin: 10px 20px;
+  float: left;
+}
+.section:nth-child(even) h2 {
+  float: left;
+}
+.section:nth-child(even) p {
+  clear: left;
+}
+.section:nth-child(even) img {
+  float: right;
 }
 .sidenote {
   width: 33%;
@@ -106,12 +142,8 @@ div {
   float: right;
   border: 2px solid {{ palette.border }};
 }
-.content img {
-  margin: 10px;
-  float: right;
-}
-.content :nth-child(even) img {
-  float: left;
+.strut { {# Used to ensure parents fully contain child floats.  Hackery, but I digress. #}
+  clear: both;
 }
 
 {# Page footer #}
@@ -135,9 +167,20 @@ div {
     position: static; 
     width: 100%
   }
-  .navigation li {
-    display: list-item;
+  .content {
+    padding: 5px 0 10px 0;
   }
-  .content img {float: none; }
-  .content :nth-child(even) img { float:none; }
+  .section img {
+    float: right; 
+  }
+  .section:nth-child(even) img { 
+    float: left; 
+  }
+  .section p {
+    float: none;
+    clear: both;
+  }
+  .section:nth-child(even) p {
+    clear: both;
+  }
 }
