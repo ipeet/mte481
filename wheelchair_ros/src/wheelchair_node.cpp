@@ -1,8 +1,7 @@
 /******************************************************************************
- * serial.h
- * Copyright 2011 Iain Peet
+ * wheelchair_node.cpp
  *
- * Provides basic termios serial communication logic.
+ * ROS node which communicates with the wheelchair controller.
  ******************************************************************************
  * This program is distributed under the of the GNU Lesser Public License. 
  *
@@ -20,43 +19,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *****************************************************************************/
 
-#ifndef SERIAL_H_
-#define SERIAL_H_
+#include "ros/ros.h"
+#include "wheelchair_ros/protocol.h"
+#include "wheelchair_ros/protocol_handlers.h"
+#include "wheelchair_ros/protocol_dispatcher.h"
+#include "wheelchair_ros/InputData.h"
 
-#include <cstdlib>
-#include <termios.h>
+int main(int argc, char *argv[]) {
+  ros::init(argc, argv, "wheelchair_node");
+  ros::NodeHandle node;
 
-class Serial {
-public:
-  class Exception {
-  public:
-    Exception(const char* m): msg(m) 
-      {}
-    const char* msg;
-  };
-
-private:
-  const char* m_serialDev;
-  // The original termios state for the TTY
-  struct termios m_initialTcAttr;
-
-  /* Functions managing the dongle's file descriptor. */
-  void openSerial();
-  void closeSerial();
-
-protected:
-  // The POSIX file descriptor for the dongle's serial line
-  int m_serialFd;
-
-public:
-  Serial(const char* serialDev);
-  virtual ~Serial();
-
-  void setBlocking(bool blocking);
-  ssize_t send(const char* buf, size_t count) throw(Serial::Exception*);
-  ssize_t receive(char* buf, size_t count) throw(Serial::Exception*);
-};
-
-
-#endif //SERIAL_H_
+  ros::spin();
+}
 

@@ -86,3 +86,34 @@ void Serial::closeSerial()
   m_serialFd = -1;
 }
 
+void Serial::setBlocking(bool blocking) {
+  int flags = fcntl(m_serialFd, F_GETFL);
+  if (flags == -1) {
+    throw new Serial::Exception(strerror(errno));
+  }
+  if (blocking) {
+    flags &= ~O_NONBLOCK;
+  } else {
+    flags |= O_NONBLOCK;
+  }
+  if (fcntl(m_serialFd, F_SETFL, flags)) {
+    throw new Serial::Exception(strerror(errno));
+  }
+}
+
+ssize_t Serial::send(const char* buf, size_t count) throw(Serial::Exception*) {
+  ssize_t ret = write(m_serialFd, buf, count);
+  if (ret == -1) {
+    throw new Serial::Exception(strerror(errno));
+  }
+  return ret;
+}
+
+ssize_t Serial::receive(char* buf, size_t count) throw(Serial::Exception*) {
+  ssize_t ret = read(m_serialFd, buf, count);
+  if (ret == -1) {
+    throw new Serial::Exception(strerror(errno));
+  }
+  return ret;
+}
+

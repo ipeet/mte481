@@ -1,8 +1,9 @@
 /******************************************************************************
- * serial.h
- * Copyright 2011 Iain Peet
+ * protocol_handlers.cpp
  *
- * Provides basic termios serial communication logic.
+ * Defines classes which are responsible for asynchronous handling of various
+ * serial messages.  Typically, they will package up the data and publish to
+ * a ros topic.
  ******************************************************************************
  * This program is distributed under the of the GNU Lesser Public License. 
  *
@@ -20,43 +21,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *****************************************************************************/
 
-#ifndef SERIAL_H_
-#define SERIAL_H_
+#include "wheelchair_ros/protocol.h"
+#include "wheelchair_ros/protocol_handlers.h"
+#include "wheelchair_ros/InputData.h"
 
-#include <cstdlib>
-#include <termios.h>
+using namespace std;
+using namespace ros;
+using namespace wheelchair_ros;
 
-class Serial {
-public:
-  class Exception {
-  public:
-    Exception(const char* m): msg(m) 
-      {}
-    const char* msg;
-  };
+DigitalDataHandler::DigitalDataHandler(NodeHandle &node) :
+  m_pub(node.advertise<InputData>("digital_data", 100))
+{ }
 
-private:
-  const char* m_serialDev;
-  // The original termios state for the TTY
-  struct termios m_initialTcAttr;
+void DigitalDataHandler::handle(const SerialMessage &msg) const {
+  InputData d;
+  d.input = msg.digitalData.input;
+  d.value = msg.digitalData.value;
+  m_pub.publish(d);
+}
 
-  /* Functions managing the dongle's file descriptor. */
-  void openSerial();
-  void closeSerial();
+AdcDataHandler::AdcDataHandler(NodeHandle &node) :
+  m_pub(node.advertise<InputData>("analog_data", 100))
+{ }
 
-protected:
-  // The POSIX file descriptor for the dongle's serial line
-  int m_serialFd;
-
-public:
-  Serial(const char* serialDev);
-  virtual ~Serial();
-
-  void setBlocking(bool blocking);
-  ssize_t send(const char* buf, size_t count) throw(Serial::Exception*);
-  ssize_t receive(char* buf, size_t count) throw(Serial::Exception*);
-};
-
-
-#endif //SERIAL_H_
+void AdcDataHandler::handle(const SerialMessage &msg) const {
+  InputData d;
+  d.input = msg.adcData.input;
+  d.value = msg.adcData.value;
+  m_pub.publish(d);
+}
 
