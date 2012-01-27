@@ -20,6 +20,7 @@
  *****************************************************************************/
 
 #include <string.h>
+#include <stdio.h>
 
 #include "protocol.h"
 
@@ -127,8 +128,8 @@ uint8_t pr_checksum(const SerialMessage *msg) {
     checklen = sizeof(SerialMessage) - 1;
   }
   int i;
-  for (i=1; i < checklen; ++i ) {
-    check ^= bufp[i];
+  for (i=0; i < checklen; ++i ) {
+    check ^= bufp[i+1];
   }
   return check;
 }

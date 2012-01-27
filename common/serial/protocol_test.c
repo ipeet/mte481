@@ -52,6 +52,82 @@ int main() {
     status = 1;
   }
 
+  /* Binary test messages */
+  uint8_t msg1[] = {0xc1, 42, 3, 0xaf, 0x93, 0xd4};
+  uint8_t msg2[] = {17, 17, 0};
+
+
+  /* Check checksum computation */
+  msg.checksum = 0xab; // (wrong)
+  msg.type = msg1[1];
+  msg.length = msg1[2];
+  msg.raw[0] = msg1[3];
+  msg.raw[1] = msg1[4];
+  msg.raw[2] = msg1[5];
+  if (pr_checksum(&msg) != 0xc1) {
+    printf("Checksum wrong.  Expected C1, got %02x\n", pr_checksum(&msg));
+    status = 1;
+  }
+
+  /* Excercise the parser */
+
+  /* Check syncing */
+  if (pr_push(0x00) != BAD_SYNC) {
+    printf("Expected BAD_SYNC\n");
+    status = 1;
+  }
+  if (pr_push(SYNC_BYTE_1) != OK) {
+    printf("Expected OK\n");
+    status = 1;
+  }
+  if (pr_push(0x00) != BAD_SYNC) {
+    printf("Expected BAD_SYNC\n");
+    status = 1;
+  }
+
+  /* Now for a valid message */
+  pr_push(SYNC_BYTE_1);
+  if (pr_push(SYNC_BYTE_2) != OK) {
+    printf("Expected OK\n");
+    status = 1;
+  }
+  int i;
+  for (i=0; i<5; ++i) {
+    if (pr_push(msg1[i]) != OK) {
+      printf("Expected OK\n");
+      status = 1;
+    }
+  }
+  if (pr_push(msg1[5]) != COMPLETE) {
+    printf("Expected COMPLETE\n");
+    status = 1;
+  }
+
+  /* Another valid message */
+  pr_push(SYNC_BYTE_1);
+  pr_push(SYNC_BYTE_2);
+  pr_push(msg2[0]);
+  pr_push(msg2[1]);
+  if (pr_push(msg2[2]) != COMPLETE) {
+    printf("Expected COMPLETE\n");
+    status = 1;
+  }
+
+  /* Finally, a checksum error */
+  pr_push(SYNC_BYTE_1);
+  pr_push(SYNC_BYTE_2);
+  pr_push(0x00);
+  for (i=1; i<5; ++i) {
+    if (pr_push(msg1[i]) != OK) {
+      printf("Expected OK\n");
+      status = 1;
+    }
+  }
+  if (pr_push(msg1[5]) != BAD_CHECKSUM) {
+    printf("Expected BAD_CHECKSUM\n");
+    status = 1;
+  }
+
   printf("Test complete: %s\n", status ? "FAIL": "PASS");
   return status;
 }
