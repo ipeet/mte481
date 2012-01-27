@@ -31,11 +31,23 @@
 #include "wheelchair_ros/protocol_handlers.h"
 
 using namespace std;
+using namespace std::tr1;
+
+shared_ptr<SerialDispatcher> SerialDispatcher::singleton;
+
+void SerialDispatcher::createInstance(const char *serialDev) throw(Serial::Exception*) {
+  if (singleton != NULL) {
+    singleton = shared_ptr<SerialDispatcher>(new SerialDispatcher(serialDev));
+  }
+  throw new Serial::Exception("Instance already exists");
+}
+
+shared_ptr<SerialDispatcher> SerialDispatcher::instance() {
+  return singleton;
+}
 
 SerialDispatcher::SerialDispatcher(const char *serialDev) :
-  Serial(serialDev),
-  m_bufCount(0),
-  m_readState(SYNC_1)
+  Serial(serialDev)
 { }
 
 void SerialDispatcher::setHandler(MessageType type, const SerialHandler *handler) {
@@ -48,46 +60,65 @@ void SerialDispatcher::clearHandler(MessageType type) {
 
 void SerialDispatcher::writeMsg(const SerialMessage &msg) throw(Serial::Exception*) {
   setBlocking(true);
-  send(reinterpret_cast<const char*>(&msg), msg.length + MSG_HEADER_LENGTH);
+  send(&msg, msg.length + MSG_HEADER_LENGTH);
 }
 
-void SerialDispatcher::readMsg(MessageType type, SerialMessage &message) throw(Serial::Exception*) {
+void SerialDispatcher::readMsg(MessageType type, SerialMessage *message) throw(Serial::Exception*) {
   setBlocking(true);
   char ch;
   while (true) {
     receive(&ch, 1);
-    try {
-      if (push(ch)) {
-        /* Just received a new message */
-        if (m_msgBuf[1] == type) {
-          // correct type.
-          memcpy(&message, m_msgBuf, m_bufCount);
+    ParseStatus stat = pr_push(ch);
+    switch (stat) {
+      case OK: 
+        break;
+
+      case COMPLETE:
+        if (pr_getmsg()->type == type) {
+          memcpy(message, pr_getmsg(), sizeof(SerialMessage));
           return;
         } else {
-          // wrong type, dispatch normally.
-          dispatch();
+          dispatch(*pr_getmsg());
         }
-      }
-    } catch (Serial::Exception *e) {
-      /* Exception is advisory, carry on */
-      cerr << e->msg << endl;
-      delete e;
+        break;
+
+      case BAD_SYNC:
+        cerr << "Synchronization Error" << endl;
+        break;
+
+      case BAD_CHECKSUM:
+        cerr << "Bad checksum" << endl;
+        break;
+
+      case INVALID:
+        throw new Serial::Exception("Invalid parser");
     }
   }
 }
 
 void SerialDispatcher::pump() throw(Serial::Exception*) {
   setBlocking(false);
-  char ch;
+  uint8_t ch;
   while (read(m_serialFd, &ch, 1)==1) {
-    try {
-      if (push(ch)) {
-        dispatch();
-      }
-    } catch (Serial::Exception *e) {
-      /* Exception is advisory, carry on */
-      cerr << e->msg << endl;
-      delete e;
+    ParseStatus stat = pr_push(ch);
+    switch (stat) {
+      case OK: 
+        break;
+
+      case COMPLETE:
+        dispatch(*pr_getmsg());
+        break;
+
+      case BAD_SYNC:
+        cerr << "Synchronization Error" << endl;
+        break;
+
+      case BAD_CHECKSUM:
+        cerr << "Bad checksum" << endl;
+        break;
+
+      case INVALID:
+        throw new Serial::Exception("Invalid parser");
     }
   }
 
@@ -97,77 +128,12 @@ void SerialDispatcher::pump() throw(Serial::Exception*) {
   }
 }
 
-bool SerialDispatcher::push(uint8_t byte) throw(Serial::Exception*) {
-  if (m_readState == COMPLETE) {
-    // Time to start on a new message
-    m_readState = SYNC_1;
-    m_bufCount = 0;
-  }
-
-  m_msgBuf[m_bufCount] = byte;
-  m_bufCount++;
-
-  switch (m_readState) {
-    case SYNC_1:
-      m_bufCount = 0;  // sync bytes not part of msg
-      if (byte == SYNC_BYTE_1) {
-        m_readState = SYNC_2;
-      } else {
-        throw new Serial::Exception("Expected sync 1");
-      }
-      break;
-
-    case SYNC_2:
-      m_bufCount = 0; // sync bytes not part of msg
-      if (byte == SYNC_BYTE_2) {
-        m_readState = CHECKSUM;
-      } else {
-        m_readState = SYNC_1;
-        throw new Serial::Exception("Expected sync 2");
-      }
-      break;
-
-    case CHECKSUM:
-      m_readState = TYPE;
-      break;
-
-    case TYPE:
-      m_readState = LENGTH;
-      break;
-
-    case LENGTH:
-      m_readState = PAYLOAD;
-
-      // Intentional fall-through to handle 0-length messages
-    case PAYLOAD:
-      if (m_bufCount >= MSG_HEADER_LENGTH + m_msgBuf[2]) {
-        m_readState = COMPLETE;
-      }
-      break;
-
-    default:
-      abort();
-  }
-
-  if (m_readState == COMPLETE) {
-    // Just completed a message.  Check the checksum.
-    uint8_t check = 0;
-    for (unsigned i=0; i<m_bufCount; ++i) {
-      check ^= m_msgBuf[i];
-    }
-    if (check == m_msgBuf[0]) {
-      return true;
-    } else {
-      throw new Serial::Exception("Bad checksum");
-    }
-  }
-  return false;
-}
-
-void SerialDispatcher::dispatch() {
-  MessageType t = static_cast<MessageType>(m_msgBuf[1]);
+void SerialDispatcher::dispatch(const SerialMessage &msg) {
+  MessageType t = static_cast<MessageType>(msg.type);
   if (m_handlers.find(t) != m_handlers.end()) {
-    m_handlers[t]->handle(* reinterpret_cast<SerialMessage*>(m_msgBuf));
+    m_handlers[t]->handle(msg);
+  } else {
+    cerr << "Dropped message.  Type: " << msg.type << endl;
   }
 }
 

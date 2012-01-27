@@ -28,12 +28,12 @@ int main() {
   int status = 0;
 
   /* Check assumptions about memory layout of SerialMessage */
-  SerialMessage msg;
+  struct SerialMessage msg;
   if ( &(msg.raw[0]) - &(msg.checksum) != MSG_HEADER_LENGTH ) {
     printf("MSG_HEADER_LENGTH is incorrect\n");
     status = 1;
   }
-  memset(&msg, 0, sizeof(SerialMessage));
+  memset(&msg, 0, sizeof(struct SerialMessage));
   msg.adcData.input = 0xaa;
   if ( msg.raw[0] != 0xaa ) {
     printf("SerialMessage layout is wrong.\n");

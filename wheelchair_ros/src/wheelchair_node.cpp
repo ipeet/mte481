@@ -20,7 +20,7 @@
  *****************************************************************************/
 
 #include "ros/ros.h"
-#include "wheelchair_ros/protocol.h"
+#include "protocol.h"
 #include "wheelchair_ros/protocol_handlers.h"
 #include "wheelchair_ros/protocol_dispatcher.h"
 #include "wheelchair_ros/InputData.h"

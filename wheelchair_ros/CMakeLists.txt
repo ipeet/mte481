@@ -12,6 +12,7 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 rosbuild_add_executable(sonar_node src/serial.cpp src/sonar.cpp src/sonar_node.cpp)
 rosbuild_add_executable(wheelchair_node
     src/wheelchair_node.cpp
+    src/protocol.c
     src/protocol_handlers.cpp
     src/protocol_dispatcher.cpp
     src/serial.cpp)

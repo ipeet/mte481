@@ -101,7 +101,7 @@ void Serial::setBlocking(bool blocking) {
   }
 }
 
-ssize_t Serial::send(const char* buf, size_t count) throw(Serial::Exception*) {
+ssize_t Serial::send(const void* buf, size_t count) throw(Serial::Exception*) {
   ssize_t ret = write(m_serialFd, buf, count);
   if (ret == -1) {
     throw new Serial::Exception(strerror(errno));
@@ -109,7 +109,7 @@ ssize_t Serial::send(const char* buf, size_t count) throw(Serial::Exception*) {
   return ret;
 }
 
-ssize_t Serial::receive(char* buf, size_t count) throw(Serial::Exception*) {
+ssize_t Serial::receive(void* buf, size_t count) throw(Serial::Exception*) {
   ssize_t ret = read(m_serialFd, buf, count);
   if (ret == -1) {
     throw new Serial::Exception(strerror(errno));

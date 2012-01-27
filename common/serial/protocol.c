@@ -33,7 +33,7 @@ static enum {
   PAYLOAD,
   DONE
 } _state;
-static SerialMessage _buf;
+static struct SerialMessage _buf;
 static int _payloadBytes;
 
 // Set initial parser state
@@ -115,17 +115,17 @@ enum ParseStatus pr_push(uint8_t byte) {
 }
 
 // Get a pointer to the message buffer
-const SerialMessage *pr_getmsg() {
+const struct SerialMessage *pr_getmsg() {
   return &_buf;
 }
 
 // Compute message checksum.
-uint8_t pr_checksum(const SerialMessage *msg) {
+uint8_t pr_checksum(const struct SerialMessage *msg) {
   uint8_t check = 0;
   const uint8_t *bufp = (const uint8_t*)(msg);
   int checklen = MSG_HEADER_LENGTH + msg->length - 1 /* minus checksum*/;
-  if (checklen > (sizeof(SerialMessage) - 1)) {
-    checklen = sizeof(SerialMessage) - 1;
+  if (checklen > (sizeof(struct SerialMessage) - 1)) {
+    checklen = sizeof(struct SerialMessage) - 1;
   }
   int i;
   for (i=0; i < checklen; ++i ) {

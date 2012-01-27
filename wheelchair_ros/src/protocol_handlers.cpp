@@ -21,7 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *****************************************************************************/
 
-#include "wheelchair_ros/protocol.h"
+#include "protocol.h"
 #include "wheelchair_ros/protocol_handlers.h"
 #include "wheelchair_ros/InputData.h"
 

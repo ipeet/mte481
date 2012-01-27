@@ -53,8 +53,8 @@ public:
   virtual ~Serial();
 
   void setBlocking(bool blocking);
-  ssize_t send(const char* buf, size_t count) throw(Serial::Exception*);
-  ssize_t receive(char* buf, size_t count) throw(Serial::Exception*);
+  ssize_t send(const void* buf, size_t count) throw(Serial::Exception*);
+  ssize_t receive(void* buf, size_t count) throw(Serial::Exception*);
 };
 
 

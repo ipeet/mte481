@@ -26,50 +26,38 @@
 #define PROTOCOL_DISPATCHER_H_
 
 #include <map>
-#include <memory>
+#include <tr1/memory>
 #include <cstdlib>
 #include "wheelchair_ros/serial.h"
-#include "wheelchair_ros/protocol.h"
+#include "protocol.h"
 
 class SerialHandler;
 
 class SerialDispatcher : public Serial {
 public:
-  SerialDispatcher(const char *serialDev);
+  static void createInstance(const char *serialDev) throw(Serial::Exception*);
+  static std::tr1::shared_ptr<SerialDispatcher> instance();
 
   void setHandler(MessageType type, const SerialHandler *handler);
   void clearHandler(MessageType type);
 
   void writeMsg(const SerialMessage &msg) throw(Serial::Exception*);
-  void readMsg(MessageType type, SerialMessage &msg) throw(Serial::Exception*);
+  void readMsg(MessageType type, SerialMessage *msg) throw(Serial::Exception*);
 
   /* Reads and dispatches any buffered input data */
   void pump() throw(Serial::Exception*);
 
-private:
-  /* Parse a byte.  
-   * @return true if m_msgBuf contains a newly-complete message.
-   * @throw if a parse error occurs (non-fatal) */
-  bool push(uint8_t byte) throw(Serial::Exception*);
+protected:
+  /* Singleton, because the C parser has static internal state */
+  SerialDispatcher(const char *serialDev);
 
+private:
   /* Dispatch the messge currently contained in m_buf */
-  void dispatch();
+  void dispatch(const SerialMessage &msg);
 
   std::map<MessageType, const SerialHandler*> m_handlers;
 
-  uint8_t m_msgBuf[MAX_MSG_SIZE];
-  size_t  m_bufCount;
-  
-  enum ReadStates {
-    SYNC_1,
-    SYNC_2,
-    CHECKSUM,
-    TYPE,
-    LENGTH,
-    PAYLOAD,
-    COMPLETE
-  };
-  ReadStates m_readState;
+  static std::tr1::shared_ptr<SerialDispatcher> singleton;
 };
 
 #endif //PROTOCOL_DISPATCHER_H_

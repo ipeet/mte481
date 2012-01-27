@@ -46,7 +46,7 @@ enum MessageType {
 /** x86, MSP430, AtMega, PIC are all little-endian.
  *  Assuming we can get compilers to pack nicely, we can save a
  *  whole bunch of effort on parsing. */
-typedef struct {
+struct SerialMessage {
   uint8_t checksum;  /* XOR of all following bytes */
   uint8_t type;
   uint8_t length; // length of payload:
@@ -71,7 +71,7 @@ typedef struct {
       uint16_t value;
     } PACKED adcData;
   };
-} PACKED SerialMessage;
+} PACKED;
 
 /* Set reader to correct initial state.  (Can also be used as a reset) */
 void pr_init();
@@ -90,10 +90,10 @@ enum ParseStatus pr_push(uint8_t byte);
 
 /* Get a pointer to the current message receive buffer.
    Contents only valid immediately after a COMPLETE return from pr_push. */
-const SerialMessage *pr_getmsg();
+const struct SerialMessage *pr_getmsg();
 
 /* Compute the checksum of a message */
-uint8_t pr_checksum(const SerialMessage *msg);
+uint8_t pr_checksum(const struct SerialMessage *msg);
 
 #endif //PROTOCOL_H_
 
