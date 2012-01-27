@@ -41,6 +41,8 @@ enum MessageType {
   ADC_DATA
 };
 
+#define PACKED __attribute__ (( __packed__ ))
+
 /** x86, MSP430, AtMega, PIC are all little-endian.
  *  Assuming we can get compilers to pack nicely, we can save a
  *  whole bunch of effort on parsing. */
@@ -52,24 +54,24 @@ typedef struct {
     uint8_t raw[0];
     struct { 
       uint8_t input;
-    } digitalRead;
+    } PACKED digitalRead;
     struct {
       uint8_t input;
       uint8_t value;
-    } digitalData;
+    } PACKED digitalData;
     struct {
       uint8_t output;
       uint8_t value;
-    } digitalWrite;
+    } PACKED digitalWrite;
     struct {
       uint8_t input;
-    } adcRead;
+    } PACKED adcRead;
     struct {
       uint8_t input;
       uint16_t value;
-    } adcData;
+    } PACKED adcData;
   };
-} __attribute__(( __packed__ )) SerialMessage;
+} PACKED SerialMessage;
 
 /* Set reader to correct initial state.  (Can also be used as a reset) */
 void pr_init();
@@ -89,9 +91,6 @@ enum ParseStatus pr_push(uint8_t byte);
 /* Get a pointer to the current message receive buffer.
    Contents only valid immediately after a COMPLETE return from pr_push. */
 const SerialMessage *pr_getmsg();
-
-/* Copy only the necessary bytes from one message to another. */
-void pr_cpymsg(SerialMessage *dest, const SerialMessage *src);
 
 /* Compute the checksum of a message */
 uint8_t pr_checksum(const SerialMessage *msg);

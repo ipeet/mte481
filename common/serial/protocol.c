@@ -118,15 +118,6 @@ const SerialMessage *pr_getmsg() {
   return &_buf;
 }
 
-// Copy current message buffer state.
-void pr_cpymsg(SerialMessage *dest, const SerialMessage *src) {
-  int cpy_size = sizeof(SerialMessage);
-  if (MSG_HEADER_LENGTH + src->length < cpy_size) {
-    cpy_size = MSG_HEADER_LENGTH + src->length;
-  }
-  memcpy(dest, src, cpy_size);
-}
-
 // Compute message checksum.
 uint8_t pr_checksum(const SerialMessage *msg) {
   uint8_t check = 0;

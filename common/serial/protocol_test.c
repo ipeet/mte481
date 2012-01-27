@@ -20,14 +20,35 @@
  *****************************************************************************/
 
 #include <stdio.h>
+#include <string.h>
 
 #include "protocol.h"
 
 int main() {
   int status = 0;
+
+  /* Check assumptions about memory layout of SerialMessage */
   SerialMessage msg;
   if ( &(msg.raw[0]) - &(msg.checksum) != MSG_HEADER_LENGTH ) {
     printf("MSG_HEADER_LENGTH is incorrect\n");
+    status = 1;
+  }
+  memset(&msg, 0, sizeof(SerialMessage));
+  msg.adcData.input = 0xaa;
+  if ( msg.raw[0] != 0xaa ) {
+    printf("SerialMessage layout is wrong.\n");
+    status = 1;
+  }
+  msg.adcData.value = 0xddbb;
+  if ( msg.raw[1] != 0xbb ) {
+    printf("SerialMessage layout is wrong, or arch is not little-endian.\n");
+    printf("%02x %02x\n", msg.raw[1], msg.raw[2]);
+    status = 1;
+  }
+  msg.adcData.value = 0xccee;
+  if ( msg.raw[2] != 0xcc ) {
+    printf("SerialMessage layout is wrong, or arch is not little-endian.\n");
+    printf("%02x %02x\n", msg.raw[1], msg.raw[2]);
     status = 1;
   }
 
