@@ -16,3 +16,4 @@ rosbuild_add_executable(wheelchair_node
     src/protocol_handlers.cpp
     src/protocol_dispatcher.cpp
     src/serial.cpp)
+rosbuild_add_executable(occupancy_node src/occupancy_node.cpp)
