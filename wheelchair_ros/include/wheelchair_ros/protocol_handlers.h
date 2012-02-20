@@ -1,8 +1,9 @@
 /******************************************************************************
- * serial.h
- * Copyright 2011 Iain Peet
+ * protocol_handlers.h
  *
- * Provides basic termios serial communication logic.
+ * Defines classes which are responsible for asynchronous handling of various
+ * serial messages.  Typically, they will package up the data and publish to
+ * a ros topic.
  ******************************************************************************
  * This program is distributed under the of the GNU Lesser Public License. 
  *
@@ -20,43 +21,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *****************************************************************************/
 
-#ifndef SERIAL_H_
-#define SERIAL_H_
+#ifndef PROTOCOL_HANDLERS_
+#define PROTOCOL_HANDLERS_
 
-#include <cstdlib>
-#include <termios.h>
+#include <ros/ros.h>
 
-class Serial {
+struct SerialMessage;
+
+/* Abstract base for handler classes */
+class SerialHandler {
 public:
-  class Exception {
-  public:
-    Exception(const char* m): msg(m) 
-      {}
-    const char* msg;
-  };
-
-private:
-  const char* m_serialDev;
-  // The original termios state for the TTY
-  struct termios m_initialTcAttr;
-
-  /* Functions managing the dongle's file descriptor. */
-  void openSerial();
-  void closeSerial();
-
-protected:
-  // The POSIX file descriptor for the dongle's serial line
-  int m_serialFd;
-
-public:
-  Serial(const char* serialDev);
-  virtual ~Serial();
-
-  void setBlocking(bool blocking);
-  ssize_t send(const void* buf, size_t count) throw(Serial::Exception*);
-  ssize_t receive(void* buf, size_t count) throw(Serial::Exception*);
+  virtual ~SerialHandler()  {};
+  virtual void handle(const SerialMessage &msg) const = 0;
 };
 
+/* Publishes digital read data */
+class DigitalDataHandler {
+public:
+  DigitalDataHandler(ros::NodeHandle &node);
+  virtual void handle(const SerialMessage &msg) const;
 
-#endif //SERIAL_H_
+private:
+  ros::Publisher m_pub;
+};
+
+/* Publishes adc read data */
+class AdcDataHandler {
+public:
+  AdcDataHandler(ros::NodeHandle &node);
+  virtual void handle(const SerialMessage &msg) const;
+
+private:
+  ros::Publisher m_pub;
+};
+
+#endif //PROTOCOL_HANDLERS_
 

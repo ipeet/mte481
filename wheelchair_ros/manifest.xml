@@ -8,4 +8,8 @@
   <review status="unreviewed" notes=""/>
   <depend package="roscpp"/>
   <depend package="sensor_msgs"/>
+  <depend package="openni"/>
+  <depend package="pcl"/>
+  <depend package="pcl_ros"/>
+  <depend package="nav_msgs"/>
 </package>
