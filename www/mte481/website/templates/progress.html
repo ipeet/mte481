@@ -1,7 +1,62 @@
 {% extends "page.html" %}
 {% block content %}
 <h1>Project Status</h1>
-<p>Everything is moving towards completion on time.</p>
+<div class="section">
+<p><i>A blog-style set of updates concerning the progress of the project</i>
+</div>
+<!--BEGIN BLOG-STYLE CONTENT-->
+<div class="section">
+  <h2>Sonar Mounts Fitted to Wheelchair</h2>
+  <img src="static/Sensor_Mount.jpg" width="300" alt="Blog Image" align=float/>
+  <p>The sonar mounts have been mounted to the wheelchair and fit quite nicely. Now the only mechanical part left to be completed is the hinged tray to hold the Kinect sensor in front of the user. Once this is completed, and if time allows, we will paint the parts black to match the existing wheelchair's colour scheme. </p>
+  <div class="strut"></div>
+</div>
+<!-- BLOG ENTRY SEPARATOR -->
+<div class="section">
+  <h2>PCBs Arrived</h2>
+  <img src="static/PCB.jpg" width="300" alt="Blog Image" align=float/>
+  <p>The PCBs have arrived and look exactly as ordered. Now we are just waiting on delivery of all the components and the boards can be soldered and assembled for testing! Code to run on the microcontroller is almost complete as well.</p>
+  <div class="strut"></div>
+</div>
+<!-- BLOG ENTRY SEPARATOR -->
+<div class="section">
+  <h2>Sonar Mounts Manufactured</h2>
+  <img src="static/Sensor_Mounts.jpg" width="300" alt="Blog Image" align=float/>
+  <p>The sonar sensors mounts have been manufactured in the shop, and are ready to be fitted to the wheelchair.</p>
+  <div class="strut"></div>
+</div>
+<!-- BLOG ENTRY SEPARATOR -->
+<div class="section">
+  <h2>PCBs Designed</h2>
+  <img src="static/PCB_render.jpg" width="300" alt="Blog Image" align=float/>
+  <p>The PCB we will need for the project (details available on the <a href="/design">Design</a> page) has been designed and is ready to be sent out for fab!</p>
+  <div class="strut"></div>
+</div>
+<!-- BLOG ENTRY SEPARATOR -->
+<div class="section">
+  <h2>Kinect Obstacle-Detection Code</h2>
+  <img src="static/group_pointcloud.png" width="200" alt="Blog Image"
+  <img src="static/group_occupancy.png" width="200" alt="Blog Image" align=float/>
+  <p>Some preliminary obstacle-detection code has been written for the Kinect to run under ROS on a laptop. The colour image shows the group members, and the greyscale image is a grid showing where obstacles have been detected (in black). As can be seen floor/ceiling obstacles are rejected but the three humans in the picture have been detected as obstacles.</p>
+  <div class="strut"></div>
+</div>
+<!-- BLOG ENTRY SEPARATOR -->
+<div class="section">
+  <h2>Sensor Testing</h2>
+  <img src="static/testing.jpg" width="300" alt="Blog Image" align=float/>
+  <p>A Kinect sensor was purchased, and a set of sonar sensors borrowed for testing as shown in the image. We set up markers on the floor and measured the coverage of various sensor configurations. We found out two important things: we will need sensors with the largest beam angle possible and also that we will have measure ranges sequentially as we ran into a lot of sensor crosstalk issues during testing!</p>
+  <div class="strut"></div>
+</div>
+<!-- BLOG ENTRY SEPARATOR -->
+<div class="section">
+  <h2>Wheelchair Accquired!</h2>
+  <p>Dr. Amir Khajepour of the MME department has generously lent us a powered wheelchair for use in our fourth year project.</p>
+  <div class="strut"></div>
+</div>
+
+<!-- END BLOG-STYLE CONTENT -->
+
+<div class="section">
 <h2>Landmarks</h2>
 <table>
 <tr>
@@ -26,4 +81,5 @@
 <td>Website Created</td><td>January 20th<td>
 </tr>
 </table>
+</div>
 {% endblock %}
