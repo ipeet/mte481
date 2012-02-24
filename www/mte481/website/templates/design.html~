@@ -1,0 +1,41 @@
+{% extends "page.html" %}
+{% block content %}
+<h1>Design Details</h1>
+<div class="section">
+  <h2>System Model</h2>
+  <img src="static/System_Level.jpg" width="400" height="340" alt="System Model" align=float/>
+  <p>In the illustration of the system model pre-existing wheelchair components are highlighted in yellow, off-the-shelf components in blue and specially designed elements in green.</p><p>Collision detection is provided by vision on the front of the wheelchair (up to 45 degrees from center in both directions), and sonar sensors on the sides. The sonar sensors provide more coarse depth information that the vision system, but are much cheaper.</p><p>
+The vision system used is a Primesense sensor (packaged in the form of an Xbox360 Kinect) to provide depth information about obstacles in front of the chair. Four Maxbotics sonar sensors provide range information around the sides, and provide range information sequentially to avoid sensor crosstalk.</p><p>
+The control PCB passes user movement requests to the laptop and then takes the processed commands from the laptop and relays them to the motor controller. It is also responsible for aggregating the 4 sonar  data streams into a single USB link to the laptop, and providing 12V/5V power to the Kinect and sonar sensors. </p>
+  <div class="strut"></div>
+</div>
+<div class="section">
+  <h2>Mechanical Design</h2>
+  <img src="static/Wheel_Chair.jpg" width="445" height="380" alt="Wheelchair CAD Model" align=float/>
+  <p>The mechanical design will consist of five parts that can be mounted on to a wide variety of wheel chairs easily: 4 sonar sensor mounts, and a platform to hold the Kinect vision sensor.</p>
+  <p>The mechanical design is made so that it can be fastened to the side of the existing chair. The Kinect sensor tray is hinged at one side so that the user can raise or lower the tray in order to allow the user to enter or exit the chair easily. The sensors are offset from the base of the chair slightly to avoid getting in the way of the wheels but remain close enough to the chair's edge to not reduce mobility to drasticly</p>
+  <div class="strut"></div>
+</div>
+<div class="section">
+  <h2>Software Design</h2>
+  <img src="static/Software_Diagram.jpg" width="445" height="380" alt="Software Diagram" align=float/>
+  <p>Software will be built on the Robot Operating System (ROS), which is a distributed message passing system capable of running on Linux systems. ROS systems are organized into a network of simple nodes, which co-operate to produce complex aggregate behaviour.</p>
+<p>The proposed set of "nodes" is shown in the software diagram, where each node is a program accepting ROS inputs and providing outputs either to other ROS nodes or to the control PCB. The user input, Kinect, and sonar sensor data all flow into the laptop and the output are control commands sent via the control PCB to the wheelchair's motor controller.
+  <div class="strut"></div>
+</div>
+<div class="section">
+  <h2>Electrical Design</h2>
+  <img src="static/Hardware_Diagram.jpg" width="445" height="380" alt="Hardware Diagram" align=float/>
+  <p>A custom PCB will be designed to allow the wheelchair, laptop, and collision sensors to be interconnected. There are a few functions the PCB will be responsible for, including powering the Kinect/sonar sonsors, agregating the sensor data and the user input (in the form on the existing joystick on the wheelchair) into a single USB stream for the laptop, and sending movement commands to the wheel chair's motor controller.</p><p>
+  The 
+  </p>
+  <div class="strut"></div>
+</div>
+<div class="section">
+  <h2>Sonar Sensors</h2>
+  <img src="static/SONAR_Config_Final.jpg" width="445" height="380" alt="SONAR Config" align=float/>
+  <p>Using some wide range sensors and a good orientation of the sonar sensors we are able to see close proximity obstacles that would be of concern to a driver.
+  <div class="strut"></div>
+</div>
+<div class="section">{# Forces containing div to be long enough to contain last float #}</div>
+{% endblock %}
