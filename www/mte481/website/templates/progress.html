@@ -6,6 +6,13 @@
 </div>
 <!--BEGIN BLOG-STYLE CONTENT-->
 <div class="section">
+  <h2>PCBs Soldered, Basic Functionality Verified</h2>
+  <img src="static/solder_complete.jpg" width="300" alt="Blog Image" align=float/>
+  <p>A PCB has been soldered, and all the footprints appear to be correct. All the voltage rails all come up. USB-to-UART communication also works. Some drivers need to be written to test the ADCs and the digital potentiometers, but everything looks good so far.</p>
+  <div class="strut"></div>
+</div>
+<!-- BLOG ENTRY SEPARATOR -->
+<div class="section">
   <h2>Sonar Mounts Fitted to Wheelchair</h2>
   <img src="static/Sensor_Mount.jpg" width="300" alt="Blog Image" align=float/>
   <p>The sonar mounts have been mounted to the wheelchair and fit quite nicely. Now the only mechanical part left to be completed is the hinged tray to hold the Kinect sensor in front of the user. Once this is completed, and if time allows, we will paint the parts black to match the existing wheelchair's colour scheme. </p>
@@ -30,6 +37,13 @@
   <h2>PCBs Designed</h2>
   <img src="static/PCB_render.jpg" width="300" alt="Blog Image" align=float/>
   <p>The PCB we will need for the project (details available on the <a href="/design">Design</a> page) has been designed and is ready to be sent out for fab!</p>
+  <div class="strut"></div>
+</div>
+<!-- BLOG ENTRY SEPARATOR -->
+<div class="section">
+  <h2>Wheelchair Interface Circuit Testing Complete</h2>
+  <img src="static/test_circuit.jpg" width="300" alt="Blog Image" align=float/>
+  <p>With the sensors proven out, the last thing to get working is an interface to control the wheelchair. The existing joystick is inductively coupled to the control board inside the wheelchair's joystick housing. The result is a sine-wave signal going into the microcontroller on the control board. The wheelchair will be controlled disconnecting the joystick from the control board, and instead feeding the sine wave to our own PCB. The amplitude of this wave will allow readings of the user's requested movement in the left/right and forward/reverse directions. A reference sine wave is created on our own PCB and its amplitude can be varied using a digital potentiometer to feed control signals back to the wheelchair.</p><p> The circuit shown in the photo does just this, and by turning the pot with a screwdriver the wheelchair can be made to move forward or reversed. With this circuit proven out we can finalize the design as part of a PCB!</p>
   <div class="strut"></div>
 </div>
 <!-- BLOG ENTRY SEPARATOR -->
