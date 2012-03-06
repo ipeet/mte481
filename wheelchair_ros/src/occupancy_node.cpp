@@ -34,7 +34,7 @@ typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
 
 ros::Publisher pub;
 
-const double RESOLUTION = 0.25; // in m
+const double RESOLUTION = 0.10; // in m
 const double WIDTH = 10.0;  // in m
 const double HEIGHT = 10.0;
 const double ORIG_X = -5.0;
@@ -59,7 +59,8 @@ void pointcloudCallback(const PointCloud::ConstPtr &msg) {
     if (x >= ORIG_X + WIDTH) continue;
     if (z < ORIG_Y) continue;
     if (z >= ORIG_Y + HEIGHT) continue;
-
+    if (y < 0.0) continue;
+    if (y > 0.5) continue;
     int xi = (x - ORIG_X) / RESOLUTION;
     int yi = (z - ORIG_Y) / RESOLUTION;
     map->data[xi*(map->info.width) + yi] = 100;
