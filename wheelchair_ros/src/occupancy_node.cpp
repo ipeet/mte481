@@ -47,10 +47,10 @@ void pointcloudCallback(const PointCloud::ConstPtr &msg) {
     double y = msg->points.at(i).y;
     double z = msg->points.at(i).z;
     if ((x<=-1.0) || (x>=1.0) || isnan(x)) continue;
-    if ((y<=-1.0) || (y>=1.0) || isnan(y)) continue;
+    if ((z<=-1.0) || (z>=1.0) || isnan(y)) continue;
     if (isnan(z)) continue;
     int xi = (x+1.0)/0.1;
-    int yi = (y+1.0)/0.1;
+    int yi = (z+1.0)/0.1;
     map->data[xi*20 + yi] = 100;
   }
   pub.publish(map);
