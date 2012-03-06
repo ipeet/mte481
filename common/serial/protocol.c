@@ -24,6 +24,10 @@
 
 #include "protocol.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 static enum {
   SYNC_1,
   SYNC_2,
@@ -133,4 +137,8 @@ uint8_t pr_checksum(const struct SerialMessage *msg) {
   }
   return check;
 }
+
+#ifdef __cplusplus
+}; // extern "C"
+#endif
 

@@ -24,6 +24,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 static const unsigned MSG_HEADER_LENGTH = 3;
 
 /* Sync bytes, sent before each message */
@@ -94,6 +98,10 @@ const struct SerialMessage *pr_getmsg();
 
 /* Compute the checksum of a message */
 uint8_t pr_checksum(const struct SerialMessage *msg);
+
+#ifdef __cplusplus
+}; // extern "C"
+#endif
 
 #endif //PROTOCOL_H_
 
