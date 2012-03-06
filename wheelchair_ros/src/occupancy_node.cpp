@@ -26,6 +26,7 @@
 #include <nav_msgs/OccupancyGrid.h>
 #include <iostream>
 #include <math.h>
+#include <GL/gl.h>
 
 using namespace std;
 using namespace nav_msgs;
