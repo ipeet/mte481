@@ -44,7 +44,7 @@ const double WIDTH = 10.0;  // in m
 const double DEPTH = 10.0;
 const double HEIGHT = 0.5; // in m
 const double ORIG_X = -5.0;
-const double ORIG_Y = -1.0;
+const double ORIG_Y = -2.0;
 
 void pointcloudCallback(const PointCloud::ConstPtr &msg) {
   /* Convenience */
@@ -69,7 +69,7 @@ void pointcloudCallback(const PointCloud::ConstPtr &msg) {
 
   for (unsigned i=0; i < msg->points.size(); ++i) {
     double x = msg->points.at(i).x;
-    double y = msg->points.at(i).y;
+    double y = -msg->points.at(i).y;
     double z = msg->points.at(i).z;
 
     /* Bounds check the point */

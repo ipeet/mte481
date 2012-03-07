@@ -69,6 +69,7 @@ void Renderer::render() {
 
   if (!m_haveMap) {
     glTranslated(-0.5, 0, -0.5);
+    glScalef(10.0, 10.0, 10.0);
     drawCube(0, 0, 0);
     drawCube(1, 0, 0);
     drawCube(1, 0, 1);
@@ -108,6 +109,12 @@ void Renderer::drawMap() {
 
   drawBounds(w, h, -d);
 
+  /* Set cube material */
+  GLfloat diff[] = {1.0, 1.0, 1.0, 1.0};
+  GLfloat spec[] = {1.0, 1.0, 1.0, 1.0};
+  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, diff);
+  //glMaterialfv(GL_FRONT, GL_SPECULAR, spec);
+  glMaterialf(GL_FRONT, GL_SHININESS, 20.0);
   for (int x=0; x < w; ++x) {
     for (int z=0; z < d; ++z) {
       for (int y=0; y < h; ++y) {
@@ -127,6 +134,7 @@ void Renderer::drawCube(double x, double y, double z) {
   glPushMatrix();
   glTranslated(x, y, z);
   glScaled(0.9, 0.9, 0.9);
+
   glCallList(m_cube_list);
   glPopMatrix();
 }
