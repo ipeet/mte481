@@ -61,11 +61,17 @@ void Renderer::render() {
 
   /* Transform to model space */
   glPushMatrix();
-  glTranslated(0, 0, -2);
+  glTranslated(0, 0, -4);
   glRotated(45, 1, 0, 0);
   glRotated(m_rotation, 0, 1, 0);
 
+  glTranslated(-0.5, 0, -0.5);
   drawCube(0, 0, 0);
+  drawCube(1, 0, 0);
+  drawCube(1, 0, 1);
+  drawCube(0, 1, 0);
+  drawCube(0, 1, 1);
+  drawCube(1, 1, 1);
 
   glPopMatrix();
   CHECK_GL();
@@ -80,7 +86,8 @@ void Renderer::setViewport(int w, int h) {
 
 void Renderer::drawCube(double x, double y, double z) {
   glPushMatrix();
-  glTranslatef(x, y, z);
+  glTranslated(x, y, z);
+  glScaled(0.9, 0.9, 0.9);
   glCallList(m_cube_list);
   glPopMatrix();
 }
