@@ -31,6 +31,7 @@ private:
   static void checkGLError(const char* file, int line);
   void createCubeDisplayList();
   void drawCube(double x, double y, double z);
+  void drawBounds(double x, double y, double z);
   void drawMap();
 };
 

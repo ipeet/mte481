@@ -41,19 +41,32 @@ ros::Publisher pub3d;
 
 const double RESOLUTION = 0.10; // in m
 const double WIDTH = 10.0;  // in m
-const double HEIGHT = 10.0;
+const double DEPTH = 10.0;
+const double HEIGHT = 0.5; // in m
 const double ORIG_X = -5.0;
 const double ORIG_Y = -1.0;
 
 void pointcloudCallback(const PointCloud::ConstPtr &msg) {
-  /* Publish the 2D occupancy grid */
+  /* Convenience */
+  int w = WIDTH / RESOLUTION;
+  int d = DEPTH / RESOLUTION;
+  int h = HEIGHT / RESOLUTION;
+
+  /* Publish the occupancy grids */
   OccupancyGrid::Ptr map (new OccupancyGrid);
   map->info.resolution = RESOLUTION;
-  map->info.width = WIDTH / RESOLUTION;
-  map->info.height = WIDTH / RESOLUTION;
-  map->data.resize(map->info.width * map->info.height);
+  map->info.width = w;
+  map->info.height = d;
+  map->data.resize(w * d);
   map->info.origin.position.x = ORIG_X;
   map->info.origin.position.y = ORIG_Y;
+
+  Occupancy3D::Ptr map3 (new Occupancy3D);
+  map3->width = w;
+  map3->depth = d;
+  map3->height = h;
+  map3->data.resize(w * d * h);
+
   for (unsigned i=0; i < msg->points.size(); ++i) {
     double x = msg->points.at(i).x;
     double y = msg->points.at(i).y;
@@ -64,14 +77,17 @@ void pointcloudCallback(const PointCloud::ConstPtr &msg) {
     if (x < ORIG_X) continue;
     if (x >= ORIG_X + WIDTH) continue;
     if (z < ORIG_Y) continue;
-    if (z >= ORIG_Y + HEIGHT) continue;
-    if (y < 0.0) continue;
-    if (y > 0.5) continue;
+    if (z >= ORIG_Y + DEPTH) continue;
+    if (y <= 0.0) continue;
+    if (y > HEIGHT) continue;
     int xi = (x - ORIG_X) / RESOLUTION;
-    int yi = (z - ORIG_Y) / RESOLUTION;
-    map->data[xi*(map->info.width) + yi] = 100;
+    int zi = (z - ORIG_Y) / RESOLUTION;
+    int yi = y / RESOLUTION;
+    map->data[xi*w + zi] = 100;
+    map3->data[yi*d*w + zi*w + xi] = 1;
   }
   pub2d.publish(map);
+  pub3d.publish(map3);
 }
 
 int main(int argc, char **argv) {
@@ -80,5 +96,6 @@ int main(int argc, char **argv) {
   ros::Subscriber sub = nh.subscribe<PointCloud>(
       "/camera/depth/points", 1, pointcloudCallback);
   pub2d = nh.advertise<OccupancyGrid> ("map", 1);
+  pub3d = nh.advertise<Occupancy3D> ("map3d", 1);
   ros::spin();
 }

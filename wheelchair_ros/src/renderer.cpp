@@ -63,9 +63,9 @@ void Renderer::render() {
 
   /* Transform to world co-ordinates */
   glPushMatrix();
-  glTranslated(0, 0, -40);
-  glRotated(45, 1, 0, 0);
-  glRotated(m_rotation, 0, 1, 0);
+  glTranslated(0, -20, -60);
+  glRotated(30, 1, 0, 0);
+  //glRotated(m_rotation, 0, 1, 0);
 
   if (!m_haveMap) {
     glTranslated(-0.5, 0, -0.5);
@@ -104,14 +104,16 @@ void Renderer::drawMap() {
   int h = m_map->height;
 
   // X offset to algin the centre the map's depth axis.
-  glTranslatef(-0.5*w, 0, 0);
+  glTranslated(-0.5*w, 0, 0);
 
-  for (int i=0; i < w; ++i) {
-    for (int j=0; j < d; ++j) {
-      for (int k=0; k < h; ++k) {
-         int data = m_map->data[d*w*k + w*j + i];
+  drawBounds(w, h, -d);
+
+  for (int x=0; x < w; ++x) {
+    for (int z=0; z < d; ++z) {
+      for (int y=0; y < h; ++y) {
+         int data = m_map->data[d*w*y + w*z + x];
          if (data) {
-           drawCube(i, k, j);
+           drawCube(x, y, -z);
          }
       }
     }
@@ -127,6 +129,45 @@ void Renderer::drawCube(double x, double y, double z) {
   glScaled(0.9, 0.9, 0.9);
   glCallList(m_cube_list);
   glPopMatrix();
+}
+
+void Renderer::drawBounds(double x, double y, double z) {
+  GLfloat em[] = {0.0, 1.0, 0.0, 1.0};
+  glMaterialfv(GL_FRONT, GL_EMISSION, em);
+
+  /* Back wall */
+  glBegin(GL_LINE_LOOP);
+  glVertex3d(0,0,z);
+  glVertex3d(x,0,z);
+  glVertex3d(x,y,z);
+  glVertex3d(0,y,z);
+  glEnd();
+
+  /* Left wall */
+  glBegin(GL_LINE_LOOP);
+  glVertex3d(0,0,0); 
+  glVertex3d(0,0,z); 
+  glVertex3d(0,y,z); 
+  glVertex3d(0,y,0); 
+  glEnd();
+
+  /* Right Wall */
+  glBegin(GL_LINE_LOOP);
+  glVertex3d(x,0,0); 
+  glVertex3d(x,0,z); 
+  glVertex3d(x,y,z); 
+  glVertex3d(x,y,0); 
+  glEnd();
+
+  /* Front wall(ish) */
+  glBegin(GL_LINES);
+  glVertex3d(0,0,0);
+  glVertex3d(x,0,0);
+  glEnd();
+
+  GLfloat no_em[] = {0, 0, 0, 0};
+  glMaterialfv(GL_FRONT, GL_EMISSION, no_em);
+  CHECK_GL();
 }
 
 void Renderer::createCubeDisplayList() {

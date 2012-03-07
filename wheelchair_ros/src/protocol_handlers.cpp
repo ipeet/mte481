@@ -41,8 +41,8 @@ void SonarHandler::handle(const SerialMessage &msg) const {
 
 void JoystickRequestHandler::handle(const SerialMessage &msg) const {
   cerr << "Joystick: ";
-  cerr << unsigned(msg.jsReq.forward) << " ";
-  cerr << unsigned(msg.jsReq.lateral) << endl;
+  cerr << 127 - int(msg.jsReq.forward) << " ";
+  cerr << 127 - int(msg.jsReq.lateral) << endl;
 }
 
 DigitalDataHandler::DigitalDataHandler(NodeHandle &node) :
