@@ -36,7 +36,8 @@ using namespace std::tr1;
 shared_ptr<SerialDispatcher> SerialDispatcher::singleton;
 
 void SerialDispatcher::createInstance(const char *serialDev) throw(Serial::Exception*) {
-  if (singleton != NULL) {
+  static bool created = false;
+  if (!created) {
     singleton = shared_ptr<SerialDispatcher>(new SerialDispatcher(serialDev));
   }
   throw new Serial::Exception("Instance already exists");

@@ -26,6 +26,7 @@
 #include <nav_msgs/OccupancyGrid.h>
 #include <iostream>
 #include <math.h>
+#include <GL/gl.h>
 
 using namespace std;
 using namespace nav_msgs;
@@ -34,24 +35,36 @@ typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
 
 ros::Publisher pub;
 
+const double RESOLUTION = 0.10; // in m
+const double WIDTH = 10.0;  // in m
+const double HEIGHT = 10.0;
+const double ORIG_X = -5.0;
+const double ORIG_Y = -1.0;
+
 void pointcloudCallback(const PointCloud::ConstPtr &msg) {
   OccupancyGrid::Ptr map (new OccupancyGrid);
-  map->info.resolution = 0.10;
-  map->info.width = 20;
-  map->info.height = 20;
+  map->info.resolution = RESOLUTION;
+  map->info.width = WIDTH / RESOLUTION;
+  map->info.height = WIDTH / RESOLUTION;
   map->data.resize(map->info.width * map->info.height);
-  map->info.origin.position.x = -1;
-  map->info.origin.position.y = 1;
-  for (int i=0; i < msg->points.size(); ++i) {
+  map->info.origin.position.x = ORIG_X;
+  map->info.origin.position.y = ORIG_Y;
+  for (unsigned i=0; i < msg->points.size(); ++i) {
     double x = msg->points.at(i).x;
     double y = msg->points.at(i).y;
     double z = msg->points.at(i).z;
-    if ((x<=-1.0) || (x>=1.0) || isnan(x)) continue;
-    if ((z<=-1.0) || (z>=1.0) || isnan(y)) continue;
-    if (isnan(z)) continue;
-    int xi = (x+1.0)/0.1;
-    int yi = (z+1.0)/0.1;
-    map->data[xi*20 + yi] = 100;
+
+    /* Bounds check the point */
+    if (isnan(x) || isnan(y) || isnan(z)) continue;
+    if (x < ORIG_X) continue;
+    if (x >= ORIG_X + WIDTH) continue;
+    if (z < ORIG_Y) continue;
+    if (z >= ORIG_Y + HEIGHT) continue;
+    if (y < 0.0) continue;
+    if (y > 0.5) continue;
+    int xi = (x - ORIG_X) / RESOLUTION;
+    int yi = (z - ORIG_Y) / RESOLUTION;
+    map->data[xi*(map->info.width) + yi] = 100;
   }
   pub.publish(map);
 }

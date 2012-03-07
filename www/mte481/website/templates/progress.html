@@ -4,16 +4,44 @@
 <p><i>A blog-style set of updates concerning the progress of the project. Newcomers should start from the bottom (earlier updates) and work their way up.</i>
 <!--BEGIN BLOG-STYLE CONTENT-->
 <div class="section">
+  <h2>Kinect Mount Completed</h2>
+  <img src="static/Kinect_Mount_Final.jpg" width="300" alt="Blog Image" align=float/>
+  <p>The tray to hold the Kinect is finally completed, and has been painted black to match the wheelchair. Not shown in the picure is the Kinect itself (it attaches to the quick-release mechanism shown in the center), or the safety stop switch that is mounted to the same platform in front of the user. A conduit for wiring is incuded and the next update should show the Kinect fully mounted and operational on the wheelchair.</p>
+  <div class="strut"></div>
+</div>
+<!-- BLOG ENTRY SEPARATOR -->
+<div class="section">
+  <h2>Wiring Completed</h2>
+  <img src="static/Wiring_Complete.jpg" width="300" alt="Blog Image" align=float/>
+  <p>The joystick wiring and the sonar sensor wiring is complete as shown in the picture. The wire ends connect to screw terminals on the PCB (see images of PCB below). Also completed but not shown is the battery wiring to connect the PCB to the 2 lead-acid batteries. This means all electronics can now be mounted to the chair and it should be operational within days.</p>
+  <div class="strut"></div>
+</div>
+<!-- BLOG ENTRY SEPARATOR -->
+<div class="section">
+  <h2>Sonar Mounts Complete</h2>
+  <img src="static/Sensor_Mount_Final.jpg" width="300" alt="Blog Image" align=float/>
+  <p>The sonar mounts are complete and they have been painted to match the existing wheelchair colour scheme. The two mounting holes is where the sensor will be attached once it has been wired up.</p>
+  <div class="strut"></div>
+</div>
+<!-- BLOG ENTRY SEPARATOR -->
+<div class="section">
+  <h2>Electronics Fully Tested</h2>
+  <img src="static/electronics_tested.jpg" width="300" alt="Blog Image" align=float/>
+  <p>All drivers have been written for ADCs/digital pots on the PCB and all interfaces have been fully tested. Shown in this image is a modified version of the original test bread board. It generates a 20kHz sine wave much like the chair's joystick, and moving the pot on the test board varies the amplitude of the input to the PCB, just like moving the joystick. This has been used to simulate joystick input and verify the correct output on the bench. The next step is to wire up the joystick and demonstrate the fully-functional PCB on a moving wheelchair!</p>
+  <div class="strut"></div>
+</div>
+<!-- BLOG ENTRY SEPARATOR -->
+<div class="section">
   <h2>Mechanical Parts Almost Completed</h2>
   <img src="static/Kinect_Shelf.jpg" width="300" alt="Blog Image" align=float/>
-  <p>The last remaining part, the tray to hold the Kinect sensor above the user's lap, is almost completed. Once we get this done, it will be timing for attaching the sensors and wiring them up.</p>
+  <p>The last remaining part, the tray to hold the Kinect sensor above the user's lap, is almost completed. Once we get this done, it will be time for attaching the sensors and wiring them up.</p>
   <div class="strut"></div>
 </div>
 <!-- BLOG ENTRY SEPARATOR -->
 <div class="section">
   <h2>PCBs Soldered, Basic Functionality Verified</h2>
   <img src="static/solder_complete.jpg" width="300" alt="Blog Image" align=float/>
-  <p>A PCB has been soldered, and all the footprints appear to be correct. All the voltage rails all come up. USB-to-UART communication also works. Some drivers need to be written to test the ADCs and the digital potentiometers, but everything looks good so far.</p>
+  <p>A PCB has been fully soldered, and all the footprints appear to be correct. All the voltage rails all come up. USB-to-UART communication also works. Some drivers need to be written to test the ADCs and the digital potentiometers, but everything looks good so far.</p>
   <div class="strut"></div>
 </div>
 <!-- BLOG ENTRY SEPARATOR -->
@@ -48,7 +76,7 @@
 <div class="section">
   <h2>Wheelchair Interface Circuit Testing Complete</h2>
   <img src="static/test_circuit.jpg" width="300" alt="Blog Image" align=float/>
-  <p>With the sensors proven out, the last thing to get working is an interface to control the wheelchair. The existing joystick is inductively coupled to the control board inside the wheelchair's joystick housing. The result is a sine-wave signal going into the microcontroller on the control board. The wheelchair will be controlled disconnecting the joystick from the control board, and instead feeding the sine wave to our own PCB. The amplitude of this wave will allow readings of the user's requested movement in the left/right and forward/reverse directions. A reference sine wave is created on our own PCB and its amplitude can be varied using a digital potentiometer to feed control signals back to the wheelchair.</p><p> The circuit shown in the photo does just this, and by turning the pot with a screwdriver the wheelchair can be made to move forward or reversed. With this circuit proven out we can finalize the design as part of a PCB!</p>
+  <p>With the sensors proven out, the last thing to get working is an interface to control the wheelchair. The existing joystick is inductively coupled to the control board inside the wheelchair's joystick housing. The result is a sine-wave signal going into the microcontroller on the control board. The wheelchair will be controlled via disconnecting the joystick from the control board, and instead feeding the sine wave to our own PCB. The amplitude of this wave will allow readings of the user's requested movement in the left/right and forward/reverse directions. A reference sine wave is created on our own PCB and its amplitude can be varied using a digital potentiometer to feed control signals back to the wheelchair.</p><p> The circuit shown in the photo does just this, and by turning the pot with a screwdriver the wheelchair can be made to move forward or reversed. With this circuit proven out we can finalize the design as part of a PCB!</p>
   <div class="strut"></div>
 </div>
 <!-- BLOG ENTRY SEPARATOR -->
