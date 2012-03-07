@@ -5,14 +5,14 @@
 #include <GL/glut.h>
 
 #include <ros/ros.h>
-#include <nav_msgs/OccupancyGrid.h>
 #include <iostream>
 #include <memory>
 
+#include "wheelchair_ros/Occupancy3D.h"
 #include "wheelchair_ros/renderer.hpp"
 
 using namespace std;
-using namespace nav_msgs;
+using namespace wheelchair_ros;
 
 const int TICK_MS = 33;
 const int WIDTH = 600;
@@ -27,8 +27,9 @@ Renderer& renderer() {
   return *r; 
 }
 
-void occupancyCallback(const OccupancyGrid::ConstPtr &msg) {
-
+void occupancyCallback(const Occupancy3D::ConstPtr &msg) {
+  renderer().setMap(msg);
+  glutPostRedisplay();
 }
 
 void render() {
@@ -47,7 +48,6 @@ void tick(int value) {
     exit(0);
   }
   ros::spinOnce();
-  renderer().setRotation(renderer().getRotation() + 1.0);
   glutPostRedisplay();
 }
 
@@ -57,8 +57,8 @@ int main(int argc, char *argv[]) {
   /* ROS init */
   ros::init(argc, argv, "viewer_node");
   ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe<OccupancyGrid>(
-      "map", 1, occupancyCallback);
+  ros::Subscriber sub = nh.subscribe<Occupancy3D>(
+      "map3d", 1, occupancyCallback);
 
   /* GLUT init */
   glutInitWindowPosition(0, 0);

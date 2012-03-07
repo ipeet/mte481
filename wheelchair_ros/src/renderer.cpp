@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "wheelchair_ros/renderer.hpp"
+#include "wheelchair_ros/Occupancy3D.h"
 
 using namespace std;
 
@@ -19,10 +20,11 @@ void Renderer::checkGLError(const char* file, int line) {
 #define CHECK_GL() checkGLError(__FILE__, __LINE__)
 
 Renderer::Renderer(int width, int height) :
-  m_rotation(0),
+  m_rotation(-1.0),
   m_fov(60.0),
   m_width(width),
-  m_height(height)
+  m_height(height),
+  m_haveMap(false)
 {
   glShadeModel(GL_SMOOTH);
   glClearColor(0, 0, 0, 0);
@@ -59,19 +61,23 @@ void Renderer::render() {
   glLightfv(GL_LIGHT1, GL_SPECULAR, light);
   glEnable(GL_LIGHT1);
 
-  /* Transform to model space */
+  /* Transform to world co-ordinates */
   glPushMatrix();
   glTranslated(0, 0, -4);
   glRotated(45, 1, 0, 0);
   glRotated(m_rotation, 0, 1, 0);
 
-  glTranslated(-0.5, 0, -0.5);
-  drawCube(0, 0, 0);
-  drawCube(1, 0, 0);
-  drawCube(1, 0, 1);
-  drawCube(0, 1, 0);
-  drawCube(0, 1, 1);
-  drawCube(1, 1, 1);
+  if (!m_haveMap) {
+    glTranslated(-0.5, 0, -0.5);
+    drawCube(0, 0, 0);
+    drawCube(1, 0, 0);
+    drawCube(1, 0, 1);
+    drawCube(0, 1, 0);
+    drawCube(0, 1, 1);
+    drawCube(1, 1, 1); 
+  } else {
+    drawMap();
+  }
 
   glPopMatrix();
   CHECK_GL();
@@ -82,6 +88,19 @@ void Renderer::render() {
 void Renderer::setViewport(int w, int h) {
   m_width = w;
   m_height = h;
+}
+
+void Renderer::setMap(const wheelchair_ros::Occupancy3D::ConstPtr &msg) {
+  m_haveMap = true;
+  m_map = msg;
+}
+
+void Renderer::drawMap() {
+  glPushMatrix();
+  glTranslatef(- double(m_map->width)/2.0, 0, 0);
+
+  glPopMatrix();
+  CHECK_GL();
 }
 
 void Renderer::drawCube(double x, double y, double z) {
