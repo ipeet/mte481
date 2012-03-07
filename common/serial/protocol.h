@@ -70,6 +70,13 @@ struct SerialMessage {
       uint8_t input;
       uint16_t value;
     } PACKED adcData;
+    struct {
+      uint8_t msmts[4];
+    } PACKED sonar;
+    struct {
+      uint8_t forward;
+      uint8_t lateral;
+    } PACKED jsReq;
   };
 } PACKED;
 

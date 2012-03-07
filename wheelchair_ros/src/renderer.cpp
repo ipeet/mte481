@@ -63,7 +63,7 @@ void Renderer::render() {
 
   /* Transform to world co-ordinates */
   glPushMatrix();
-  glTranslated(0, 0, -4);
+  glTranslated(0, 0, -40);
   glRotated(45, 1, 0, 0);
   glRotated(m_rotation, 0, 1, 0);
 
@@ -97,7 +97,25 @@ void Renderer::setMap(const wheelchair_ros::Occupancy3D::ConstPtr &msg) {
 
 void Renderer::drawMap() {
   glPushMatrix();
-  glTranslatef(- double(m_map->width)/2.0, 0, 0);
+
+  /* convenience */
+  int w = m_map->width;
+  int d = m_map->depth;
+  int h = m_map->height;
+
+  // X offset to algin the centre the map's depth axis.
+  glTranslatef(-0.5*w, 0, 0);
+
+  for (int i=0; i < w; ++i) {
+    for (int j=0; j < d; ++j) {
+      for (int k=0; k < h; ++k) {
+         int data = m_map->data[d*w*k + w*j + i];
+         if (data) {
+           drawCube(i, k, j);
+         }
+      }
+    }
+  }
 
   glPopMatrix();
   CHECK_GL();

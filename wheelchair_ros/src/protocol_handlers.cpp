@@ -21,6 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *****************************************************************************/
 
+#include <iostream>
+
 #include "protocol.h"
 #include "wheelchair_ros/protocol_handlers.h"
 #include "wheelchair_ros/InputData.h"
@@ -28,6 +30,20 @@
 using namespace std;
 using namespace ros;
 using namespace wheelchair_ros;
+
+void SonarHandler::handle(const SerialMessage &msg) const {
+  cerr << "Sonar:";
+  for (int i=0; i<4; ++i) {
+    cerr << " " << unsigned(msg.sonar.msmts[i]);
+  }
+  cerr << endl;
+}
+
+void JoystickRequestHandler::handle(const SerialMessage &msg) const {
+  cerr << "Joystick: ";
+  cerr << unsigned(msg.jsReq.forward) << " ";
+  cerr << unsigned(msg.jsReq.lateral) << endl;
+}
 
 DigitalDataHandler::DigitalDataHandler(NodeHandle &node) :
   m_pub(node.advertise<InputData>("digital_data", 100))

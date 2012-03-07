@@ -28,12 +28,16 @@
 #include <math.h>
 #include <GL/gl.h>
 
+#include "wheelchair_ros/Occupancy3D.h"
+
 using namespace std;
 using namespace nav_msgs;
+using namespace wheelchair_ros;
 
 typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
 
-ros::Publisher pub;
+ros::Publisher pub2d;
+ros::Publisher pub3d;
 
 const double RESOLUTION = 0.10; // in m
 const double WIDTH = 10.0;  // in m
@@ -42,6 +46,7 @@ const double ORIG_X = -5.0;
 const double ORIG_Y = -1.0;
 
 void pointcloudCallback(const PointCloud::ConstPtr &msg) {
+  /* Publish the 2D occupancy grid */
   OccupancyGrid::Ptr map (new OccupancyGrid);
   map->info.resolution = RESOLUTION;
   map->info.width = WIDTH / RESOLUTION;
@@ -66,7 +71,7 @@ void pointcloudCallback(const PointCloud::ConstPtr &msg) {
     int yi = (z - ORIG_Y) / RESOLUTION;
     map->data[xi*(map->info.width) + yi] = 100;
   }
-  pub.publish(map);
+  pub2d.publish(map);
 }
 
 int main(int argc, char **argv) {
@@ -74,6 +79,6 @@ int main(int argc, char **argv) {
   ros::NodeHandle nh;
   ros::Subscriber sub = nh.subscribe<PointCloud>(
       "/camera/depth/points", 1, pointcloudCallback);
-  pub = nh.advertise<OccupancyGrid> ("map", 1);
+  pub2d = nh.advertise<OccupancyGrid> ("map", 1);
   ros::spin();
 }
