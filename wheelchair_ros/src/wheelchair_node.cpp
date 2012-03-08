@@ -41,6 +41,11 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
+  SonarHandler sonar (node);
+  SerialDispatcher::instance()->setHandler(SONAR_MSG, &sonar);
+  JoystickRequestHandler js (node);
+  SerialDispatcher::instance()->setHandler(JS_REQ, &js);
+
   ros::Rate loop_rate(50);
   while(ros::ok()) {
     SerialDispatcher::instance()->pump();

@@ -36,13 +36,9 @@ static const uint8_t SYNC_BYTE_2 = 0x55;
 
 /* Type codes for messages */
 enum MessageType {
-  PING = 1,
-  PING_RESP,
-  DIGITAL_READ,
-  DIGITAL_DATA,
-  DIGITAL_WRITE,
-  ADC_READ,
-  ADC_DATA
+  SONAR_MSG,
+  JS_REQ,
+  JS_LIMIT
 };
 
 #define PACKED __attribute__ (( __packed__ ))
@@ -74,6 +70,13 @@ struct SerialMessage {
       uint8_t input;
       uint16_t value;
     } PACKED adcData;
+    struct {
+      uint8_t msmts[4];
+    } PACKED sonar;
+    struct {
+      uint8_t forward;
+      uint8_t lateral;
+    } PACKED jsReq;
   };
 } PACKED;
 

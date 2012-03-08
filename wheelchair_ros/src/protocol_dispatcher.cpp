@@ -39,6 +39,7 @@ void SerialDispatcher::createInstance(const char *serialDev) throw(Serial::Excep
   static bool created = false;
   if (!created) {
     singleton = shared_ptr<SerialDispatcher>(new SerialDispatcher(serialDev));
+    return;
   }
   throw new Serial::Exception("Instance already exists");
 }
@@ -89,7 +90,7 @@ void SerialDispatcher::readMsg(MessageType type, SerialMessage *message) throw(S
 
       case BAD_CHECKSUM:
         cerr << "Bad checksum" << endl;
-        break;
+        break; 
 
       case INVALID:
         throw new Serial::Exception("Invalid parser");

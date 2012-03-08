@@ -35,8 +35,25 @@ public:
   virtual void handle(const SerialMessage &msg) const = 0;
 };
 
+/* Receives sonar data */
+class SonarHandler : public SerialHandler {
+private:
+  ros::Publisher m_pub;
+
+public:
+  SonarHandler(ros::NodeHandle &node);
+  virtual void handle(const SerialMessage &msg) const;
+};
+
+/* Receives joystick requests */
+class JoystickRequestHandler : public SerialHandler {
+public:
+  JoystickRequestHandler(ros::NodeHandle &node);
+  virtual void handle(const SerialMessage &msg) const;
+};
+
 /* Publishes digital read data */
-class DigitalDataHandler {
+class DigitalDataHandler : public SerialHandler {
 public:
   DigitalDataHandler(ros::NodeHandle &node);
   virtual void handle(const SerialMessage &msg) const;
@@ -46,7 +63,7 @@ private:
 };
 
 /* Publishes adc read data */
-class AdcDataHandler {
+class AdcDataHandler : public SerialHandler {
 public:
   AdcDataHandler(ros::NodeHandle &node);
   virtual void handle(const SerialMessage &msg) const;
