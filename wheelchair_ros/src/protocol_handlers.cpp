@@ -26,17 +26,26 @@
 #include "protocol.h"
 #include "wheelchair_ros/protocol_handlers.h"
 #include "wheelchair_ros/InputData.h"
+#include "wheelchair_ros/Sonar.h"
 
 using namespace std;
 using namespace ros;
 using namespace wheelchair_ros;
 
+SonarHandler::SonarHandler(NodeHandle &node) :
+  m_pub(node.advertise<Sonar>("sonar", 1))
+{ }
+
 void SonarHandler::handle(const SerialMessage &msg) const {
-  cerr << "Sonar:";
+  Sonar::Ptr out (new Sonar());
   for (int i=0; i<4; ++i) {
-    cerr << " " << unsigned(msg.sonar.msmts[i]);
+    out->ranges.push_back(2.0*msg.sonar.msmts[i] * 0.0254);
   }
-  cerr << endl;
+  m_pub.publish(out);
+}
+
+JoystickRequestHandler::JoystickRequestHandler(NodeHandle &node) {
+
 }
 
 void JoystickRequestHandler::handle(const SerialMessage &msg) const {

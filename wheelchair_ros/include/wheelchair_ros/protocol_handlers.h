@@ -37,13 +37,18 @@ public:
 
 /* Receives sonar data */
 class SonarHandler : public SerialHandler {
+private:
+  ros::Publisher m_pub;
+
 public:
+  SonarHandler(ros::NodeHandle &node);
   virtual void handle(const SerialMessage &msg) const;
 };
 
 /* Receives joystick requests */
 class JoystickRequestHandler : public SerialHandler {
 public:
+  JoystickRequestHandler(ros::NodeHandle &node);
   virtual void handle(const SerialMessage &msg) const;
 };
 

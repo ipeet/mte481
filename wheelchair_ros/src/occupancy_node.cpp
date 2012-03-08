@@ -30,6 +30,8 @@
 #include <memory>
 
 #include "wheelchair_ros/Occupancy3D.h"
+#include "wheelchair_ros/Sonar.h"
+
 #include "wheelchair_ros/occupancy.hpp"
 
 using namespace std;
@@ -50,14 +52,26 @@ void pointcloudCallback(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &msg) {
   occ->handlePointcloud(msg);
 }
 
+void sonarCallback(const Sonar::ConstPtr &msg) {
+  occ->handleSonar(msg);
+}
+
 int main(int argc, char **argv) {
   ros::init(argc, argv, "occupancy_node");
   ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe<pcl::PointCloud<pcl::PointXYZ> >(
+  ros::Subscriber points = nh.subscribe<pcl::PointCloud<pcl::PointXYZ> >(
       "/camera/depth/points", 1, pointcloudCallback);
+  ros::Subscriber sonar = nh.subscribe<Sonar>("sonar", 1, sonarCallback);
  
   occ = auto_ptr<Occupancy> (new Occupancy
     (nh, WIDTH, DEPTH, HEIGHT, ORIG_X, ORIG_Y, ORIG_Z, RESOLUTION));
-  
+ 
+  ros::Rate loop_rate(30);
+  while (ros::ok()) {
+    ros::spinOnce();
+    occ->publish();
+    loop_rate.sleep();
+  }
   ros::spin();
 }
+
