@@ -21,13 +21,20 @@
 
 #include <iostream>
 
-#include "ros/ros.h"
+#include <ros/ros.h>
+#include <geometry_msgs/Twist.h>
+
 #include "protocol.h"
 #include "wheelchair_ros/protocol_handlers.h"
 #include "wheelchair_ros/protocol_dispatcher.h"
 #include "wheelchair_ros/InputData.h"
 
 using namespace std;
+using geometry_msgs::Twist;
+
+void jsOutCallback(const Twist::ConstPtr &msg) {
+  /* Send command to wheelchair */
+}
 
 int main(int argc, char *argv[]) {
   ros::init(argc, argv, "wheelchair_node");
@@ -40,6 +47,9 @@ int main(int argc, char *argv[]) {
     cerr << "Failed to open " << devName << ": " << ex->msg << endl;
     exit(1);
   }
+
+  ros::Subscriber js_out_sub = node.subscribe<Twist> (
+      "wheel_js_out", 1, jsOutCallback);
 
   SonarHandler sonar (node);
   SerialDispatcher::instance()->setHandler(SONAR_MSG, &sonar);

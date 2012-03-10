@@ -46,13 +46,13 @@ void SonarHandler::handle(const SerialMessage &msg) const {
 }
 
 JoystickRequestHandler::JoystickRequestHandler(NodeHandle &node) :
-  m_pub(node.advertise<geometery_msgs::Twist>("wheelchair_js", 1))
+  m_pub(node.advertise<geometry_msgs::Twist>("wheel_js_in", 1))
 { }
 
 void JoystickRequestHandler::handle(const SerialMessage &msg) const {
   geometry_msgs::Twist::Ptr out (new geometry_msgs::Twist());
-  out.linear.x = double(127 - int(msg.jsReq.lateral)) / 127.0;
-  out.linear.y = double(127 - int(msg.jsReq.forward)) / 127.0;
+  out->linear.x = double(127 - int(msg.jsReq.lateral)) / 127.0;
+  out->linear.y = double(127 - int(msg.jsReq.forward)) / 127.0;
   m_pub.publish(out);
 }
 
