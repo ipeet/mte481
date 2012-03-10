@@ -47,6 +47,9 @@ public:
 
 /* Receives joystick requests */
 class JoystickRequestHandler : public SerialHandler {
+private:
+  ros::Publisher m_pub;
+
 public:
   JoystickRequestHandler(ros::NodeHandle &node);
   virtual void handle(const SerialMessage &msg) const;
