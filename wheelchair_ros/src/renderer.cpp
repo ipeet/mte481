@@ -24,14 +24,13 @@ Renderer::Renderer(int width, int height) :
   m_fov(60.0),
   m_width(width),
   m_height(height),
+  m_cube_list(0),
   m_haveMap(false)
 {
   glShadeModel(GL_SMOOTH);
   glClearColor(0, 0, 0, 0);
   glEnable(GL_DEPTH_TEST);
   CHECK_GL();
-
-  createCubeDisplayList();
 }
 
 void Renderer::render() {
@@ -131,6 +130,10 @@ void Renderer::drawMap() {
 }
 
 void Renderer::drawCube(double x, double y, double z) {
+  if (!m_cube_list) {
+    createCubeDisplayList();
+  }
+
   glPushMatrix();
   glTranslated(x, y, z);
   glScaled(0.9, 0.9, 0.9);

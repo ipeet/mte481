@@ -4,6 +4,15 @@
 
 #include "wheelchair_ros/Occupancy3D.h"
 
+class RendererView {
+private:
+  Renderer &m_renderer;
+
+public:
+  RendererView(Renderer &r) : m_renderer(r) {}
+  virtual void render() = 0;
+};
+
 class Renderer {
 private:
   double m_rotation;
@@ -17,7 +26,7 @@ private:
   wheelchair_ros::Occupancy3D::ConstPtr m_map;
 
 public:
-  Renderer(int width, int height);
+  Renderer(int width, int height, bv);
 
   double getRotation() { return m_rotation; }
   void setRotation(double rot) { m_rotation = rot; }
@@ -33,6 +42,8 @@ private:
   void drawCube(double x, double y, double z);
   void drawBounds(double x, double y, double z);
   void drawMap();
+
+  friend class RendererView;
 };
 
 #endif //RENDERER_HPP_

@@ -19,25 +19,19 @@ const int WIDTH = 600;
 const int HEIGHT = 400;
 
 
-Renderer& renderer() {
-  static auto_ptr<Renderer> r (NULL);
-  if (r.get() == NULL) {
-    r = auto_ptr<Renderer> (new Renderer(WIDTH, HEIGHT));
-  }
-  return *r; 
-}
+static auto_ptr<Renderer> renderer (NULL);
 
 void occupancyCallback(const Occupancy3D::ConstPtr &msg) {
-  renderer().setMap(msg);
+  renderer->setMap(msg);
   glutPostRedisplay();
 }
 
 void render() {
-  renderer().render();
+  renderer->render();
 }
 
 void onResize(int width, int height) {
-  renderer().setViewport(width, height);
+  renderer->setViewport(width, height);
   glutPostRedisplay();
 }
 
@@ -65,6 +59,9 @@ int main(int argc, char *argv[]) {
   glutInitWindowSize(WIDTH, HEIGHT);
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
   glutCreateWindow("Wheelchar 482");
+
+  renderer = auto_ptr<Renderer> (new Renderer(WIDTH, HEIGHT));
+
   glutDisplayFunc(render);
   glutTimerFunc(TICK_MS, tick, 0);
   glutReshapeFunc(onResize);
