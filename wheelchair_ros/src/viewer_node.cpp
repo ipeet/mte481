@@ -45,6 +45,59 @@ void tick(int value) {
   glutPostRedisplay();
 }
 
+/* Mouse motion state */
+enum MouseStates {
+  LEFT_DOWN = 1,
+  RIGHT_DOWN = 2
+};
+static unsigned mouseState = 0;
+static int lastMouseX = 0;
+static int lastMouseY = 0;
+
+void buttonHandler(int button, int state, int x, int y) {
+  lastMouseX = x;
+  lastMouseY = y;
+  if (state == GLUT_DOWN) {
+    switch (button) {
+      case GLUT_LEFT_BUTTON:
+        mouseState |= LEFT_DOWN;
+        break;
+      case GLUT_RIGHT_BUTTON:
+        mouseState |= RIGHT_DOWN;
+        break;
+      default:
+        break;
+    }
+  } else {
+    switch (button) {
+      case GLUT_LEFT_BUTTON:
+        mouseState &= ~LEFT_DOWN;
+        break;
+      case GLUT_RIGHT_BUTTON:
+        mouseState &= ~RIGHT_DOWN;
+        break;
+      default:
+        break;
+    }
+  }
+}
+
+void moveHandler(int x, int y) {
+  int dx = x - lastMouseX;
+  int dy = y - lastMouseY;
+  if (mouseState & LEFT_DOWN) {
+    renderer->setOrientation(renderer->getOrientation() + dx);
+    renderer->setAzimuth(renderer->getAzimuth() + dy);
+  }
+  if (mouseState & RIGHT_DOWN) {
+    renderer->setDistance(renderer->getDistance() - dy);
+    glutPostRedisplay();
+  }
+
+  lastMouseX = x;
+  lastMouseY = y;
+}
+
 int main(int argc, char *argv[]) {
   glutInit(&argc, argv);
 
@@ -67,6 +120,8 @@ int main(int argc, char *argv[]) {
   glutDisplayFunc(render);
   glutTimerFunc(TICK_MS, tick, 0);
   glutReshapeFunc(onResize);
+  glutMouseFunc(buttonHandler);
+  glutMotionFunc(moveHandler);
   glutMainLoop();
   return 0;
 }

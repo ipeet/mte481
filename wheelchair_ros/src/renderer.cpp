@@ -178,7 +178,7 @@ void Map3DView::render() {
   }
 
   // X offset to algin the centre the map's depth axis.
-  glTranslated(-0.5*w, -0.5*d, 0);
+  glTranslated(-0.5*w, -0.5*h, 0.5*d);
 
   drawBounds(w, h, -d);
 
