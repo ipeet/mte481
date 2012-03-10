@@ -18,11 +18,11 @@ const int TICK_MS = 33;
 const int WIDTH = 600;
 const int HEIGHT = 400;
 
-
-static auto_ptr<Renderer> renderer (NULL);
+static Renderer *renderer = NULL;
+static Map3DView  *map3View = NULL;
 
 void occupancyCallback(const Occupancy3D::ConstPtr &msg) {
-  renderer->setMap(msg);
+  map3View->setMap(msg);
   glutPostRedisplay();
 }
 
@@ -60,7 +60,9 @@ int main(int argc, char *argv[]) {
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
   glutCreateWindow("Wheelchar 482");
 
-  renderer = auto_ptr<Renderer> (new Renderer(WIDTH, HEIGHT));
+  renderer = new Renderer(WIDTH, HEIGHT);
+  map3View = new Map3DView (*renderer);
+  renderer->setView(map3View);
 
   glutDisplayFunc(render);
   glutTimerFunc(TICK_MS, tick, 0);
