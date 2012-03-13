@@ -44,6 +44,8 @@ public:
   void setOrientation(double o) { m_orient = o; }
   double getDistance() { return m_distance; }
   void setDistance(double d) { m_distance = d; }
+  void reset(); // Resets to default view configuration
+
   void setViewport(int w, int h);
   void setView(RendererView *view) { m_view = view; }
 

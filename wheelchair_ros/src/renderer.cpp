@@ -23,7 +23,7 @@ void checkGLError(const char* file, int line) {
 
 const double Renderer::DEFAULT_AZIMUTH = 30.0;
 const double Renderer::DEFAULT_ORIENT = 0.0;
-const double Renderer::DEFAULT_DISTANCE = 80.0;
+const double Renderer::DEFAULT_DISTANCE = 100.0;
 
 Renderer::Renderer(int width, int height) :
   m_fov(60.0),
@@ -96,6 +96,12 @@ void Renderer::render() {
 void Renderer::setViewport(int w, int h) {
   m_width = w;
   m_height = h;
+}
+
+void Renderer::reset() {
+  m_azimuth = DEFAULT_AZIMUTH;
+  m_orient = DEFAULT_ORIENT;
+  m_distance = DEFAULT_DISTANCE;
 }
 
 void Renderer::drawCube(double x, double y, double z) {

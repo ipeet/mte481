@@ -53,6 +53,59 @@ void tick(int value) {
   glutPostRedisplay();
 }
 
+void keyHandler(unsigned char key, int x, int y) {
+  switch(key) {
+    case ' ':  // Reset camera position
+      renderer->reset();
+      break;
+    case '1': // 3D map view
+      renderer->setView(map3View);
+      break;
+    case '2': // Occupancy view
+      renderer->setView(colView);
+      break;
+    default:
+      return;
+  }
+  glutPostRedisplay();
+}
+
+/* Mouse event handlers */
+void buttonHandler(int, int, int, int);
+void moveHandler(int, int);
+
+int main(int argc, char *argv[]) {
+  glutInit(&argc, argv);
+
+  /* ROS init */
+  ros::init(argc, argv, "viewer_node");
+  ros::NodeHandle nh;
+  ros::Subscriber sub2 = nh.subscribe<OccupancyGrid>(
+      "map2d", 1, map2Callback);
+  ros::Subscriber sub3 = nh.subscribe<Occupancy3D>(
+      "map3d", 1, map3Callback);
+
+  /* GLUT init */
+  glutInitWindowPosition(0, 0);
+  glutInitWindowSize(WIDTH, HEIGHT);
+  glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+  glutCreateWindow("Wheelchar 482");
+
+  renderer = new Renderer(WIDTH, HEIGHT);
+  map3View = new Map3DView (*renderer);
+  colView = new CollisionView (*renderer);
+  renderer->setView(colView);
+
+  glutDisplayFunc(render);
+  glutTimerFunc(TICK_MS, tick, 0);
+  glutReshapeFunc(onResize);
+  glutMouseFunc(buttonHandler);
+  glutMotionFunc(moveHandler);
+  glutKeyboardFunc(keyHandler);
+  glutMainLoop();
+  return 0;
+}
+
 /* Mouse motion state */
 enum MouseStates {
   LEFT_DOWN = 1,
@@ -104,36 +157,5 @@ void moveHandler(int x, int y) {
 
   lastMouseX = x;
   lastMouseY = y;
-}
-
-int main(int argc, char *argv[]) {
-  glutInit(&argc, argv);
-
-  /* ROS init */
-  ros::init(argc, argv, "viewer_node");
-  ros::NodeHandle nh;
-  ros::Subscriber sub2 = nh.subscribe<OccupancyGrid>(
-      "map2d", 1, map2Callback);
-  ros::Subscriber sub3 = nh.subscribe<Occupancy3D>(
-      "map3d", 1, map3Callback);
-
-  /* GLUT init */
-  glutInitWindowPosition(0, 0);
-  glutInitWindowSize(WIDTH, HEIGHT);
-  glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-  glutCreateWindow("Wheelchar 482");
-
-  renderer = new Renderer(WIDTH, HEIGHT);
-  map3View = new Map3DView (*renderer);
-  colView = new CollisionView (*renderer);
-  renderer->setView(colView);
-
-  glutDisplayFunc(render);
-  glutTimerFunc(TICK_MS, tick, 0);
-  glutReshapeFunc(onResize);
-  glutMouseFunc(buttonHandler);
-  glutMotionFunc(moveHandler);
-  glutMainLoop();
-  return 0;
 }
 
