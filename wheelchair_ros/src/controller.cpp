@@ -16,11 +16,11 @@ Controller::Controller(ros::NodeHandle &nh) :
 {}
 
 void Controller::handleJs(const Twist::ConstPtr &msg) {
-  cerr << "Contoller JS: " << msg->linear.x << ", " << msg->linear.y << endl; 
+  Path::Ptr path = predictPath(msg);
+  m_pathPub.publish(path);
 }
 
 void Controller::handleAuxJs(const Twist::ConstPtr &msg) {
-  cerr << "Contoller Aux JS: " << msg->linear.x << ", " << msg->linear.y << endl; 
 }
 
 Path::Ptr Controller::predictPath(const Twist::ConstPtr &input) {

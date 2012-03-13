@@ -3,6 +3,7 @@
 #define RENDERER_HPP_
 
 #include <nav_msgs/OccupancyGrid.h>
+#include <nav_msgs/Path.h>
 #include "wheelchair_ros/Occupancy3D.h"
 
 void checkGLError(const char* file, int line);
@@ -75,14 +76,21 @@ private:
 
 class CollisionView : public RendererView { 
 private:
-  bool m_haveMap;
   nav_msgs::OccupancyGrid::ConstPtr m_map;
+  bool m_haveMap;
+  nav_msgs::Path::ConstPtr m_path;
+  bool m_havePath;
 
 public:
-  CollisionView(Renderer &r) : RendererView(r), m_haveMap(false) {}
+  CollisionView(Renderer &r) : 
+    RendererView(r), 
+    m_haveMap(false),
+    m_havePath(false)
+  {}
 
   virtual void render();
   void setMap(const nav_msgs::OccupancyGrid::ConstPtr &msg);
+  void setPath(const nav_msgs::Path::ConstPtr &msg);
 };
 
 #endif //RENDERER_HPP_

@@ -9,6 +9,7 @@
 
 using namespace std;
 using nav_msgs::OccupancyGrid;
+using nav_msgs::Path;
 
 void checkGLError(const char* file, int line) {
   GLenum err = glGetError();
@@ -278,6 +279,12 @@ void Map3DView::drawBounds(double x, double y, double z) {
 void CollisionView::setMap(const OccupancyGrid::ConstPtr &msg) {
   m_map = msg;
   m_haveMap = true;
+}
+
+void CollisionView::setPath(const Path::ConstPtr &msg) {
+  m_path = msg;
+  m_havePath = true;
+  cerr << "Path!" << endl;
 }
 
 void CollisionView::render() {
