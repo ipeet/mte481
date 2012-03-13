@@ -3,6 +3,7 @@
 #define GEOMETRY_HPP_
 
 #include <iostream>
+#include <vector>
 
 class Vector3D {
 public:
@@ -26,4 +27,41 @@ public:
 Vector3D operator*(double l, const Vector3D &r);
 std::ostream& operator<<(std::ostream &s, const Vector3D &v);
 
+class Point3D {
+public:
+  double p[3];
+
+public:
+  Point3D();
+  Point3D(double x, double y, double z);
+  Point3D(const Point3D &other);
+  Point3D& operator=(const Point3D &other);
+
+  Vector3D operator-(const Point3D &r) const;
+  Point3D operator+(const Vector3D &r) const;
+};
+
+Point3D operator+(const Vector3D &l, const Point3D &r);
+
+class Polygon {
+private:
+  std::vector<Point3D> m_vertices;
+
+public:
+  void push(const Point3D &p) 
+    { m_vertices.push_back(p); }
+  unsigned size() const
+    { return m_vertices.size(); }
+  Point3D& operator[](unsigned i) 
+    { return m_vertices[i]; }
+  const Point3D& operator[](unsigned i) const
+    { return m_vertices[i]; }
+
+  /* Check if this polygon contains a point.  Assumes that this is a convex
+   * planar polygon, that vertices are given in counter-clockwise order,  and
+   * that the point is within the plane of the polygon */
+  bool contains(const Point3D &p) const;
+};
+
 #endif //GEOMETRY_HPP_
+
