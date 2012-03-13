@@ -40,12 +40,16 @@ int main(int argc, char *argv[]) {
   ros::init(argc, argv, "wheelchair_node");
   ros::NodeHandle node;
 
+  ros::Rate chair_retry(0.5);
   const char* devName = "/dev/ttyUSB0";
-  try {
-    SerialDispatcher::createInstance(devName);
-  } catch (Serial::Exception *ex) {
-    cerr << "Failed to open " << devName << ": " << ex->msg << endl;
-    exit(1);
+  while (ros::ok()) {
+    try {
+      SerialDispatcher::createInstance(devName);
+      break;
+    } catch (Serial::Exception *ex) {
+      cerr << "Failed to open " << devName << ": " << ex->msg << endl;
+    }
+    chair_retry.sleep();
   }
 
   ros::Subscriber js_out_sub = node.subscribe<Twist> (

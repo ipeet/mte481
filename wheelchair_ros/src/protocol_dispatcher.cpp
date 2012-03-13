@@ -39,6 +39,7 @@ void SerialDispatcher::createInstance(const char *serialDev) throw(Serial::Excep
   static bool created = false;
   if (!created) {
     singleton = shared_ptr<SerialDispatcher>(new SerialDispatcher(serialDev));
+    created = true;
     return;
   }
   throw new Serial::Exception("Instance already exists");

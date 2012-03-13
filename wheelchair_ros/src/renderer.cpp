@@ -25,7 +25,7 @@ Renderer::Renderer(int width, int height) :
   m_height(height),
   m_azimuth(30.0),
   m_orient(0.0),
-  m_distance(60.0),
+  m_distance(80.0),
   m_cube_list(0),
   m_view(NULL)
 {
