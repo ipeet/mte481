@@ -8,11 +8,13 @@
 #include <iostream>
 #include <memory>
 
+#include <nav_msgs/OccupancyGrid.h>
 #include "wheelchair_ros/Occupancy3D.h"
 #include "wheelchair_ros/renderer.hpp"
 
 using namespace std;
 using namespace wheelchair_ros;
+using nav_msgs::OccupancyGrid;
 
 const int TICK_MS = 33;
 const int WIDTH = 600;
@@ -20,9 +22,15 @@ const int HEIGHT = 400;
 
 static Renderer *renderer = NULL;
 static Map3DView  *map3View = NULL;
+static CollisionView *colView = NULL;
 
-void occupancyCallback(const Occupancy3D::ConstPtr &msg) {
+void map3Callback(const Occupancy3D::ConstPtr &msg) {
   map3View->setMap(msg);
+  glutPostRedisplay();
+}
+
+void map2Callback(const OccupancyGrid::ConstPtr &msg) {
+  colView->setMap(msg);
   glutPostRedisplay();
 }
 
@@ -104,8 +112,10 @@ int main(int argc, char *argv[]) {
   /* ROS init */
   ros::init(argc, argv, "viewer_node");
   ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe<Occupancy3D>(
-      "map3d", 1, occupancyCallback);
+  ros::Subscriber sub2 = nh.subscribe<OccupancyGrid>(
+      "map2d", 1, map2Callback);
+  ros::Subscriber sub3 = nh.subscribe<Occupancy3D>(
+      "map3d", 1, map3Callback);
 
   /* GLUT init */
   glutInitWindowPosition(0, 0);
@@ -115,7 +125,8 @@ int main(int argc, char *argv[]) {
 
   renderer = new Renderer(WIDTH, HEIGHT);
   map3View = new Map3DView (*renderer);
-  renderer->setView(map3View);
+  colView = new CollisionView (*renderer);
+  renderer->setView(colView);
 
   glutDisplayFunc(render);
   glutTimerFunc(TICK_MS, tick, 0);

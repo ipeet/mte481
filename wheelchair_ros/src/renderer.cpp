@@ -3,10 +3,12 @@
 #include <GL/glut.h>
 #include <iostream>
 
+#include <nav_msgs/OccupancyGrid.h>
 #include "wheelchair_ros/renderer.hpp"
 #include "wheelchair_ros/Occupancy3D.h"
 
 using namespace std;
+using nav_msgs::OccupancyGrid;
 
 void checkGLError(const char* file, int line) {
   GLenum err = glGetError();
@@ -19,13 +21,17 @@ void checkGLError(const char* file, int line) {
 }
 #define CHECK_GL() checkGLError(__FILE__, __LINE__)
 
+const double Renderer::DEFAULT_AZIMUTH = 30.0;
+const double Renderer::DEFAULT_ORIENT = 0.0;
+const double Renderer::DEFAULT_DISTANCE = 80.0;
+
 Renderer::Renderer(int width, int height) :
   m_fov(60.0),
   m_width(width),
   m_height(height),
-  m_azimuth(30.0),
-  m_orient(0.0),
-  m_distance(80.0),
+  m_azimuth(DEFAULT_AZIMUTH),
+  m_orient(DEFAULT_ORIENT),
+  m_distance(DEFAULT_DISTANCE),
   m_cube_list(0),
   m_view(NULL)
 {
@@ -103,6 +109,21 @@ void Renderer::drawCube(double x, double y, double z) {
 
   glCallList(m_cube_list);
   glPopMatrix();
+  CHECK_GL();
+}
+
+void Renderer::drawQuad(double x, double y) {
+  glPushMatrix();
+  glTranslated(x, y, 0);
+  glBegin(GL_QUADS);
+  glNormal3d(0, 0, 1);
+  glVertex3d(-0.5, -0.5, 0);
+  glVertex3d(0.5, -0.5, 0);
+  glVertex3d(0.5, 0.5, 0);
+  glVertex3d(-0.5, 0.5, 0);
+  glEnd();
+  glPopMatrix();
+  CHECK_GL();
 }
 
 void Renderer::createCubeDisplayList() {
@@ -192,7 +213,7 @@ void Map3DView::render() {
   GLfloat diff[] = {1.0, 1.0, 1.0, 1.0};
   GLfloat spec[] = {1.0, 1.0, 1.0, 1.0};
   glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, diff);
-  //glMaterialfv(GL_FRONT, GL_SPECULAR, spec);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, spec);
   glMaterialf(GL_FRONT, GL_SHININESS, 20.0);
   for (int x=0; x < w; ++x) {
     for (int z=0; z < d; ++z) {
@@ -245,6 +266,67 @@ void Map3DView::drawBounds(double x, double y, double z) {
 
   GLfloat no_em[] = {0, 0, 0, 0};
   glMaterialfv(GL_FRONT, GL_EMISSION, no_em);
+  CHECK_GL();
+}
+
+void CollisionView::setMap(const OccupancyGrid::ConstPtr &msg) {
+  m_map = msg;
+  m_haveMap = true;
+}
+
+void CollisionView::render() {
+  glPushMatrix();
+
+  double w, h;
+  if (m_haveMap) {
+    w = m_map->info.width;
+    h = m_map->info.height;
+  } else {
+    w = 40;
+    h = 40;
+  }
+
+  /* Invert the default rotations.  The means that map will be viewed head-on
+   * if view hasn't been modified, but will retain any delta */
+  glRotated(-Renderer::DEFAULT_ORIENT, 0, 1, 0);
+  glRotated(-Renderer::DEFAULT_AZIMUTH, 1, 0, 0);
+  glTranslated(-0.5*w, -0.5*h, 0);
+
+  /* Draw the bouding rectangle */
+  GLfloat em[] = {0, 0, 0.8, 1};
+  GLfloat blk[] = {0, 0, 0, 1};
+  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, blk);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, blk);
+  glMaterialfv(GL_FRONT, GL_EMISSION, em);
+  glBegin(GL_LINE_LOOP);
+  glVertex3d(0, 0, 0);
+  glVertex3d(w, 0, 0);
+  glVertex3d(w, h, 0);
+  glVertex3d(0, h, 0);
+  glEnd();
+
+  if (!m_haveMap) {
+    glPopMatrix();
+    CHECK_GL();
+    return;
+  }
+
+  /* Draw the actual map */
+  GLfloat diff[] = {1.0, 1.0, 1.0, 1.0};
+  GLfloat spec[] = {1.0, 1.0, 1.0, 1.0};
+  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, diff);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, spec);
+  glMaterialfv(GL_FRONT, GL_EMISSION, blk);
+  glMaterialf(GL_FRONT, GL_SHININESS, 20.0);
+  for (int i=0; i < w; ++i) {
+    for (int j=0; j < h; ++j) {
+      if (m_map->data[j*w + i]) {
+        m_renderer.drawQuad(i, j);
+      }
+    }
+  }
+
+  glPopMatrix();
   CHECK_GL();
 }
 

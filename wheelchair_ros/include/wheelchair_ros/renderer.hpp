@@ -2,6 +2,7 @@
 #ifndef RENDERER_HPP_
 #define RENDERER_HPP_
 
+#include <nav_msgs/OccupancyGrid.h>
 #include "wheelchair_ros/Occupancy3D.h"
 
 void checkGLError(const char* file, int line);
@@ -17,6 +18,11 @@ public:
 };
 
 class Renderer {
+public:
+  const static double DEFAULT_AZIMUTH;
+  const static double DEFAULT_ORIENT;
+  const static double DEFAULT_DISTANCE;
+
 private:
   double m_fov;
   int m_width;
@@ -44,6 +50,7 @@ public:
   void render();
 
   void drawCube(double x, double y, double z);
+  void drawQuad(double x, double y);
 
 private:
   void createCubeDisplayList();
@@ -62,6 +69,18 @@ public:
 
 private:
   void drawBounds(double x, double y, double z);
+};
+
+class CollisionView : public RendererView { 
+private:
+  bool m_haveMap;
+  nav_msgs::OccupancyGrid::ConstPtr m_map;
+
+public:
+  CollisionView(Renderer &r) : RendererView(r), m_haveMap(false) {}
+
+  virtual void render();
+  void setMap(const nav_msgs::OccupancyGrid::ConstPtr &msg);
 };
 
 #endif //RENDERER_HPP_
