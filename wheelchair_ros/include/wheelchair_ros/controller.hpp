@@ -8,6 +8,7 @@
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/Path.h>
+#include "wheelchair_ros/PredictedPath.h"
 
 class Controller {
 private:
@@ -20,7 +21,8 @@ public:
   void handleAuxJs(const geometry_msgs::Twist::ConstPtr &msg);
 
 protected:
-  nav_msgs::Path::Ptr predictPath(const geometry_msgs::Twist::ConstPtr &input);
+  wheelchair_ros::PredictedPath::Ptr 
+    predictPath(const geometry_msgs::Twist::ConstPtr &input);
 
   struct State {
     geometry_msgs::PoseStamped::Ptr pose;

@@ -9,14 +9,13 @@
 #include <memory>
 
 #include <nav_msgs/OccupancyGrid.h>
-#include <nav_msgs/Path.h>
+#include "wheelchair_ros/PredictedPath.h"
 #include "wheelchair_ros/Occupancy3D.h"
 #include "wheelchair_ros/renderer.hpp"
 
 using namespace std;
 using namespace wheelchair_ros;
 using nav_msgs::OccupancyGrid;
-using nav_msgs::Path;
 
 const int TICK_MS = 33;
 const int WIDTH = 600;
@@ -36,7 +35,7 @@ void map2Callback(const OccupancyGrid::ConstPtr &msg) {
   glutPostRedisplay();
 }
 
-void pathCallback(const Path::ConstPtr &msg) {
+void pathCallback(const PredictedPath::ConstPtr &msg) {
   colView->setPath(msg);
   glutPostRedisplay();
 }
@@ -91,7 +90,7 @@ int main(int argc, char *argv[]) {
       "map2d", 1, map2Callback);
   ros::Subscriber sub3 = nh.subscribe<Occupancy3D>(
       "map3d", 1, map3Callback);
-  ros::Subscriber pathSub = nh.subscribe<Path>(
+  ros::Subscriber pathSub = nh.subscribe<PredictedPath>(
       "predicted_path", 1, pathCallback);
 
   /* GLUT init */

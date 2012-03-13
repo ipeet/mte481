@@ -8,8 +8,8 @@
 #include "wheelchair_ros/Occupancy3D.h"
 
 using namespace std;
+using namespace wheelchair_ros;
 using nav_msgs::OccupancyGrid;
-using nav_msgs::Path;
 
 void checkGLError(const char* file, int line) {
   GLenum err = glGetError();
@@ -281,10 +281,9 @@ void CollisionView::setMap(const OccupancyGrid::ConstPtr &msg) {
   m_haveMap = true;
 }
 
-void CollisionView::setPath(const Path::ConstPtr &msg) {
+void CollisionView::setPath(const PredictedPath::ConstPtr &msg) {
   m_path = msg;
   m_havePath = true;
-  cerr << "Path!" << endl;
 }
 
 void CollisionView::render() {
@@ -318,15 +317,22 @@ void CollisionView::render() {
   glVertex3d(0, h, 0);
   glEnd();
 
-  if (!m_haveMap) {
-    glPopMatrix();
-    CHECK_GL();
-    return;
-  }
+  renderMap();
+  renderPath();
+
+  glPopMatrix();
+  CHECK_GL();
+}
+
+void CollisionView::renderMap() {
+  if (!m_haveMap) return;
+  double w = m_map->info.width;
+  double h = m_map->info.height;
 
   /* Draw the actual map */
   GLfloat diff[] = {1.0, 1.0, 1.0, 1.0};
   GLfloat spec[] = {1.0, 1.0, 1.0, 1.0};
+  GLfloat blk[] = {0, 0, 0, 1};
   glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, diff);
   glMaterialfv(GL_FRONT, GL_SPECULAR, spec);
   glMaterialfv(GL_FRONT, GL_EMISSION, blk);
@@ -338,8 +344,35 @@ void CollisionView::render() {
       }
     }
   }
+}
 
-  glPopMatrix();
+void CollisionView::renderPath() {
+  if (!m_havePath) return;
+
+  double orig_x = 20.0;
+  double orig_y = 20.0;
+  if (m_haveMap) {
+    orig_x = m_map->info.origin.position.x;
+    orig_y = m_map->info.origin.position.y;
+  }
+
+  GLfloat em[] = {0, 1, 0, 1};
+  GLfloat blk[] = {0, 0, 0, 1};
+  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, blk);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, blk);
+  glMaterialfv(GL_FRONT, GL_EMISSION, em);
+
+  glBegin(GL_LINES);
+  for (unsigned i=1; i < m_path->poses.size(); ++i) {
+    glVertex3d( orig_x + m_path->poses[i-1].pose.position.x, 
+                orig_y + m_path->poses[i-1].pose.position.y,
+                0.05 );
+    glVertex3d( orig_x + m_path->poses[i].pose.position.x, 
+                orig_y + m_path->poses[i].pose.position.y,
+                0.05 );
+  }
+  glEnd();
+
   CHECK_GL();
 }
 
