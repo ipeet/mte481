@@ -18,5 +18,6 @@ rosbuild_add_executable(wheelchair_node
     src/serial.cpp)
 rosbuild_add_executable(occupancy_node src/occupancy_node.cpp src/occupancy.cpp)
 rosbuild_add_executable(viewer_node src/viewer_node.cpp src/renderer.cpp)
+rosbuild_add_executable(controller_node src/controller_node.cpp src/controller.cpp)
 
 target_link_libraries(viewer_node /usr/lib/libglut.a /usr/lib/libGLU.a)
