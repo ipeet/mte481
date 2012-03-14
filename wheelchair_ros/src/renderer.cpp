@@ -6,6 +6,7 @@
 #include <nav_msgs/OccupancyGrid.h>
 #include "wheelchair_ros/renderer.hpp"
 #include "wheelchair_ros/Occupancy3D.h"
+#include "wheelchair_ros/geometry.hpp"
 
 using namespace std;
 using namespace wheelchair_ros;
@@ -130,6 +131,15 @@ void Renderer::drawQuad(double x, double y) {
   glVertex3d(-0.5, 0.5, 0);
   glEnd();
   glPopMatrix();
+  CHECK_GL();
+}
+
+void Renderer::drawPoly(const Polygon& poly) {
+  glBegin(GL_LINE_LOOP);
+  for (unsigned i=0; i < poly.size(); ++i) {
+    glVertex3dv(poly[i].p);
+  }
+  glEnd();
   CHECK_GL();
 }
 
@@ -289,13 +299,15 @@ void CollisionView::setPath(const PredictedPath::ConstPtr &msg) {
 void CollisionView::render() {
   glPushMatrix();
 
-  double w, h;
+  double w, h, res;
   if (m_haveMap) {
     w = m_map->info.width;
     h = m_map->info.height;
+    res = m_map->info.resolution;
   } else {
     w = 40;
     h = 40;
+    res = 0.1;
   }
 
   /* Invert the default rotations.  The means that map will be viewed head-on
@@ -318,7 +330,7 @@ void CollisionView::render() {
   glEnd();
 
   renderMap();
-  renderPath();
+  renderPath(res);
 
   glPopMatrix();
   CHECK_GL();
@@ -346,8 +358,14 @@ void CollisionView::renderMap() {
   }
 }
 
-void CollisionView::renderPath() {
+void CollisionView::renderPath(double res) {
   if (!m_havePath) return;
+
+  Polygon wheelPoly;
+  wheelPoly.push(Point3D(-0.5,-0.5,0));
+  wheelPoly.push(Point3D(0.5,-0.5,0));
+  wheelPoly.push(Point3D(0.5,0.5,0));
+  wheelPoly.push(Point3D(-0.5,0.5,0));
 
   double orig_x = 20.0;
   double orig_y = 20.0;
@@ -356,23 +374,46 @@ void CollisionView::renderPath() {
     orig_y = m_map->info.origin.position.y;
   }
 
-  GLfloat em[] = {0, 1, 0, 1};
+  glPushMatrix();
+  glTranslated(orig_x, orig_y, 0.05);
+  glScaled(1.0/res, 1.0/res, 1.0);
+
+  GLfloat green[] = {0, 1, 0, 1};
+  GLfloat red[] = {1, 0, 0, 1};
   GLfloat blk[] = {0, 0, 0, 1};
   glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, blk);
   glMaterialfv(GL_FRONT, GL_SPECULAR, blk);
-  glMaterialfv(GL_FRONT, GL_EMISSION, em);
+  glMaterialfv(GL_FRONT, GL_EMISSION, green);
 
   glBegin(GL_LINES);
   for (unsigned i=1; i < m_path->poses.size(); ++i) {
-    glVertex3d( orig_x + m_path->poses[i-1].pose.position.x, 
-                orig_y + m_path->poses[i-1].pose.position.y,
-                0.05 );
-    glVertex3d( orig_x + m_path->poses[i].pose.position.x, 
-                orig_y + m_path->poses[i].pose.position.y,
-                0.05 );
+    glVertex3d( m_path->poses[i-1].pose.position.x, 
+                m_path->poses[i-1].pose.position.y,
+                0.0 );
+    glVertex3d( m_path->poses[i].pose.position.x, 
+                m_path->poses[i].pose.position.y,
+                0.0 );
   }
   glEnd();
+  CHECK_GL();
 
+  for (unsigned i=0; i < m_path->poses.size(); ++i) {
+    glPushMatrix();
+    if (m_path->poseCollides[i]) {
+      glMaterialfv(GL_FRONT, GL_EMISSION, red);
+    } else {
+      glMaterialfv(GL_FRONT, GL_EMISSION, green);
+    }
+    glTranslated(m_path->poses[i].pose.position.x,
+                 m_path->poses[i].pose.position.y,
+                 0);
+    glRotated(m_path->poses[i].pose.orientation.w * 180.0 / M_PI, 0, 0, 1);
+    m_renderer.drawPoly(wheelPoly);
+    glPopMatrix();
+    CHECK_GL();
+  }
+
+  glPopMatrix();
   CHECK_GL();
 }
 

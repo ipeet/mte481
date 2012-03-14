@@ -8,6 +8,8 @@
 
 void checkGLError(const char* file, int line);
 
+class Polygon;
+
 class Renderer;
 class RendererView {
 protected:
@@ -54,6 +56,7 @@ public:
 
   void drawCube(double x, double y, double z);
   void drawQuad(double x, double y);
+  void drawPoly(const Polygon &poly);
 
 private:
   void createCubeDisplayList();
@@ -94,7 +97,7 @@ public:
 
 protected:
   void renderMap();
-  void renderPath();
+  void renderPath(double res);
 };
 
 #endif //RENDERER_HPP_

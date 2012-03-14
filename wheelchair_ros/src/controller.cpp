@@ -42,8 +42,9 @@ PredictedPath::Ptr Controller::predictPath(const Twist::ConstPtr &input) {
 
   PredictedPath::Ptr ret (new PredictedPath);
   ret->poses.push_back(*(curState.pose));
-  for (int i=0; i<50; ++i) {
-    curState = predict(curState, input, 0.2);
+  ret->poseCollides.push_back(false);
+  for (int i=0; i<20; ++i) {
+    curState = predict(curState, input, 0.5);
     ret->poses.push_back(*(curState.pose));
     ret->poseCollides.push_back(true);
   }
