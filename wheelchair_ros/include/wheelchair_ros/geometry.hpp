@@ -109,6 +109,7 @@ public:
 
   Vector3D operator*(const Vector3D &r) const;
   Point3D operator*(const Point3D &r) const;
+  Polygon operator*(const Polygon &r) const;
 
   GLdouble& at(unsigned i, unsigned j)
     { return m[i + 4*j]; }
@@ -117,6 +118,7 @@ public:
 
   static Matrix4x4 translation(const Vector3D &v);
   static Matrix4x4 rotation(double rad, const Vector3D &axis);
+  static Matrix4x4 scale(double sx, double sy, double sz);
 };
 
 std::ostream& operator<<(std::ostream &s, const Matrix4x4 &m);

@@ -119,7 +119,7 @@ void Occupancy::publish() {
   map2->info.width = gw;
   map2->info.height = gd;
   map2->info.origin.position.x = m_orig_x;
-  map2->info.origin.position.y = m_orig_y;
+  map2->info.origin.position.y = m_orig_z;
   map2->data.resize(gw*gd);
 
   for (unsigned i=0; i<m_kinect2d.size(); ++i) {

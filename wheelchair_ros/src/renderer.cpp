@@ -123,6 +123,7 @@ void Renderer::drawCube(double x, double y, double z) {
 void Renderer::drawQuad(double x, double y) {
   glPushMatrix();
   glTranslated(x, y, 0);
+  glScaled(0.9, 0.9, 0);
   glBegin(GL_QUADS);
   glNormal3d(0, 0, 1);
   glVertex3d(-0.5, -0.5, 0);
@@ -299,15 +300,13 @@ void CollisionView::setPath(const PredictedPath::ConstPtr &msg) {
 void CollisionView::render() {
   glPushMatrix();
 
-  double w, h, res;
+  double w, h;
   if (m_haveMap) {
     w = m_map->info.width;
     h = m_map->info.height;
-    res = m_map->info.resolution;
   } else {
     w = 40;
     h = 40;
-    res = 0.1;
   }
 
   /* Invert the default rotations.  The means that map will be viewed head-on
@@ -323,15 +322,14 @@ void CollisionView::render() {
   glMaterialfv(GL_FRONT, GL_SPECULAR, blk);
   glMaterialfv(GL_FRONT, GL_EMISSION, em);
   glBegin(GL_LINE_LOOP);
-  glVertex3d(0, 0, 0);
-  glVertex3d(w, 0, 0);
-  glVertex3d(w, h, 0);
-  glVertex3d(0, h, 0);
+  glVertex3d(-0.5, -0.5, 0);
+  glVertex3d(w-0.5, -0.5, 0);
+  glVertex3d(w-0.5, h-0.5, 0);
+  glVertex3d(-0.5, h-0.5, 0);
   glEnd();
 
   renderMap();
-  renderPath(res);
-
+  renderPath();
   glPopMatrix();
   CHECK_GL();
 }
@@ -348,7 +346,7 @@ void CollisionView::renderMap() {
   glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, diff);
   glMaterialfv(GL_FRONT, GL_SPECULAR, spec);
   glMaterialfv(GL_FRONT, GL_EMISSION, blk);
-  glMaterialf(GL_FRONT, GL_SHININESS, 20.0);
+  glMaterialf(GL_FRONT, GL_SHININESS, 25.0);
   for (int i=0; i < w; ++i) {
     for (int j=0; j < h; ++j) {
       if (m_map->data[j*w + i]) {
@@ -358,7 +356,7 @@ void CollisionView::renderMap() {
   }
 }
 
-void CollisionView::renderPath(double res) {
+void CollisionView::renderPath() {
   if (!m_havePath) return;
 
   Polygon wheelPoly;
@@ -367,16 +365,18 @@ void CollisionView::renderPath(double res) {
   wheelPoly.push(Point3D(0.5,0.5,0));
   wheelPoly.push(Point3D(-0.5,0.5,0));
 
-  double orig_x = 20.0;
-  double orig_y = 20.0;
+  double orig_x = -20.0;
+  double orig_y = -20.0;
+  double res = 0.1;
   if (m_haveMap) {
     orig_x = m_map->info.origin.position.x;
     orig_y = m_map->info.origin.position.y;
+    res = m_map->info.resolution;
   }
 
   glPushMatrix();
-  glTranslated(orig_x, orig_y, 0.05);
   glScaled(1.0/res, 1.0/res, 1.0);
+  glTranslated(-orig_x, -orig_y, 0.05);
 
   GLfloat green[] = {0, 1, 0, 1};
   GLfloat red[] = {1, 0, 0, 1};

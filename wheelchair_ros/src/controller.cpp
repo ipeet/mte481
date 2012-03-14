@@ -3,30 +3,39 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <nav_msgs/OccupancyGrid.h>
 #include "wheelchair_ros/PredictedPath.h"
 #include "wheelchair_ros/controller.hpp"
+#include "wheelchair_ros/geometry.hpp"
 
 
 using namespace std;
 using geometry_msgs::Twist;
 using geometry_msgs::PoseStamped;
+using nav_msgs::OccupancyGrid;
 using wheelchair_ros::PredictedPath;
 
 Controller::Controller(ros::NodeHandle &nh) :
   m_pathPub(nh.advertise<PredictedPath>("predicted_path", 1)),
-  m_cmdPub(nh.advertise<Twist>("wheel_js_out", 1))
+  m_cmdPub(nh.advertise<Twist>("wheel_js_out", 1)),
+  m_haveMap(false)
 {}
 
 void Controller::handleJs(const Twist::ConstPtr &msg) {
   PredictedPath::Ptr path = predictPath(msg);
   m_pathPub.publish(path);
   Twist::Ptr cmd (new Twist);
-  cmd->linear.x = msg->linear.x;
-  cmd->linear.y = msg->linear.y;
+  cmd->linear.x = 0;
+  cmd->linear.y = 0;
   m_cmdPub.publish(cmd);
 }
 
 void Controller::handleAuxJs(const Twist::ConstPtr &msg) {
+}
+
+void Controller::handleMap(const OccupancyGrid::ConstPtr &msg) {
+  m_map = msg;
+  m_haveMap = true;
 }
 
 PredictedPath::Ptr Controller::predictPath(const Twist::ConstPtr &input) {
@@ -46,7 +55,10 @@ PredictedPath::Ptr Controller::predictPath(const Twist::ConstPtr &input) {
   for (int i=0; i<20; ++i) {
     curState = predict(curState, input, 0.5);
     ret->poses.push_back(*(curState.pose));
-    ret->poseCollides.push_back(true);
+    bool col = collides(curState.pose->pose.position.x,
+        curState.pose->pose.position.y,
+        curState.pose->pose.orientation.w);
+    ret->poseCollides.push_back(col);
   }
   return ret;
 }
@@ -64,8 +76,8 @@ Controller::State Controller::predict(
   ret.pose->pose.orientation.z = 1;
 
   // Compute current velocities:
-  double angular = input->linear.x;
-  double forward = input->linear.y;
+  double angular = -input->linear.x + 0.04;
+  double forward = input->linear.y - 0.055; 
   double heading = prev.pose->pose.orientation.w; // convenient
 
   // Forward difference computation of next state:
@@ -76,5 +88,33 @@ Controller::State Controller::predict(
     prev.pose->pose.position.y + forward*sin(heading);
 
   return ret;
+}
+
+bool Controller::collides(double x, double y, double w) {
+  if (!m_haveMap) return false;
+  Polygon wheel;
+  wheel.push(Point3D(-0.5,-0.5,0));
+  wheel.push(Point3D(0.5,-0.5,0));
+  wheel.push(Point3D(0.5,0.5,0));
+  wheel.push(Point3D(-0.5,0.5,0));
+  double res = m_map->info.resolution;
+  double orig_x = m_map->info.origin.position.x;
+  double orig_y = m_map->info.origin.position.y;
+
+  wheel = Matrix4x4::rotation(w, Vector3D(0, 0, 1)) * wheel;
+  wheel = Matrix4x4::translation(Vector3D(x-orig_x, y-orig_y, 0)) * wheel;
+  wheel = Matrix4x4::scale(1.0/res, 1.0/res, 1.0) * wheel;
+  
+  for (unsigned i=0; i < m_map->info.width; ++i) {
+    for (unsigned j=0; j < m_map->info.height; ++j) {
+      if (m_map->data[i + j*(m_map->info.width)]) {
+        if (wheel.contains(Point3D(i, j, 0))) {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
 }
 

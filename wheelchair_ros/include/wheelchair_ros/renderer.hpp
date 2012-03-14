@@ -97,7 +97,7 @@ public:
 
 protected:
   void renderMap();
-  void renderPath(double res);
+  void renderPath();
 };
 
 #endif //RENDERER_HPP_

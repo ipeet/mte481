@@ -212,9 +212,17 @@ Vector3D Matrix4x4::operator*(const Vector3D &r) const {
 
 Point3D Matrix4x4::operator*(const Point3D &r) const {
   return Point3D(
-      r.p[0]*at(0,0) + r.p[1]*at(0,1) * r.p[2]*at(0,2) + at(0,3),
-      r.p[0]*at(1,0) + r.p[1]*at(1,1) * r.p[2]*at(1,2) + at(1,3),
-      r.p[0]*at(2,0) + r.p[1]*at(2,1) * r.p[2]*at(2,2) + at(2,3) );
+      r.p[0]*at(0,0) + r.p[1]*at(0,1) + r.p[2]*at(0,2) + at(0,3),
+      r.p[0]*at(1,0) + r.p[1]*at(1,1) + r.p[2]*at(1,2) + at(1,3),
+      r.p[0]*at(2,0) + r.p[1]*at(2,1) + r.p[2]*at(2,2) + at(2,3) );
+}
+
+Polygon Matrix4x4::operator*(const Polygon &r) const {
+  Polygon ret;
+  for (unsigned i=0; i < r.size(); ++i) {
+    ret.push((*this) * r[i]);
+  }
+  return ret;
 }
 
 Matrix4x4 Matrix4x4::translation(const Vector3D &v) {
@@ -227,6 +235,14 @@ Matrix4x4 Matrix4x4::translation(const Vector3D &v) {
 
 Matrix4x4 Matrix4x4::rotation(double rad, const Vector3D &axis) {
   return Matrix4x4(Quaternion(rad, axis));
+}
+
+Matrix4x4 Matrix4x4::scale(double sx, double sy, double sz) {
+  Matrix4x4 ret;
+  ret.at(0,0) = sx;
+  ret.at(1,1) = sy;
+  ret.at(2,2) = sz;
+  return ret;
 }
 
 ostream& operator<<(ostream &s, const Matrix4x4 &m) {
@@ -276,5 +292,8 @@ void geometryTests() {
   cerr << Matrix4x4::rotation(0.5*M_PI, Vector3D(0, 1, 0))*v1 << endl;
   cerr << "Rotate " << v1 << " 0.5pi about z: ";
   cerr << Matrix4x4::rotation(0.5*M_PI, Vector3D(0, 0, 1))*v1 << endl;
+
+  cerr << "Translate poly by " << v2 << ": ";
+  cerr << Matrix4x4::translation(v2) * poly << endl;
 }
 
