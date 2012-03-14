@@ -21,8 +21,8 @@ void Controller::handleJs(const Twist::ConstPtr &msg) {
   PredictedPath::Ptr path = predictPath(msg);
   m_pathPub.publish(path);
   Twist::Ptr cmd (new Twist);
-  cmd->linear.x = 0;
-  cmd->linear.y = 0;
+  cmd->linear.x = msg->linear.x;
+  cmd->linear.y = msg->linear.y;
   m_cmdPub.publish(cmd);
 }
 

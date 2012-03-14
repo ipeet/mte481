@@ -63,6 +63,8 @@ void SerialDispatcher::clearHandler(MessageType type) {
 
 void SerialDispatcher::writeMsg(const SerialMessage &msg) throw(Serial::Exception*) {
   setBlocking(true);
+  uint8_t sync[] = {SYNC_BYTE_1, SYNC_BYTE_2};
+  send(&sync, 2);
   send(&msg, msg.length + MSG_HEADER_LENGTH);
 }
 

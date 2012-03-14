@@ -20,6 +20,7 @@
  *****************************************************************************/
 
 #include <iostream>
+#include <cstdio>
 
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
@@ -32,16 +33,24 @@
 using namespace std;
 using geometry_msgs::Twist;
 
+void printSerialMessage(const SerialMessage &msg) {
+  const uint8_t *bMsg = reinterpret_cast<const uint8_t*>(&msg);
+  for (unsigned i=0; i < msg.length + MSG_HEADER_LENGTH; ++i) {
+    fprintf(stderr, "%02x ", int(bMsg[i]));
+  }
+  fprintf(stderr, "\n");
+}
+
 void jsOutCallback(const Twist::ConstPtr &msg) {
   /* Send command to wheelchair */
-  struct SerialMessage msg;
-  msg.type = SONAR_LIMIT;
-  msg.length = 2;
-  msg.jsReq.forward = 127 - msg->linear.y*127;
-  msg.jsReq.lateral = 127 - msg->linear.x*127;
-  msg.checksum = pr_checksum(&msg);
+  struct SerialMessage cmd;
+  cmd.type = JS_LIMIT;
+  cmd.length = 2;
+  cmd.jsReq.forward = 127.5 + msg->linear.y*127;
+  cmd.jsReq.lateral = 127.5 + msg->linear.x*127;
+  cmd.checksum = pr_checksum(&cmd);
   try {
-    SerialDispatcher::instance()->writeMsg(msg);
+    SerialDispatcher::instance()->writeMsg(cmd);
   } catch (Serial::Exception *ex) {
     cerr << "Write error: " << ex->msg << endl;
   }
