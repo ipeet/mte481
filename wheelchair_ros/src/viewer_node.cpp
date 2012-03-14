@@ -84,8 +84,6 @@ void moveHandler(int, int);
 int main(int argc, char *argv[]) {
   glutInit(&argc, argv);
 
-  geometryTests();
-
   /* ROS init */
   ros::init(argc, argv, "viewer_node");
   ros::NodeHandle nh;

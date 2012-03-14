@@ -164,3 +164,82 @@ void geometryTests() {
   cerr << "contains " << p7 << ": " << poly.contains(p7) << endl;
 }
 
+Quaternion::Quaternion(double rad, const Vector3D &axis)
+{ 
+  Vector3D axisn (axis.normalized());
+  a = cos(rad/2);
+  b = axisn.v[0]*sin(rad/2);
+  c = axisn.v[1]*sin(rad/2);
+  d = axisn.v[2]*sin(rad/2);
+}
+
+Quaternion& Quaternion::operator=(const Quaternion &other)
+{
+  a = other.a;
+  b = other.b;
+  c = other.c;
+  d = other.d;
+  return *this;
+}
+
+Quaternion Quaternion::operator*(const Quaternion &r) const {
+  Quaternion ret;
+  ret.a = a*r.a - b*r.b - c*r.c - d*r.d;
+  ret.b = a*r.b + b*r.a + c*r.d - d*r.c;
+  ret.c = a*r.c - b*r.d + c*r.a + d*r.b;
+  ret.d = a*r.d + b*r.c - c*r.b + d*r.a;
+  return ret;
+}
+
+std::ostream& operator<<(std::ostream &os, const Quaternion &q) {
+  return os << "[" << q.a << " " << q.b << " " << q.c << " " << q.d << "]";
+}
+
+Matrix4x4::Matrix4x4() {
+  for (unsigned i=0; i<4; ++i) {
+    for (unsigned j=0; j<4; ++j) {
+      at(i,j) = (i==j) ? 1 : 0;
+    }
+  }
+}
+
+Matrix4x4::Matrix4x4(const Matrix4x4 &other) {
+  for (unsigned i=0; i<16; ++i) m[i] = other.m[i];
+}
+
+Matrix4x4& Matrix4x4::operator=(const Quaternion &q) {
+  m[0] = q.a*q.a + q.b*q.b - q.c*q.c - q.d*q.d;
+  m[4] = 2.0*q.b*q.c - 2.0*q.a*q.d;
+  m[8] = 2.0*q.b*q.d + 2.0*q.a*q.c;
+  m[12] = 0;
+
+  m[1] = 2.0*q.b*q.c + 2.0*q.a*q.d;
+  m[5] = q.a*q.a - q.b*q.b + q.c*q.c - q.d*q.d;
+  m[9] = 2.0*q.c*q.d - 2.0*q.a*q.b;
+  m[13] = 0;
+
+  m[2] = 2.0*q.b*q.d - 2.0*q.a*q.c;
+  m[6] = 2.0*q.c*q.d + 2.0*q.a*q.b;
+  m[10] = q.a*q.a - q.b*q.b - q.c*q.c + q.d*q.d;
+  m[14] = 0;
+
+  m[3] = 0;
+  m[7] = 0;
+  m[11] = 0;
+  m[15] = 1;
+  return *this;
+}
+
+ostream& operator<<(ostream &s, const Matrix4x4 &m) {
+  s << "[";
+  for (int i=0; i<4; ++i) {
+    for (int j=0; j<4; ++j) {
+      s << m.at(i,j);
+      if (j<3) s << ", ";
+    }
+    if (i<3) s << endl;
+  }
+  s << "]";
+  return s;
+}
+
