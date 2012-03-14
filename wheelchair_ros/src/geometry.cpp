@@ -60,7 +60,7 @@ Vector3D operator*(double l, const Vector3D &r) {
 }
 
 ostream& operator<<(ostream &s, const Vector3D &v) {
-  s << "[" << v.v[0] << "," << v.v[1] << "," << v.v[2] << "]" << endl;
+  s << "[" << v.v[0] << "," << v.v[1] << "," << v.v[2] << "]";
   return s;
 }
 
@@ -88,7 +88,7 @@ Point3D& Point3D::operator=(const Point3D &other) {
 }
 
 Vector3D Point3D::operator-(const Point3D &r) const {
-  return Vector3D(r.p[0] - p[0], r.p[1] - p[1], r.p[2] - p[2]);
+  return Vector3D(p[0] - r.p[0], p[1] - r.p[1], p[2] - r.p[2]);
 }
 
 Point3D Point3D::operator+(const Vector3D &r) const {
@@ -97,6 +97,11 @@ Point3D Point3D::operator+(const Vector3D &r) const {
 
 Point3D operator+(const Vector3D &l, const Point3D &r) {
   return Point3D(l.v[0] + r.p[0], l.v[1] + r.p[1], l.v[2] + r.p[2]);
+}
+
+ostream& operator<<(ostream &s, const Point3D &p) {
+  s << "{" << p.p[0] << "," << p.p[1] << "," << p.p[2] << "}";
+  return s;
 }
 
 bool Polygon::contains(const Point3D &p) const {
@@ -119,5 +124,43 @@ bool Polygon::contains(const Point3D &p) const {
     }
   }
   return true;
+}
+
+ostream& operator<<(ostream& s, const Polygon &p) {
+  s << "[";
+  for (unsigned i=0; i<p.size(); ++i) {
+    if (i) s << "  ";
+    s << p[i] << ",";
+    if ((i+1) < p.size()) s << endl;
+  }
+  s << "]";
+  return s;
+}
+
+void geometryTests() {
+  Vector3D v1 (1, -1, 0);
+  Vector3D v2 (1, 1, 0);
+  cerr << v1 << " dot " << v2 << " = " << v1.dot(v2) << endl;
+  cerr << v1 << " cross " << v2 << " = " << v1.cross(v2) << endl;
+  Point3D p1 (1, 0, 1);
+  Point3D p2 (0, 1, 1);
+  cerr << p1 << " - " << p2 << " = " << (p1 - p2) << endl;
+ 
+  Polygon poly;
+  poly.push(Point3D(-1, -1, 0));
+  poly.push(Point3D(1, -1, 0));
+  poly.push(Point3D(1, 1, 0));
+  poly.push(Point3D(-1, 1, 0));
+  cerr << poly << " :" << endl;
+  Point3D p3 (0, 0, 0);
+  cerr << "contains " << p3 << ": " << poly.contains(p3) << endl;
+  Point3D p4 (2, 2, 2);
+  cerr << "contains " << p4 << ": " << poly.contains(p4) << endl;
+  Point3D p5 (0.9, 0.9, 40);
+  cerr << "contains " << p5 << ": " << poly.contains(p5) << endl;
+  Point3D p6 (-0.9, 0.9, 0);
+  cerr << "contains " << p6 << ": " << poly.contains(p6) << endl;
+  Point3D p7 (1.01, -1.01, 0);
+  cerr << "contains " << p7 << ": " << poly.contains(p7) << endl;
 }
 

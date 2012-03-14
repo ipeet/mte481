@@ -12,6 +12,7 @@
 #include "wheelchair_ros/PredictedPath.h"
 #include "wheelchair_ros/Occupancy3D.h"
 #include "wheelchair_ros/renderer.hpp"
+#include "wheelchair_ros/geometry.hpp"
 
 using namespace std;
 using namespace wheelchair_ros;
@@ -82,6 +83,8 @@ void moveHandler(int, int);
 
 int main(int argc, char *argv[]) {
   glutInit(&argc, argv);
+
+  geometryTests();
 
   /* ROS init */
   ros::init(argc, argv, "viewer_node");

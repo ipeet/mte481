@@ -4,10 +4,11 @@
 
 #include <iostream>
 #include <vector>
+#include <GL/gl.h>
 
 class Vector3D {
 public:
-  double v[3];
+  GLdouble v[3];
 
 public:
   Vector3D();
@@ -29,7 +30,7 @@ std::ostream& operator<<(std::ostream &s, const Vector3D &v);
 
 class Point3D {
 public:
-  double p[3];
+  GLdouble p[3];
 
 public:
   Point3D();
@@ -42,6 +43,7 @@ public:
 };
 
 Point3D operator+(const Vector3D &l, const Point3D &r);
+std::ostream& operator<<(std::ostream &s, const Point3D &p);
 
 class Polygon {
 private:
@@ -62,6 +64,10 @@ public:
    * that the point is within the plane of the polygon */
   bool contains(const Point3D &p) const;
 };
+
+std::ostream& operator<<(std::ostream &s, const Polygon &p);
+
+void geometryTests();
 
 #endif //GEOMETRY_HPP_
 
