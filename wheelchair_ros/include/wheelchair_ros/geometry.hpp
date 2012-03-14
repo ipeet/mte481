@@ -114,6 +114,9 @@ public:
     { return m[i + 4*j]; }
   const GLdouble& at(unsigned i, unsigned j) const
     { return m[i + 4*j]; }
+
+  static Matrix4x4 translation(const Vector3D &v);
+  static Matrix4x4 rotation(double rad, const Vector3D &axis);
 };
 
 std::ostream& operator<<(std::ostream &s, const Matrix4x4 &m);

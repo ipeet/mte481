@@ -137,33 +137,6 @@ ostream& operator<<(ostream& s, const Polygon &p) {
   return s;
 }
 
-void geometryTests() {
-  Vector3D v1 (1, -1, 0);
-  Vector3D v2 (1, 1, 0);
-  cerr << v1 << " dot " << v2 << " = " << v1.dot(v2) << endl;
-  cerr << v1 << " cross " << v2 << " = " << v1.cross(v2) << endl;
-  Point3D p1 (1, 0, 1);
-  Point3D p2 (0, 1, 1);
-  cerr << p1 << " - " << p2 << " = " << (p1 - p2) << endl;
- 
-  Polygon poly;
-  poly.push(Point3D(-1, -1, 0));
-  poly.push(Point3D(1, -1, 0));
-  poly.push(Point3D(1, 1, 0));
-  poly.push(Point3D(-1, 1, 0));
-  cerr << poly << " :" << endl;
-  Point3D p3 (0, 0, 0);
-  cerr << "contains " << p3 << ": " << poly.contains(p3) << endl;
-  Point3D p4 (2, 2, 2);
-  cerr << "contains " << p4 << ": " << poly.contains(p4) << endl;
-  Point3D p5 (0.9, 0.9, 40);
-  cerr << "contains " << p5 << ": " << poly.contains(p5) << endl;
-  Point3D p6 (-0.9, 0.9, 0);
-  cerr << "contains " << p6 << ": " << poly.contains(p6) << endl;
-  Point3D p7 (1.01, -1.01, 0);
-  cerr << "contains " << p7 << ": " << poly.contains(p7) << endl;
-}
-
 Quaternion::Quaternion(double rad, const Vector3D &axis)
 { 
   Vector3D axisn (axis.normalized());
@@ -230,6 +203,32 @@ Matrix4x4& Matrix4x4::operator=(const Quaternion &q) {
   return *this;
 }
 
+Vector3D Matrix4x4::operator*(const Vector3D &r) const {
+  return Vector3D(
+      r.v[0]*at(0,0) + r.v[1]*at(0,1) + r.v[2]*at(0,2),
+      r.v[0]*at(1,0) + r.v[1]*at(1,1) + r.v[2]*at(1,2),
+      r.v[0]*at(2,0) + r.v[1]*at(2,1) + r.v[2]*at(2,2) );
+}
+
+Point3D Matrix4x4::operator*(const Point3D &r) const {
+  return Point3D(
+      r.p[0]*at(0,0) + r.p[1]*at(0,1) * r.p[2]*at(0,2) + at(0,3),
+      r.p[0]*at(1,0) + r.p[1]*at(1,1) * r.p[2]*at(1,2) + at(1,3),
+      r.p[0]*at(2,0) + r.p[1]*at(2,1) * r.p[2]*at(2,2) + at(2,3) );
+}
+
+Matrix4x4 Matrix4x4::translation(const Vector3D &v) {
+  Matrix4x4 ret;
+  ret.at(0,3) = v.v[0];
+  ret.at(1,3) = v.v[1];
+  ret.at(2,3) = v.v[2];
+  return ret;
+}
+
+Matrix4x4 Matrix4x4::rotation(double rad, const Vector3D &axis) {
+  return Matrix4x4(Quaternion(rad, axis));
+}
+
 ostream& operator<<(ostream &s, const Matrix4x4 &m) {
   s << "[";
   for (int i=0; i<4; ++i) {
@@ -241,5 +240,41 @@ ostream& operator<<(ostream &s, const Matrix4x4 &m) {
   }
   s << "]";
   return s;
+}
+
+void geometryTests() {
+  Vector3D v1 (1, -1, 0);
+  Vector3D v2 (1, 1, 0);
+  cerr << v1 << " dot " << v2 << " = " << v1.dot(v2) << endl;
+  cerr << v1 << " cross " << v2 << " = " << v1.cross(v2) << endl;
+  Point3D p1 (1, 0, 1);
+  Point3D p2 (0, 1, 1);
+  cerr << p1 << " - " << p2 << " = " << (p1 - p2) << endl;
+ 
+  Polygon poly;
+  poly.push(Point3D(-1, -1, 0));
+  poly.push(Point3D(1, -1, 0));
+  poly.push(Point3D(1, 1, 0));
+  poly.push(Point3D(-1, 1, 0));
+  cerr << poly << " :" << endl;
+  Point3D p3 (0, 0, 0);
+  cerr << "contains " << p3 << ": " << poly.contains(p3) << endl;
+  Point3D p4 (2, 2, 2);
+  cerr << "contains " << p4 << ": " << poly.contains(p4) << endl;
+  Point3D p5 (0.9, 0.9, 40);
+  cerr << "contains " << p5 << ": " << poly.contains(p5) << endl;
+  Point3D p6 (-0.9, 0.9, 0);
+  cerr << "contains " << p6 << ": " << poly.contains(p6) << endl;
+  Point3D p7 (1.01, -1.01, 0);
+  cerr << "contains " << p7 << ": " << poly.contains(p7) << endl;
+
+  cerr << "Translate " << p1 << " by " << v2 << ": ";
+  cerr << Matrix4x4::translation(v2)*p1 << endl;
+  cerr << "Rotate " << v1 << " 0.5pi about x: ";
+  cerr << Matrix4x4::rotation(0.5*M_PI, Vector3D(1, 0, 0))*v1 << endl;
+  cerr << "Rotate " << v1 << " 0.5pi about y: ";
+  cerr << Matrix4x4::rotation(0.5*M_PI, Vector3D(0, 1, 0))*v1 << endl;
+  cerr << "Rotate " << v1 << " 0.5pi about z: ";
+  cerr << Matrix4x4::rotation(0.5*M_PI, Vector3D(0, 0, 1))*v1 << endl;
 }
 
