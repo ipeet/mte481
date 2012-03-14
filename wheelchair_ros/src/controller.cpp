@@ -13,12 +13,17 @@ using geometry_msgs::PoseStamped;
 using wheelchair_ros::PredictedPath;
 
 Controller::Controller(ros::NodeHandle &nh) :
-  m_pathPub(nh.advertise<PredictedPath>("predicted_path", 1))
+  m_pathPub(nh.advertise<PredictedPath>("predicted_path", 1)),
+  m_cmdPub(nh.advertise<Twist>("wheel_js_out", 1))
 {}
 
 void Controller::handleJs(const Twist::ConstPtr &msg) {
   PredictedPath::Ptr path = predictPath(msg);
   m_pathPub.publish(path);
+  Twist::Ptr cmd (new Twist);
+  cmd->linear.x = 0;
+  cmd->linear.y = 0;
+  m_cmdPub.publish(cmd);
 }
 
 void Controller::handleAuxJs(const Twist::ConstPtr &msg) {

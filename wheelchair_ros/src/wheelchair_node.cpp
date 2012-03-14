@@ -34,6 +34,17 @@ using geometry_msgs::Twist;
 
 void jsOutCallback(const Twist::ConstPtr &msg) {
   /* Send command to wheelchair */
+  struct SerialMessage msg;
+  msg.type = SONAR_LIMIT;
+  msg.length = 2;
+  msg.jsReq.forward = 127 - msg->linear.y*127;
+  msg.jsReq.lateral = 127 - msg->linear.x*127;
+  msg.checksum = pr_checksum(&msg);
+  try {
+    SerialDispatcher::instance()->writeMsg(msg);
+  } catch (Serial::Exception *ex) {
+    cerr << "Write error: " << ex->msg << endl;
+  }
 }
 
 int main(int argc, char *argv[]) {

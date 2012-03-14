@@ -13,6 +13,7 @@
 class Controller {
 private:
   ros::Publisher m_pathPub;
+  ros::Publisher m_cmdPub;
 
 public:
   Controller(ros::NodeHandle &nh);
