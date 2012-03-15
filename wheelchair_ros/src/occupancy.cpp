@@ -86,7 +86,7 @@ void Occupancy::handleSonar(const Sonar::ConstPtr &msg) {
   m_sonar3d.resize(w*d*h);
 
   for (int i=0; i<4; ++i) {
-    for (double j=-0.25*M_PI; j < 0.3*M_PI; j+=0.02) {
+    for (double j=-0.5*config::SONAR_FOV; j < 0.5*config::SONAR_FOV; j+=0.02) {
       pair<double, double> pos = m_sonars[i].inOccupancy(
           *this, msg->ranges[i], j);
       double x = pos.first;
@@ -95,8 +95,8 @@ void Occupancy::handleSonar(const Sonar::ConstPtr &msg) {
       if (x >= m_orig_x + m_width) continue;
       if (z < m_orig_z) continue;
       if (z >= m_orig_z + m_depth) continue;
-      int xi = (x - m_orig_x) / m_resolution;
-      int zi = (z - m_orig_z) / m_resolution;
+      int xi = (x + 0.5 - m_orig_x) / m_resolution;
+      int zi = (z + 0.5 - m_orig_z) / m_resolution;
       m_sonar2d[zi*w + xi] = 100;
       m_sonar3d[zi*w + xi] = 1;
     }

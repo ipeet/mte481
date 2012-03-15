@@ -28,12 +28,13 @@ inline Polygon getWheelchairBounds() {
   return ret;
 }
 
+static const double SONAR_FOV = 0.4*M_PI;
 inline std::vector<Occupancy::SonarPose> getSonarPoses() {
   std::vector<Occupancy::SonarPose> ret;
-  ret.push_back(Occupancy::SonarPose(0,    0.3,  0.75*M_PI));
-  ret.push_back(Occupancy::SonarPose(-0.3, 0.3,  0.25*M_PI));
-  ret.push_back(Occupancy::SonarPose(-0.3, -0.3, -0.75*M_PI));
-  ret.push_back(Occupancy::SonarPose(0,    -0.3,  -0.25*M_PI));
+  ret.push_back(Occupancy::SonarPose(-0.3,  0.0, -0.8*M_PI));
+  ret.push_back(Occupancy::SonarPose(-0.3, -0.3,  0.8*M_PI));
+  ret.push_back(Occupancy::SonarPose(0.3,   0.0,  0.2*M_PI));
+  ret.push_back(Occupancy::SonarPose(0.3,  -0.3, -0.2*M_PI));
   return ret;
 }
 
