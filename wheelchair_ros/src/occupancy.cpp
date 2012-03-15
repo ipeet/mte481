@@ -145,6 +145,9 @@ Occupancy::SonarPose::SonarPose(double x, double y, double dir) :
 pair<double, double> Occupancy::SonarPose::inOccupancy
   (const Occupancy &occ, double rad, double ang) 
 {
+  if (rad < 3*config::RESOLUTION) {
+    rad = 3*config::RESOLUTION;
+  }
   double x = m_x + rad * cos(ang + m_dir);
   double y = m_y + rad * sin(ang + m_dir);
   return pair<double, double> (x, y);

@@ -5,6 +5,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/OccupancyGrid.h>
 #include "wheelchair_ros/PredictedPath.h"
+#include "wheelchair_ros/Sonar.h"
 #include "wheelchair_ros/controller.hpp"
 #include "wheelchair_ros/config.hpp"
 #include "wheelchair_ros/geometry.hpp"
@@ -15,31 +16,50 @@ using geometry_msgs::Twist;
 using geometry_msgs::PoseStamped;
 using nav_msgs::OccupancyGrid;
 using wheelchair_ros::PredictedPath;
+using wheelchair_ros::Sonar;
 
 Controller::Controller(ros::NodeHandle &nh) :
   m_pathPub(nh.advertise<PredictedPath>("predicted_path", 1)),
   m_cmdPub(nh.advertise<Twist>("wheel_js_out", 1)),
-  m_haveMap(false)
+  m_haveMap(false),
+  m_haveSonar(false)
 {}
 
 void Controller::handleJs(const Twist::ConstPtr &msg) {
-  PredictedPath::Ptr path = predictPath(msg);
+  Twist::Ptr cmd (new Twist);
+  cmd->linear.x = msg->linear.x;
+  cmd->linear.y = msg->linear.y;
+
+  /* Check rotation against sonars.  We will modify only
+   * the rotation rate.  Do this before predicting the path, so that
+   * path prediction accounts for the modified angular rate. */
+  if (m_haveSonar) {
+    double minRange = m_sonar->ranges[0];
+    for (int i=1; i<4; ++i) {
+      if (m_sonar->ranges[i] < minRange) {
+        minRange = m_sonar->ranges[i];
+      }
+    }
+    if (minRange < 0.6) {
+      double scale = minRange / 0.6;
+      cmd->linear.x *= scale;
+    }
+  }
+
+  PredictedPath::Ptr path = predictPath(cmd);
   m_pathPub.publish(path);
 
+  /* Check path against occupancy grid */
   double tCol = path->timestep * ((*path).poses.size() -1);
-
-  Twist::Ptr cmd (new Twist);
   if ( tCol < config::TIMESTEP ) {
     cmd->linear.x = 0;
     cmd->linear.y = 0;
   } else if (tCol < config::SOFTSTOP_BEGIN) {
     double scale = tCol / config::SOFTSTOP_BEGIN;
-    cmd->linear.x = scale * msg->linear.x;
-    cmd->linear.y = scale * msg->linear.y;
-  } else {
-    cmd->linear.x = msg->linear.x;
-    cmd->linear.y = msg->linear.y;
-  }
+    cmd->linear.x *= scale;
+    cmd->linear.y *= scale;
+  } 
+
   m_cmdPub.publish(cmd);
 }
 
@@ -49,6 +69,11 @@ void Controller::handleAuxJs(const Twist::ConstPtr &msg) {
 void Controller::handleMap(const OccupancyGrid::ConstPtr &msg) {
   m_map = msg;
   m_haveMap = true;
+}
+
+void Controller::handleSonar(const Sonar::ConstPtr &msg) {
+  m_sonar = msg;
+  m_haveSonar = true;
 }
 
 PredictedPath::Ptr Controller::predictPath(const Twist::ConstPtr &input) {

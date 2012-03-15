@@ -3,11 +3,13 @@
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/OccupancyGrid.h>
 
+#include "wheelchair_ros/Sonar.h"
 #include "wheelchair_ros/controller.hpp"
 
 using namespace std;
 using geometry_msgs::Twist;
 using nav_msgs::OccupancyGrid;
+using wheelchair_ros::Sonar;
 
 static auto_ptr<Controller> controller;
 
@@ -23,6 +25,10 @@ void mapCallback(const OccupancyGrid::ConstPtr &msg) {
   controller->handleMap(msg);
 }
 
+void sonarCallback(const Sonar::ConstPtr &msg) {
+  controller->handleSonar(msg);
+}
+
 int main (int argc, char *argv[]) {
   ros::init(argc, argv, "controller_node");
   ros::NodeHandle node;
@@ -35,6 +41,8 @@ int main (int argc, char *argv[]) {
       "wheel_js_aux", 1, auxJsCallback);
   ros::Subscriber map = node.subscribe<OccupancyGrid> (
       "map2d", 1, mapCallback);
+  ros::Subscriber sonar = node.subscribe<Sonar> (
+      "sonar", 1, sonarCallback);
 
   ros::spin();
 }

@@ -9,6 +9,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/OccupancyGrid.h>
 #include "wheelchair_ros/PredictedPath.h"
+#include "wheelchair_ros/Sonar.h"
 
 class Controller {
 private:
@@ -18,12 +19,16 @@ private:
   nav_msgs::OccupancyGrid::ConstPtr m_map;
   bool m_haveMap;
 
+  wheelchair_ros::Sonar::ConstPtr m_sonar;
+  bool m_haveSonar;
+
 public:
   Controller(ros::NodeHandle &nh);
 
   void handleJs(const geometry_msgs::Twist::ConstPtr &msg);
   void handleAuxJs(const geometry_msgs::Twist::ConstPtr &msg);
   void handleMap(const nav_msgs::OccupancyGrid::ConstPtr &msg);
+  void handleSonar(const wheelchair_ros::Sonar::ConstPtr &msg);
 
 protected:
   wheelchair_ros::PredictedPath::Ptr 
