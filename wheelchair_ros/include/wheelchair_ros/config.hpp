@@ -42,6 +42,13 @@ inline std::vector<Occupancy::SonarPose> getSonarPoses() {
   return ret;
 }
 
+/* Motion model parameters */
+static const double TIMESTEP = 0.25;
+static const double SIM_LENGTH = 10.0;
+static const double K_FWD = 0.3;
+static const double K_ROT = 0.3;
+static const double SOFTSTOP_BEGIN = 5.0;  // (seconds to collision)
+
 }; // namespace config
 
 

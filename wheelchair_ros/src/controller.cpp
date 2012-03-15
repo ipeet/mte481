@@ -25,10 +25,17 @@ Controller::Controller(ros::NodeHandle &nh) :
 void Controller::handleJs(const Twist::ConstPtr &msg) {
   PredictedPath::Ptr path = predictPath(msg);
   m_pathPub.publish(path);
+
+  double tCol = path->timestep * ((*path).poses.size() -1);
+
   Twist::Ptr cmd (new Twist);
-  if ( (path->timestep * ((*path).poses.size()-1)) < 3.0) {
+  if ( tCol < config::TIMESTEP ) {
     cmd->linear.x = 0;
     cmd->linear.y = 0;
+  } else if (tCol < config::SOFTSTOP_BEGIN) {
+    double scale = tCol / config::SOFTSTOP_BEGIN;
+    cmd->linear.x = scale * msg->linear.x;
+    cmd->linear.y = scale * msg->linear.y;
   } else {
     cmd->linear.x = msg->linear.x;
     cmd->linear.y = msg->linear.y;
@@ -58,9 +65,9 @@ PredictedPath::Ptr Controller::predictPath(const Twist::ConstPtr &input) {
   PredictedPath::Ptr ret (new PredictedPath);
   ret->poses.push_back(*(curState.pose));
   ret->poseCollides.push_back(false);
-  ret->timestep = 0.5;
-  for (int i=0; i<20; ++i) {
-    curState = predict(curState, input, ret->timestep);
+  ret->timestep = config::TIMESTEP;
+  for (double t=0; t <= config::SIM_LENGTH; t += config::TIMESTEP) {
+    curState = predict(curState, input, config::TIMESTEP);
     ret->poses.push_back(*(curState.pose));
     double curX = curState.pose->pose.position.x;
     double curY = curState.pose->pose.position.y;
@@ -84,8 +91,8 @@ Controller::State Controller::predict(
   ret.pose->pose.orientation.z = 1;
 
   // Compute current velocities:
-  double angular = 0.2*(-input->linear.x + 0.04);
-  double forward = 0.2*(input->linear.y - 0.055); 
+  double angular = config::K_ROT * (-input->linear.x + 0.04);
+  double forward = config::K_FWD * (input->linear.y - 0.055); 
   double heading = prev.pose->pose.orientation.w; // convenient
 
   // Forward difference computation of next state:
