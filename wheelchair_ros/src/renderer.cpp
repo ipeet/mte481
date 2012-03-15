@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <nav_msgs/OccupancyGrid.h>
+#include "wheelchair_ros/config.hpp"
 #include "wheelchair_ros/renderer.hpp"
 #include "wheelchair_ros/Occupancy3D.h"
 #include "wheelchair_ros/geometry.hpp"
@@ -359,12 +360,7 @@ void CollisionView::renderMap() {
 void CollisionView::renderPath() {
   if (!m_havePath) return;
 
-  Polygon wheelPoly;
-  wheelPoly.push(Point3D(-0.5,-0.5,0));
-  wheelPoly.push(Point3D(0.5,-0.5,0));
-  wheelPoly.push(Point3D(0.5,0.5,0));
-  wheelPoly.push(Point3D(-0.5,0.5,0));
-
+  Polygon wheelPoly (config::getWheelchairBounds());
   double orig_x = -20.0;
   double orig_y = -20.0;
   double res = 0.1;

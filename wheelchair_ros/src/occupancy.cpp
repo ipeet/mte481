@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "wheelchair_ros/occupancy.hpp"
+#include "wheelchair_ros/config.hpp"
 
 using namespace std;
 using namespace nav_msgs;
@@ -26,7 +27,8 @@ Occupancy::Occupancy(ros::NodeHandle node,
   m_orig_x(ox),
   m_orig_y(oy),
   m_orig_z(oz),
-  m_haveSonar(false)
+  m_haveSonar(false),
+  m_sonars(config::getSonarPoses())
 {
   /* Convenience - grid size */
   int gw = m_width / m_resolution;
@@ -36,11 +38,6 @@ Occupancy::Occupancy(ros::NodeHandle node,
   m_sonar2d.resize(gw*gd);
   m_kinect3d.resize(gw*gd*gh);
   m_sonar3d.resize(gw*gd*gh);
-
-  m_sonars.push_back(SonarPose(0.5, -0.5, 0));
-  m_sonars.push_back(SonarPose(0.5, 0.5, 0));
-  m_sonars.push_back(SonarPose(-0.5, -0.5, M_PI));
-  m_sonars.push_back(SonarPose(-0.5, 0.5, M_PI));
 }
 
 void Occupancy::handlePointcloud(const PointCloud::ConstPtr &msg) {

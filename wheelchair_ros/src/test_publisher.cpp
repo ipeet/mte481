@@ -41,8 +41,8 @@ int main(int argc, char *argv[]) {
   ros::Rate loopRate(5);
   while (ros::ok()) {
     Twist::Ptr js (new Twist);
-    js->linear.x = 0.2;
-    js->linear.y = 0.5;
+    js->linear.x = -1.0;
+    js->linear.y = 2.5;
     wheelJs.publish(js);
 
     publishMap(map2);

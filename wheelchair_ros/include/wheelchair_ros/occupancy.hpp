@@ -13,6 +13,18 @@
 #include "wheelchair_ros/Sonar.h"
 
 class Occupancy {
+public:
+  class SonarPose {
+  private:
+    double m_x; // displacment from origin [m]
+    double m_y;
+    double m_dir;  // orientation, in radians
+  public:
+    SonarPose(double x, double y, double dir);
+    std::pair<double, double> inOccupancy
+      (const Occupancy &occ, double rad, double ang);
+  };
+
 private:
   ros::Publisher m_pub2d;
   std::vector<int> m_kinect2d;
@@ -32,17 +44,6 @@ private:
 
   double m_ranges[4];
   bool m_haveSonar;
-
-  class SonarPose {
-  private:
-    double m_x; // displacment from origin [m]
-    double m_y;
-    double m_dir;  // orientation, in radians
-  public:
-    SonarPose(double x, double y, double dir);
-    std::pair<double, double> inOccupancy
-      (const Occupancy &occ, double rad, double ang);
-  };
 
   std::vector<SonarPose> m_sonars;
 

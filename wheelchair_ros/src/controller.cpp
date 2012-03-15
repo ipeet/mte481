@@ -6,6 +6,7 @@
 #include <nav_msgs/OccupancyGrid.h>
 #include "wheelchair_ros/PredictedPath.h"
 #include "wheelchair_ros/controller.hpp"
+#include "wheelchair_ros/config.hpp"
 #include "wheelchair_ros/geometry.hpp"
 
 
@@ -25,8 +26,13 @@ void Controller::handleJs(const Twist::ConstPtr &msg) {
   PredictedPath::Ptr path = predictPath(msg);
   m_pathPub.publish(path);
   Twist::Ptr cmd (new Twist);
-  cmd->linear.x = 0;
-  cmd->linear.y = 0;
+  if ( (path->timestep * ((*path).poses.size()-1)) < 3.0) {
+    cmd->linear.x = 0;
+    cmd->linear.y = 0;
+  } else {
+    cmd->linear.x = msg->linear.x;
+    cmd->linear.y = msg->linear.y;
+  }
   m_cmdPub.publish(cmd);
 }
 
@@ -52,13 +58,15 @@ PredictedPath::Ptr Controller::predictPath(const Twist::ConstPtr &input) {
   PredictedPath::Ptr ret (new PredictedPath);
   ret->poses.push_back(*(curState.pose));
   ret->poseCollides.push_back(false);
+  ret->timestep = 0.5;
   for (int i=0; i<20; ++i) {
-    curState = predict(curState, input, 0.5);
+    curState = predict(curState, input, ret->timestep);
     ret->poses.push_back(*(curState.pose));
-    bool col = collides(curState.pose->pose.position.x,
-        curState.pose->pose.position.y,
-        curState.pose->pose.orientation.w);
+    double curX = curState.pose->pose.position.x;
+    double curY = curState.pose->pose.position.y;
+    bool col = collides(curX, curY, curState.pose->pose.orientation.w);
     ret->poseCollides.push_back(col);
+    if (col) break;
   }
   return ret;
 }
@@ -76,8 +84,8 @@ Controller::State Controller::predict(
   ret.pose->pose.orientation.z = 1;
 
   // Compute current velocities:
-  double angular = -input->linear.x + 0.04;
-  double forward = input->linear.y - 0.055; 
+  double angular = 0.2*(-input->linear.x + 0.04);
+  double forward = 0.2*(input->linear.y - 0.055); 
   double heading = prev.pose->pose.orientation.w; // convenient
 
   // Forward difference computation of next state:
@@ -92,11 +100,7 @@ Controller::State Controller::predict(
 
 bool Controller::collides(double x, double y, double w) {
   if (!m_haveMap) return false;
-  Polygon wheel;
-  wheel.push(Point3D(-0.5,-0.5,0));
-  wheel.push(Point3D(0.5,-0.5,0));
-  wheel.push(Point3D(0.5,0.5,0));
-  wheel.push(Point3D(-0.5,0.5,0));
+  Polygon wheel (config::getWheelchairBounds());
   double res = m_map->info.resolution;
   double orig_x = m_map->info.origin.position.x;
   double orig_y = m_map->info.origin.position.y;
