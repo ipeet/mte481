@@ -384,10 +384,10 @@ void CollisionView::renderPath() {
   glBegin(GL_LINES);
   for (unsigned i=1; i < m_path->poses.size(); ++i) {
     glVertex3d( m_path->poses[i-1].pose.position.x, 
-                m_path->poses[i-1].pose.position.y,
+                m_path->poses[i-1].pose.position.y - config::KINECT_OFFSET,
                 0.0 );
     glVertex3d( m_path->poses[i].pose.position.x, 
-                m_path->poses[i].pose.position.y,
+                m_path->poses[i].pose.position.y - config::KINECT_OFFSET,
                 0.0 );
   }
   glEnd();
@@ -400,6 +400,7 @@ void CollisionView::renderPath() {
     } else {
       glMaterialfv(GL_FRONT, GL_EMISSION, green);
     }
+    glTranslated(0, -config::KINECT_OFFSET, 0);
     glTranslated(m_path->poses[i].pose.position.x,
                  m_path->poses[i].pose.position.y,
                  0);

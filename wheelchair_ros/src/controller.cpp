@@ -106,7 +106,8 @@ bool Controller::collides(double x, double y, double w) {
   double orig_y = m_map->info.origin.position.y;
 
   wheel = Matrix4x4::rotation(w, Vector3D(0, 0, 1)) * wheel;
-  wheel = Matrix4x4::translation(Vector3D(x-orig_x, y-orig_y, 0)) * wheel;
+  wheel = Matrix4x4::translation(Vector3D(
+        x-orig_x, y-orig_y-config::KINECT_OFFSET, 0)) * wheel;
   wheel = Matrix4x4::scale(1.0/res, 1.0/res, 1.0) * wheel;
   
   for (unsigned i=0; i < m_map->info.width; ++i) {
