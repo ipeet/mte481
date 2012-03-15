@@ -65,9 +65,9 @@ void Occupancy::handlePointcloud(const PointCloud::ConstPtr &msg) {
     if (y >= m_orig_y + m_height) continue;
     if (z < m_orig_z) continue;
     if (z >= m_orig_z + m_depth) continue;
-    int xi = (x - m_orig_x) / m_resolution;
-    int yi = (y - m_orig_y) / m_resolution;
-    int zi = (z - m_orig_z) / m_resolution;
+    int xi = (x - m_orig_x) / m_resolution + 0.5;
+    int yi = (y - m_orig_y) / m_resolution + 0.5;
+    int zi = (z - m_orig_z) / m_resolution + 0.5;
     m_kinect2d[zi*w + xi] = 100;
     m_kinect3d[yi*d*w + zi*w + xi] = 1;
   }
@@ -95,8 +95,8 @@ void Occupancy::handleSonar(const Sonar::ConstPtr &msg) {
       if (x >= m_orig_x + m_width) continue;
       if (z < m_orig_z) continue;
       if (z >= m_orig_z + m_depth) continue;
-      int xi = (x + 0.5 - m_orig_x) / m_resolution;
-      int zi = (z + 0.5 - m_orig_z) / m_resolution;
+      int xi = (x - m_orig_x) / m_resolution + 0.5;
+      int zi = (z - m_orig_z) / m_resolution + 0.5;
       m_sonar2d[zi*w + xi] = 100;
       m_sonar3d[zi*w + xi] = 1;
     }
