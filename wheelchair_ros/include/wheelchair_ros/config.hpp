@@ -48,6 +48,8 @@ static const double SIM_LENGTH = 10.0;
 static const double K_FWD = 0.3;
 static const double K_ROT = 0.3;
 static const double SOFTSTOP_BEGIN = 5.0;  // (seconds to collision)
+static const double LAT_OFFSET = 0.04;  // zero point for wheelchair js.
+static const double FWD_OFFSET = 0.055;
 
 }; // namespace config
 

@@ -3,6 +3,7 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include "wheelchair_ros/config.hpp"
 
 using geometry_msgs::Twist;
 using nav_msgs::OccupancyGrid;
@@ -41,8 +42,8 @@ int main(int argc, char *argv[]) {
   ros::Rate loopRate(5);
   while (ros::ok()) {
     Twist::Ptr js (new Twist);
-    js->linear.x = -1.0;
-    js->linear.y = 2.5;
+    js->linear.x = -0.5;
+    js->linear.y = 2.0;
     wheelJs.publish(js);
 
     publishMap(map2);
