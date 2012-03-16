@@ -23,6 +23,8 @@ public:
 
   Vector3D operator*(double r) const;
   Vector3D operator/(double denom) const;
+  Vector3D operator+(const Vector3D &r) const;
+  Vector3D operator-(const Vector3D &r) const;
 };
 
 Vector3D operator*(double l, const Vector3D &r);

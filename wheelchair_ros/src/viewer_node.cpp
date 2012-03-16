@@ -155,13 +155,17 @@ void buttonHandler(int button, int state, int x, int y) {
 void moveHandler(int x, int y) {
   int dx = x - lastMouseX;
   int dy = y - lastMouseY;
-  if (mouseState & LEFT_DOWN) {
-    renderer->setOrientation(renderer->getOrientation() + dx);
-    renderer->setAzimuth(renderer->getAzimuth() + dy);
-  }
   if (mouseState & RIGHT_DOWN) {
-    renderer->setDistance(renderer->getDistance() - dy);
-    glutPostRedisplay();
+    Quaternion rot (M_PI*dy/180.0, Vector3D(1, 0, 0));
+    rot = rot * Quaternion(M_PI*dx/180.0, Vector3D(0, 1, 0));
+    renderer->setRotation(rot * renderer->getRotation());
+  }
+  if (mouseState & LEFT_DOWN) {
+    if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
+      renderer->setTranslation(renderer->getTranslation() - Vector3D(0,0,dy));
+    } else {
+      renderer->setTranslation(renderer->getTranslation() + Vector3D(0.1*dx,-0.1*dy,0));
+    }
   }
 
   lastMouseX = x;
