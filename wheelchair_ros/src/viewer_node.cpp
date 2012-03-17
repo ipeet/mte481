@@ -22,9 +22,10 @@ const int TICK_MS = 33;
 const int WIDTH = 600;
 const int HEIGHT = 400;
 
-static Renderer *renderer = NULL;
-static Map3DView  *map3View = NULL;
-static CollisionView *colView = NULL;
+static auto_ptr<Renderer> renderer (NULL);
+static auto_ptr<Map3DView> map3View (NULL);
+static auto_ptr<CollisionView> colView (NULL);
+static auto_ptr<ros::NodeHandle> node (NULL);
 
 void map3Callback(const Occupancy3D::ConstPtr &msg) {
   map3View->setMap(msg);
@@ -60,17 +61,22 @@ void tick(int value) {
   glutPostRedisplay();
 }
 
+void toggleDriveEnabled();
 void keyHandler(unsigned char key, int x, int y) {
   switch(key) {
     case ' ':  // Reset camera position
       renderer->reset();
       break;
     case '1': // 3D map view
-      renderer->setView(map3View);
+      renderer->setView(map3View.get());
       break;
     case '2': // Occupancy view
-      renderer->setView(colView);
+      renderer->setView(colView.get());
       break;
+    case 'd': 
+      toggleDriveEnabled();
+      break;
+      
     default:
       return;
   }
@@ -86,12 +92,12 @@ int main(int argc, char *argv[]) {
 
   /* ROS init */
   ros::init(argc, argv, "viewer_node");
-  ros::NodeHandle nh;
-  ros::Subscriber sub2 = nh.subscribe<OccupancyGrid>(
+  node = auto_ptr<ros::NodeHandle> (new ros::NodeHandle);
+  ros::Subscriber sub2 = node->subscribe<OccupancyGrid>(
       "map2d", 1, map2Callback);
-  ros::Subscriber sub3 = nh.subscribe<Occupancy3D>(
+  ros::Subscriber sub3 = node->subscribe<Occupancy3D>(
       "map3d", 1, map3Callback);
-  ros::Subscriber pathSub = nh.subscribe<PredictedPath>(
+  ros::Subscriber pathSub = node->subscribe<PredictedPath>(
       "predicted_path", 1, pathCallback);
 
   /* GLUT init */
@@ -100,10 +106,14 @@ int main(int argc, char *argv[]) {
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
   glutCreateWindow("Wheelchar 482");
 
-  renderer = new Renderer(WIDTH, HEIGHT);
-  map3View = new Map3DView (*renderer);
-  colView = new CollisionView (*renderer);
-  renderer->setView(colView);
+  renderer = auto_ptr<Renderer> (new Renderer(WIDTH, HEIGHT));
+  map3View = auto_ptr<Map3DView> (new Map3DView (*renderer));
+  colView = auto_ptr<CollisionView> (new CollisionView (*renderer));
+  renderer->setView(colView.get());
+
+  bool driveEnabled;
+  node->param<bool>("drive_enabled", driveEnabled, true);
+  renderer->setDriveEnabled(driveEnabled);
 
   glutDisplayFunc(render);
   glutTimerFunc(TICK_MS, tick, 0);
@@ -113,6 +123,13 @@ int main(int argc, char *argv[]) {
   glutKeyboardFunc(keyHandler);
   glutMainLoop();
   return 0;
+}
+
+void toggleDriveEnabled() {
+  bool cur;
+  node->param<bool>("drive_enabled", cur, true);
+  node->setParam("drive_enabled", !cur);
+  renderer->setDriveEnabled(!cur);
 }
 
 /* Mouse motion state */

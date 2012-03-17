@@ -36,6 +36,7 @@ private:
   int m_height;
 
   int m_cube_list;
+  bool m_driveEnabled;
 
   RendererView *m_view;
 
@@ -50,6 +51,8 @@ public:
 
   void setViewport(int w, int h);
   void setView(RendererView *view) { m_view = view; }
+
+  void setDriveEnabled(bool en) {m_driveEnabled = en;}
 
   void render();
 

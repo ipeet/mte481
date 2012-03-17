@@ -37,6 +37,7 @@ Renderer::Renderer(int width, int height) :
   m_width(width),
   m_height(height),
   m_cube_list(0),
+  m_driveEnabled(true),
   m_view(NULL)
 {
   glShadeModel(GL_SMOOTH);
@@ -98,9 +99,13 @@ void Renderer::render() {
   /* Switch to orthographic projection to draw text */
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(-1.0,1.0,-1.0,1.0,-1.0,1.0);
+  glOrtho(0, m_width, 0, m_height,-1.0,1.0);
 
-  drawString("Hello!", -0.95, -0.95);
+  glDisable(GL_LIGHTING);
+  glColor3f(1,0,0);
+  if (!m_driveEnabled) {
+    drawString("Drive Disabled.", 10.0, 10.0);
+  }
   CHECK_GL();
 
   glutSwapBuffers();
@@ -113,7 +118,6 @@ void Renderer::drawString(const char* str, double x, double y, double z) {
     str++;
   }
 }
-
 
 void Renderer::setViewport(int w, int h) {
   m_width = w;
