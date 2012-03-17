@@ -35,7 +35,8 @@ private:
   int m_width;
   int m_height;
 
-  int m_cube_list;
+  int m_cubeList;
+  int m_wfCubeList;
   bool m_driveEnabled;
 
   RendererView *m_view;
@@ -56,7 +57,8 @@ public:
 
   void render();
 
-  void drawCube(double x, double y, double z);
+  void drawCube();
+  void drawWfCube();  // Wireframe cube
   void drawQuad(double x, double y);
   void drawPoly(const Polygon &poly);
   void drawString(const char* str, double x, double y, double z=0.0);
@@ -67,17 +69,26 @@ private:
 
 class Map3DView : public RendererView {
 private:
-  bool m_haveMap;
   wheelchair_ros::Occupancy3D::ConstPtr m_map;
+  bool m_haveMap;
+  wheelchair_ros::PredictedPath::ConstPtr m_path;
+  bool m_havePath;
 
 public:
-  Map3DView(Renderer &r) : RendererView(r), m_haveMap(false) {}
+  Map3DView(Renderer &r) : 
+    RendererView(r), 
+    m_haveMap(false),
+    m_havePath(false)
+  {}
 
   virtual void render();
   void setMap(const wheelchair_ros::Occupancy3D::ConstPtr &msg);
+  void setPath(const wheelchair_ros::PredictedPath::ConstPtr &msg);
 
 private:
   void drawBounds(double x, double y, double z);
+  void drawMap();
+  void drawPath();
 };
 
 class CollisionView : public RendererView { 

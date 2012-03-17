@@ -36,7 +36,8 @@ Renderer::Renderer(int width, int height) :
   m_fov(60.0),
   m_width(width),
   m_height(height),
-  m_cube_list(0),
+  m_cubeList(0),
+  m_wfCubeList(0),
   m_driveEnabled(true),
   m_view(NULL)
 {
@@ -84,12 +85,8 @@ void Renderer::render() {
   } else {
     glTranslated(-0.5, 0, -10);
     glRotated(30, 1, 0, 0);
-    drawCube(0, 0, 0);
-    drawCube(1, 0, 0);
-    drawCube(1, 0, 1);
-    drawCube(0, 1, 0);
-    drawCube(0, 1, 1);
-    drawCube(1, 1, 1); 
+    glRotated(30, 0, 1, 0);
+    drawWfCube();
   }
 
   glPopMatrix();
@@ -156,17 +153,47 @@ void Renderer::reset() {
   m_view->reset();
 }
 
-void Renderer::drawCube(double x, double y, double z) {
-  if (!m_cube_list) {
+void Renderer::drawCube() {
+  if (!m_cubeList) {
     createCubeDisplayList();
   }
+  glCallList(m_cubeList);
+  CHECK_GL();
+}
 
-  glPushMatrix();
-  glTranslated(x, y, z);
-  glScaled(0.9, 0.9, 0.9);
+void Renderer::drawWfCube() {
+  /* Back wall */
+  glBegin(GL_LINE_LOOP);
+  glVertex3d(-0.5,-0.5,0.5);
+  glVertex3d(0.5,-0.5,0.5);
+  glVertex3d(0.5,0.5,0.5);
+  glVertex3d(-0.5,0.5,0.5);
+  glEnd();
 
-  glCallList(m_cube_list);
-  glPopMatrix();
+  /* Left wall */
+  glBegin(GL_LINE_LOOP);
+  glVertex3d(-0.5,-0.5,-0.5); 
+  glVertex3d(-0.5,-0.5,0.5); 
+  glVertex3d(-0.5,0.5,0.5); 
+  glVertex3d(-0.5,0.5,-0.5); 
+  glEnd();
+
+  /* Right Wall */
+  glBegin(GL_LINE_LOOP);
+  glVertex3d(0.5,-0.5,-0.5); 
+  glVertex3d(0.5,-0.5,0.5); 
+  glVertex3d(0.5,0.5,0.5); 
+  glVertex3d(0.5,0.5,-0.5); 
+  glEnd();
+
+  /* Front wall(ish) */
+  glBegin(GL_LINE_LOOP);
+  glVertex3d(-0.5,-0.5,-0.5);
+  glVertex3d(0.5,-0.5,-0.5);
+  glVertex3d(0.5,0.5,-0.5);
+  glVertex3d(-0.5,0.5,-0.5);
+  glEnd();
+
   CHECK_GL();
 }
 
@@ -195,14 +222,14 @@ void Renderer::drawPoly(const Polygon& poly) {
 }
 
 void Renderer::createCubeDisplayList() {
-  m_cube_list = glGenLists(1);
-  if (! m_cube_list) {
+  m_cubeList = glGenLists(1);
+  if (! m_cubeList) {
     cerr << "Failed to allocate display list." << endl;
     cerr << "GL: " << gluErrorString(glGetError()) << endl;
     abort();
   }
 
-  glNewList(m_cube_list, GL_COMPILE);
+  glNewList(m_cubeList, GL_COMPILE);
   glBegin(GL_QUADS);
   /* xy faces */
   glNormal3d(0, 0, 1);
@@ -252,6 +279,11 @@ void Map3DView::setMap(const wheelchair_ros::Occupancy3D::ConstPtr &msg) {
   m_map = msg;
 }
 
+void Map3DView::setPath(const wheelchair_ros::PredictedPath::ConstPtr &msg) {
+  m_havePath = true;
+  m_path = msg;
+}
+
 void Map3DView::render() {
   glPushMatrix();
 
@@ -262,44 +294,126 @@ void Map3DView::render() {
     d = m_map->depth;
     h = m_map->height;
   } else {
-    w = d = 40;
-    h = 10;
+    w = config::WIDTH / config::RESOLUTION;
+    d = config::DEPTH / config::RESOLUTION;
+    h = config::HEIGHT / config::RESOLUTION;
   }
 
   // X offset to algin the centre the map's depth axis.
   glTranslated(-0.5*w, -0.5*h, 0.5*d);
 
   drawBounds(w, h, -d);
+  drawMap();
+  drawPath();
 
-  if (!m_haveMap) {
-    glPopMatrix();
-    CHECK_GL();
-    return;
-  }
+  glPopMatrix();
+  CHECK_GL();
+}
 
-  /* Set cube material */
-  GLfloat diff[] = {1.0, 1.0, 1.0, 1.0};
-  GLfloat spec[] = {1.0, 1.0, 1.0, 1.0};
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, diff);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, spec);
+void Map3DView::drawMap() {
+  if (!m_haveMap) return;
+
+  /* convenience */
+  int w = m_map->width;
+  int d = m_map->depth;
+  int h = m_map->height;
+  GLfloat white[] = {1.0, 1.0, 1.0, 1.0};
+  GLfloat black[] = {0, 0, 0, 1};
+
+  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, white);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, white);
+  glMaterialfv(GL_FRONT, GL_EMISSION, black);
   glMaterialf(GL_FRONT, GL_SHININESS, 20.0);
   for (int x=0; x < w; ++x) {
     for (int z=0; z < d; ++z) {
       for (int y=0; y < h; ++y) {
          int data = m_map->data[d*w*y + w*z + x];
          if (data) {
-           m_renderer.drawCube(x, y, -z);
+           glPushMatrix();
+           glTranslated(x, y, -z);
+           glScaled(0.9,0.9,0.9);
+           m_renderer.drawCube();
+           glPopMatrix();
          }
       }
     }
   }
+}
+
+void Map3DView::drawPath() {
+  /* convenience */
+  GLfloat black[] = {0, 0, 0, 1};
+  GLfloat green[] = {0, 1, 0, 1};
+  GLfloat red[] = {1, 0, 0, 1};
+
+  glPushMatrix();
+  /* Map to physics co-ordinate space */
+  glScaled(1.0/config::RESOLUTION, 1.0/config::RESOLUTION, 1.0/config::RESOLUTION);
+  glTranslated(-config::ORIG_X, 0.5, config::ORIG_Z); 
+
+  /* Draw the start point */
+  glPushMatrix();
+  glScaled(config::WHEELCHAIR_WIDTH, 1.0, config::WHEELCHAIR_LENGTH);
+  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, black);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, black);
+  glMaterialfv(GL_FRONT, GL_EMISSION, green);
+  m_renderer.drawWfCube();
+  glPopMatrix();
+
+  /* Draw the path */
+  if (!m_havePath) {
+    glPopMatrix();
+    return;
+  }
+
+  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, green);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, black);
+  glMaterialfv(GL_FRONT, GL_EMISSION, black);
+
+  for (int i=0; (i+1) < m_path->poses.size(); ++i) {
+    double x1 = m_path->poses[i].pose.position.x;
+    double y1 = m_path->poses[i].pose.position.y;
+    double x2 = m_path->poses[i+1].pose.position.x;
+    double y2 = m_path->poses[i+1].pose.position.y;
+    double len = sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+    double th = atan2((y2-y1),(x2-x1));
+
+    glPushMatrix();
+    // Place link at (x1, y1) */
+    glTranslated(x1, 0, -y1);
+    // Scale and rotate link it so it reaches (x2, y2) 
+    glRotated(180.0*th/M_PI, 0, 1, 0);
+    glScaled(len, 0.1, 0.1);
+    glTranslated(0.5, 0, 0);
+    m_renderer.drawCube();
+    glPopMatrix();
+  }
+
+  /* Draw the end point */
+  glPushMatrix();
+  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, black);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, black);
+  if (m_path->poseCollides.back()) {
+    glMaterialfv(GL_FRONT, GL_EMISSION, red);
+  } else {
+    glMaterialfv(GL_FRONT, GL_EMISSION, green);
+  }
+  glTranslated(m_path->poses.back().pose.position.x, 0,
+      - m_path->poses.back().pose.position.y);
+  glRotated(180.0*m_path->poses.back().pose.orientation.w / M_PI, 
+      0, 1, 0);
+  glScaled(config::WHEELCHAIR_LENGTH, 1.0, config::WHEELCHAIR_WIDTH);
+  m_renderer.drawWfCube();
+  glPopMatrix();
 
   glPopMatrix();
-  CHECK_GL();
 }
 
 void Map3DView::drawBounds(double x, double y, double z) {
-  GLfloat em[] = {0.0, 1.0, 0.0, 1.0};
+  GLfloat em[] = {0.0, 0.0, 0.5, 1.0};
+  GLfloat blk[] = {0, 0, 0, 0};
+  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, blk);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, blk);
   glMaterialfv(GL_FRONT, GL_EMISSION, em);
 
   /* Back wall */

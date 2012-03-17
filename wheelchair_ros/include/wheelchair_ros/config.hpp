@@ -31,6 +31,9 @@ inline Polygon getWheelchairBounds() {
   return ret;
 }
 
+static const double WHEELCHAIR_LENGTH = 1.0;
+static const double WHEELCHAIR_WIDTH = 0.6;
+
 static const double SONAR_FOV = 0.4*M_PI;
 
 inline std::vector<Occupancy::SonarPose> getSonarPoses() {

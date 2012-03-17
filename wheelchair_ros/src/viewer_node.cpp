@@ -38,6 +38,7 @@ void map2Callback(const OccupancyGrid::ConstPtr &msg) {
 }
 
 void pathCallback(const PredictedPath::ConstPtr &msg) {
+  map3View->setPath(msg);
   colView->setPath(msg);
   glutPostRedisplay();
 }
@@ -109,7 +110,7 @@ int main(int argc, char *argv[]) {
   renderer = auto_ptr<Renderer> (new Renderer(WIDTH, HEIGHT));
   map3View = auto_ptr<Map3DView> (new Map3DView (*renderer));
   colView = auto_ptr<CollisionView> (new CollisionView (*renderer));
-  renderer->setView(colView.get());
+  renderer->setView(map3View.get());
 
   bool driveEnabled;
   node->param<bool>("drive_enabled", driveEnabled, true);
