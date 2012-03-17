@@ -55,6 +55,14 @@ Vector3D Vector3D::operator/(double d) const {
   return Vector3D(v[0]/d, v[1]/d, v[2]/d);
 }
 
+Vector3D Vector3D::operator+(const Vector3D & r) const {
+  return Vector3D(v[0] + r.v[0], v[1] + r.v[1], v[2] + r.v[2]);
+}
+
+Vector3D Vector3D::operator-(const Vector3D &r) const {
+  return Vector3D(v[0] - r.v[0], v[1] - r.v[1], v[2] - r.v[2]);
+}
+
 Vector3D operator*(double l, const Vector3D &r) {
   return Vector3D(r.v[0]*l, r.v[1]*l, r.v[2]*l);
 }

@@ -5,6 +5,7 @@
 #include <nav_msgs/OccupancyGrid.h>
 #include "wheelchair_ros/Occupancy3D.h"
 #include "wheelchair_ros/PredictedPath.h"
+#include "wheelchair_ros/geometry.hpp"
 
 void checkGLError(const char* file, int line);
 
@@ -14,25 +15,25 @@ class Renderer;
 class RendererView {
 protected:
   Renderer &m_renderer;
+  Quaternion m_rotation;
+  Vector3D m_translation;
+
+  const static Quaternion DEFAULT_ROTATION;
+  const static Vector3D DEFAULT_TRANSLATION;
 
 public:
-  RendererView(Renderer &r) : m_renderer(r) {}
+  RendererView(Renderer &r) : m_renderer(r) {reset();}
   virtual void render() = 0;
+  virtual void reset();  // Resets co-ordinate transforms
+
+  friend class Renderer;
 };
 
 class Renderer {
-public:
-  const static double DEFAULT_AZIMUTH;
-  const static double DEFAULT_ORIENT;
-  const static double DEFAULT_DISTANCE;
-
 private:
   double m_fov;
   int m_width;
   int m_height;
-  double m_azimuth;  // angle from the 'horizontal' plane
-  double m_orient;   // angle about the vertical axis.
-  double m_distance; // distance of the camera from the origin.
 
   int m_cube_list;
 
@@ -41,12 +42,10 @@ private:
 public:
   Renderer(int width, int height);
 
-  double getAzimuth() { return m_azimuth; }
-  void setAzimuth(double a) { m_azimuth = a; }
-  double getOrientation() { return m_orient; }
-  void setOrientation(double o) { m_orient = o; }
-  double getDistance() { return m_distance; }
-  void setDistance(double d) { m_distance = d; }
+  Quaternion getRotation() const;
+  void setRotation(const Quaternion &r);
+  Vector3D getTranslation() const;
+  void setTranslation(const Vector3D &v);
   void reset(); // Resets to default view configuration
 
   void setViewport(int w, int h);
@@ -89,9 +88,10 @@ public:
     RendererView(r), 
     m_haveMap(false),
     m_havePath(false)
-  {}
+  { reset(); }
 
   virtual void render();
+  virtual void reset();
   void setMap(const nav_msgs::OccupancyGrid::ConstPtr &msg);
   void setPath(const wheelchair_ros::PredictedPath::ConstPtr &msg);
 

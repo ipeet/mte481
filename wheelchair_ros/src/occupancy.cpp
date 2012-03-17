@@ -65,9 +65,9 @@ void Occupancy::handlePointcloud(const PointCloud::ConstPtr &msg) {
     if (y >= m_orig_y + m_height) continue;
     if (z < m_orig_z) continue;
     if (z >= m_orig_z + m_depth) continue;
-    int xi = (x - m_orig_x) / m_resolution + 0.5;
-    int yi = (y - m_orig_y) / m_resolution + 0.5;
-    int zi = (z - m_orig_z) / m_resolution + 0.5;
+    int xi = (x - m_orig_x) / m_resolution;
+    int yi = (y - m_orig_y) / m_resolution;
+    int zi = (z - m_orig_z) / m_resolution;
     m_kinect2d[zi*w + xi] = 100;
     m_kinect3d[yi*d*w + zi*w + xi] = 1;
   }
@@ -145,6 +145,9 @@ Occupancy::SonarPose::SonarPose(double x, double y, double dir) :
 pair<double, double> Occupancy::SonarPose::inOccupancy
   (const Occupancy &occ, double rad, double ang) 
 {
+  if (rad < 3*config::RESOLUTION) {
+    rad = 3*config::RESOLUTION;
+  }
   double x = m_x + rad * cos(ang + m_dir);
   double y = m_y + rad * sin(ang + m_dir);
   return pair<double, double> (x, y);

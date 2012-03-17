@@ -24,17 +24,18 @@ void checkGLError(const char* file, int line) {
 }
 #define CHECK_GL() checkGLError(__FILE__, __LINE__)
 
-const double Renderer::DEFAULT_AZIMUTH = 30.0;
-const double Renderer::DEFAULT_ORIENT = 0.0;
-const double Renderer::DEFAULT_DISTANCE = 100.0;
+const Quaternion RendererView::DEFAULT_ROTATION (30.0*M_PI/180.0, Vector3D(1, 0, 0));
+const Vector3D RendererView::DEFAULT_TRANSLATION (0, 0, -100);
+
+void RendererView::reset() {
+  m_rotation = DEFAULT_ROTATION;
+  m_translation = DEFAULT_TRANSLATION;
+}
 
 Renderer::Renderer(int width, int height) :
   m_fov(60.0),
   m_width(width),
   m_height(height),
-  m_azimuth(DEFAULT_AZIMUTH),
-  m_orient(DEFAULT_ORIENT),
-  m_distance(DEFAULT_DISTANCE),
   m_cube_list(0),
   m_view(NULL)
 {
@@ -71,23 +72,23 @@ void Renderer::render() {
   glLightfv(GL_LIGHT1, GL_SPECULAR, light);
   glEnable(GL_LIGHT1);
 
-  /* Transform to world co-ordinates */
+  /* Transform co-ordinates and render */
   glPushMatrix();
-  glTranslated(0, 0, -m_distance);
-  glRotated(m_azimuth, 1, 0, 0);
-  glRotated(m_orient, 0, 1, 0);
-
-  if (!m_view) {
-    glTranslated(-0.5, 0, -0.5);
-    glScalef(10.0, 10.0, 10.0);
+  if (m_view) {
+    glTranslated(m_view->m_translation.v[0], m_view->m_translation.v[1], 
+        m_view->m_translation.v[2]);
+    glRotated(m_view->m_rotation.angle() * 180.0 / M_PI,
+        m_view->m_rotation.x(), m_view->m_rotation.y(), m_view->m_rotation.z());
+    m_view->render();
+  } else {
+    glTranslated(-0.5, 0, -10);
+    glRotated(30, 1, 0, 0);
     drawCube(0, 0, 0);
     drawCube(1, 0, 0);
     drawCube(1, 0, 1);
     drawCube(0, 1, 0);
     drawCube(0, 1, 1);
     drawCube(1, 1, 1); 
-  } else {
-    m_view->render();
   }
 
   glPopMatrix();
@@ -101,10 +102,36 @@ void Renderer::setViewport(int w, int h) {
   m_height = h;
 }
 
+Quaternion Renderer::getRotation() const {
+  if (m_view) {
+    return m_view->m_rotation;
+  } else {
+    return Quaternion();
+  }
+}
+
+void Renderer::setRotation(const Quaternion& q) {
+  if (m_view) {
+    m_view->m_rotation = q;
+  } 
+}
+
+Vector3D Renderer::getTranslation() const {
+  if (m_view) {
+    return m_view->m_translation;
+  } else {
+    return Vector3D();
+  }
+}
+
+void Renderer::setTranslation(const Vector3D &v) {
+  if (m_view) {
+    m_view->m_translation = v;
+  }
+}
+
 void Renderer::reset() {
-  m_azimuth = DEFAULT_AZIMUTH;
-  m_orient = DEFAULT_ORIENT;
-  m_distance = DEFAULT_DISTANCE;
+  m_view->reset();
 }
 
 void Renderer::drawCube(double x, double y, double z) {
@@ -288,6 +315,11 @@ void Map3DView::drawBounds(double x, double y, double z) {
   CHECK_GL();
 }
 
+void CollisionView::reset() {
+  m_rotation = Quaternion();
+  m_translation = RendererView::DEFAULT_TRANSLATION;
+}
+
 void CollisionView::setMap(const OccupancyGrid::ConstPtr &msg) {
   m_map = msg;
   m_haveMap = true;
@@ -312,8 +344,6 @@ void CollisionView::render() {
 
   /* Invert the default rotations.  The means that map will be viewed head-on
    * if view hasn't been modified, but will retain any delta */
-  glRotated(-Renderer::DEFAULT_ORIENT, 0, 1, 0);
-  glRotated(-Renderer::DEFAULT_AZIMUTH, 1, 0, 0);
   glTranslated(-0.5*w, -0.5*h, 0);
 
   /* Draw the bouding rectangle */

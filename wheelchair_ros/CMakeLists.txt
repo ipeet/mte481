@@ -27,4 +27,4 @@ rosbuild_add_executable(controller_node
     src/geometry.cpp)
 rosbuild_add_executable(test_publisher src/test_publisher.cpp)
 
-target_link_libraries(viewer_node /usr/lib/libglut.a /usr/lib/libGLU.a)
+target_link_libraries(viewer_node -lGLU -lglut)
