@@ -77,4 +77,7 @@
   <node pkg="wheelchair_ros" type="occupancy_node" name="occupancy_node" output="screen"/>
   <node pkg="wheelchair_ros" type="wheelchair_node" name="wheelchair_node" output="screen"/>
   <node pkg="wheelchair_ros" type="controller_node" name="controller_node" output="screen"/>
+
+  <node pkg="topic_tools" type="throttle" name="throttle2" args="messages map2d 15"/>
+  <node pkg="topic_tools" type="throttle" name="throttle3" args="messages map3d 5"/>
 </launch>
