@@ -14,6 +14,7 @@
 
 class Controller {
 private:
+  ros::NodeHandle m_node;
   ros::Publisher m_pathPub;
   ros::Publisher m_cmdPub;
 
@@ -46,8 +47,8 @@ protected:
       geometry_msgs::PoseStamped::Ptr prev, 
       const geometry_msgs::Twist::ConstPtr& input, 
       double step);
-
   bool collides(double x, double y, double w);
+  bool driveEnabled();
 };
 
 #endif //CONTROLLER_HPP_

@@ -20,6 +20,7 @@ using wheelchair_ros::PredictedPath;
 using wheelchair_ros::Sonar;
 
 Controller::Controller(ros::NodeHandle &nh) :
+  m_node(nh),
   m_pathPub(nh.advertise<PredictedPath>("predicted_path", 1)),
   m_cmdPub(nh.advertise<Twist>("wheel_js_out", 1)),
   m_haveMap(false),
@@ -50,7 +51,6 @@ void Controller::handleAuxJs(const Joy::ConstPtr &msg) {
   if (m_inputState == MAIN_ENGAGED) {
     return;
   }
-
   bool auxIsNeutral = true;
   if (abs(msg->axes[0]) > 0.05) {
     auxIsNeutral = false;
@@ -98,13 +98,19 @@ void Controller::handleInput(double lateral, double forward) {
   /* Check path against occupancy grid */
   double tCol = path->timestep * ((*path).poses.size() -1);
   if ( tCol < config::TIMESTEP ) {
-    cmd->linear.x = 0;
-    cmd->linear.y = 0;
+    cmd->linear.x = config::LAT_OFFSET;
+    cmd->linear.y = config::FWD_OFFSET;
   } else if (tCol < config::SOFTSTOP_BEGIN) {
     double scale = tCol / config::SOFTSTOP_BEGIN;
     cmd->linear.x *= scale;
     cmd->linear.y *= scale;
   } 
+
+  /* Check if driving is actually enabled */
+  if (! driveEnabled()) {
+    cmd->linear.x = config::LAT_OFFSET;
+    cmd->linear.y = config::FWD_OFFSET;
+  }
 
   m_cmdPub.publish(cmd);
 }
@@ -194,5 +200,11 @@ bool Controller::collides(double x, double y, double w) {
   }
 
   return false;
+}
+
+bool Controller::driveEnabled() {
+  bool ret;
+  m_node.param<bool>("drive_enabled", ret, true);
+  return ret;
 }
 
