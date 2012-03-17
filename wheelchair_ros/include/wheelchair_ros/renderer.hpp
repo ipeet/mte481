@@ -56,6 +56,7 @@ public:
   void drawCube(double x, double y, double z);
   void drawQuad(double x, double y);
   void drawPoly(const Polygon &poly);
+  void drawString(const char* str, double x, double y, double z=0.0);
 
 private:
   void createCubeDisplayList();

@@ -94,8 +94,26 @@ void Renderer::render() {
   glPopMatrix();
   CHECK_GL();
 
+
+  /* Switch to orthographic projection to draw text */
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(-1.0,1.0,-1.0,1.0,-1.0,1.0);
+
+  drawString("Hello!", -0.95, -0.95);
+  CHECK_GL();
+
   glutSwapBuffers();
 }
+
+void Renderer::drawString(const char* str, double x, double y, double z) {
+  glRasterPos3f(x, y, z);
+  while (*str) {
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *str);
+    str++;
+  }
+}
+
 
 void Renderer::setViewport(int w, int h) {
   m_width = w;
