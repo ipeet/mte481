@@ -22,6 +22,7 @@
  *****************************************************************************/
 
 #include <iostream>
+#include <geometry_msgs/Twist.h>
 
 #include "protocol.h"
 #include "wheelchair_ros/protocol_handlers.h"
@@ -44,14 +45,15 @@ void SonarHandler::handle(const SerialMessage &msg) const {
   m_pub.publish(out);
 }
 
-JoystickRequestHandler::JoystickRequestHandler(NodeHandle &node) {
-
-}
+JoystickRequestHandler::JoystickRequestHandler(NodeHandle &node) :
+  m_pub(node.advertise<geometry_msgs::Twist>("wheel_js_in", 1))
+{ }
 
 void JoystickRequestHandler::handle(const SerialMessage &msg) const {
-  /*cerr << "Joystick: ";
-  cerr << 127 - int(msg.jsReq.forward) << " ";
-  cerr << 127 - int(msg.jsReq.lateral) << endl; */
+  geometry_msgs::Twist::Ptr out (new geometry_msgs::Twist());
+  out->linear.x = double(127 - int(msg.jsReq.lateral)) / 127.0;
+  out->linear.y = double(127 - int(msg.jsReq.forward)) / 127.0;
+  m_pub.publish(out);
 }
 
 DigitalDataHandler::DigitalDataHandler(NodeHandle &node) :

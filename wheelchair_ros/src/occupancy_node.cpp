@@ -31,20 +31,13 @@
 
 #include "wheelchair_ros/Occupancy3D.h"
 #include "wheelchair_ros/Sonar.h"
-
 #include "wheelchair_ros/occupancy.hpp"
+#include "wheelchair_ros/config.hpp"
 
 using namespace std;
 using namespace nav_msgs;
 using namespace wheelchair_ros;
-
-const double RESOLUTION = 0.10; // in m
-const double WIDTH = 10.0;  // in m
-const double DEPTH = 10.0;
-const double HEIGHT = 0.5; // in m
-const double ORIG_X = -5.0;
-const double ORIG_Y = 0.0;
-const double ORIG_Z = -2.0;
+using namespace config;
 
 auto_ptr<Occupancy> occ;
 

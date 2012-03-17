@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "wheelchair_ros/occupancy.hpp"
+#include "wheelchair_ros/config.hpp"
 
 using namespace std;
 using namespace nav_msgs;
@@ -26,7 +27,8 @@ Occupancy::Occupancy(ros::NodeHandle node,
   m_orig_x(ox),
   m_orig_y(oy),
   m_orig_z(oz),
-  m_haveSonar(false)
+  m_haveSonar(false),
+  m_sonars(config::getSonarPoses())
 {
   /* Convenience - grid size */
   int gw = m_width / m_resolution;
@@ -36,11 +38,6 @@ Occupancy::Occupancy(ros::NodeHandle node,
   m_sonar2d.resize(gw*gd);
   m_kinect3d.resize(gw*gd*gh);
   m_sonar3d.resize(gw*gd*gh);
-
-  m_sonars.push_back(SonarPose(0.5, -0.5, 0));
-  m_sonars.push_back(SonarPose(0.5, 0.5, 0));
-  m_sonars.push_back(SonarPose(-0.5, -0.5, M_PI));
-  m_sonars.push_back(SonarPose(-0.5, 0.5, M_PI));
 }
 
 void Occupancy::handlePointcloud(const PointCloud::ConstPtr &msg) {
@@ -71,7 +68,7 @@ void Occupancy::handlePointcloud(const PointCloud::ConstPtr &msg) {
     int xi = (x - m_orig_x) / m_resolution;
     int yi = (y - m_orig_y) / m_resolution;
     int zi = (z - m_orig_z) / m_resolution;
-    m_kinect2d[xi*w + zi] = 100;
+    m_kinect2d[zi*w + xi] = 100;
     m_kinect3d[yi*d*w + zi*w + xi] = 1;
   }
 }
@@ -89,7 +86,7 @@ void Occupancy::handleSonar(const Sonar::ConstPtr &msg) {
   m_sonar3d.resize(w*d*h);
 
   for (int i=0; i<4; ++i) {
-    for (double j=-0.25*M_PI; j < 0.3*M_PI; j+=0.02) {
+    for (double j=-0.5*config::SONAR_FOV; j < 0.5*config::SONAR_FOV; j+=0.02) {
       pair<double, double> pos = m_sonars[i].inOccupancy(
           *this, msg->ranges[i], j);
       double x = pos.first;
@@ -98,9 +95,9 @@ void Occupancy::handleSonar(const Sonar::ConstPtr &msg) {
       if (x >= m_orig_x + m_width) continue;
       if (z < m_orig_z) continue;
       if (z >= m_orig_z + m_depth) continue;
-      int xi = (x - m_orig_x) / m_resolution;
-      int zi = (z - m_orig_z) / m_resolution;
-      m_sonar2d[xi*w + zi] = 100;
+      int xi = (x - m_orig_x) / m_resolution + 0.5;
+      int zi = (z - m_orig_z) / m_resolution + 0.5;
+      m_sonar2d[zi*w + xi] = 100;
       m_sonar3d[zi*w + xi] = 1;
     }
     m_ranges[i] = msg->ranges[i];
@@ -119,7 +116,7 @@ void Occupancy::publish() {
   map2->info.width = gw;
   map2->info.height = gd;
   map2->info.origin.position.x = m_orig_x;
-  map2->info.origin.position.y = m_orig_y;
+  map2->info.origin.position.y = m_orig_z;
   map2->data.resize(gw*gd);
 
   for (unsigned i=0; i<m_kinect2d.size(); ++i) {
@@ -148,6 +145,9 @@ Occupancy::SonarPose::SonarPose(double x, double y, double dir) :
 pair<double, double> Occupancy::SonarPose::inOccupancy
   (const Occupancy &occ, double rad, double ang) 
 {
+  if (rad < 3*config::RESOLUTION) {
+    rad = 3*config::RESOLUTION;
+  }
   double x = m_x + rad * cos(ang + m_dir);
   double y = m_y + rad * sin(ang + m_dir);
   return pair<double, double> (x, y);

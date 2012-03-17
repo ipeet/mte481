@@ -12,4 +12,5 @@
   <depend package="pcl"/>
   <depend package="pcl_ros"/>
   <depend package="nav_msgs"/>
+  <depend package="joy"/>
 </package>

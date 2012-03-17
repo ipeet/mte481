@@ -1,0 +1,5 @@
+<!-- Customized version of openni_launch/openni.launch -->
+<launch>
+  <include file="$(find wheelchair_ros)/system-noui.launch"/>
+  <include file="$(find wheelchair_ros)/ui.launch"/>
+</launch>

@@ -1,0 +1,12 @@
+<!-- Starts viewer and controller with test publisher. 
+     No sensor / wheelchair nodes -->
+
+<launch>
+  <node pkg="wheelchair_ros" type="test_publisher" name="test_pub" output="screen"/>
+  <node pkg="wheelchair_ros" type="viewer_node" name="viewer_node" output="screen"/>
+  <node pkg="wheelchair_ros" type="controller_node" name="controller_node" output="screen"/>
+  <node pkg="joy" type="joy_node" name="joy_node" output="screen">
+    <param name="dev" value="/dev/input/js0"/>
+    <remap from="joy" to="wheel_js_aux"/>
+  </node>
+</launch>

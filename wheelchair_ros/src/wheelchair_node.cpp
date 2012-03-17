@@ -20,26 +20,60 @@
  *****************************************************************************/
 
 #include <iostream>
+#include <cstdio>
 
-#include "ros/ros.h"
+#include <ros/ros.h>
+#include <geometry_msgs/Twist.h>
+
 #include "protocol.h"
 #include "wheelchair_ros/protocol_handlers.h"
 #include "wheelchair_ros/protocol_dispatcher.h"
 #include "wheelchair_ros/InputData.h"
 
 using namespace std;
+using geometry_msgs::Twist;
+
+void printSerialMessage(const SerialMessage &msg) {
+  const uint8_t *bMsg = reinterpret_cast<const uint8_t*>(&msg);
+  for (unsigned i=0; i < msg.length + MSG_HEADER_LENGTH; ++i) {
+    fprintf(stderr, "%02x ", int(bMsg[i]));
+  }
+  fprintf(stderr, "\n");
+}
+
+void jsOutCallback(const Twist::ConstPtr &msg) {
+  /* Send command to wheelchair */
+  struct SerialMessage cmd;
+  cmd.type = JS_LIMIT;
+  cmd.length = 2;
+  cmd.jsReq.forward = 127.5 + msg->linear.y*127;
+  cmd.jsReq.lateral = 127.5 + msg->linear.x*127;
+  cmd.checksum = pr_checksum(&cmd);
+  try {
+    SerialDispatcher::instance()->writeMsg(cmd);
+  } catch (Serial::Exception *ex) {
+    cerr << "Write error: " << ex->msg << endl;
+  }
+}
 
 int main(int argc, char *argv[]) {
   ros::init(argc, argv, "wheelchair_node");
   ros::NodeHandle node;
 
+  ros::Rate chair_retry(0.5);
   const char* devName = "/dev/ttyUSB0";
-  try {
-    SerialDispatcher::createInstance(devName);
-  } catch (Serial::Exception *ex) {
-    cerr << "Failed to open " << devName << ": " << ex->msg << endl;
-    exit(1);
+  while (ros::ok()) {
+    try {
+      SerialDispatcher::createInstance(devName);
+      break;
+    } catch (Serial::Exception *ex) {
+      cerr << "Failed to open " << devName << ": " << ex->msg << endl;
+    }
+    chair_retry.sleep();
   }
+
+  ros::Subscriber js_out_sub = node.subscribe<Twist> (
+      "wheel_js_out", 1, jsOutCallback);
 
   SonarHandler sonar (node);
   SerialDispatcher::instance()->setHandler(SONAR_MSG, &sonar);
