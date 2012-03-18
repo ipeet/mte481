@@ -13,9 +13,9 @@ namespace config {
 static const double RESOLUTION = 0.10; 
 static const double WIDTH = 10.0;  
 static const double DEPTH = 10.0;
-static const double HEIGHT = 1.0; 
+static const double HEIGHT = 0.8; 
 static const double ORIG_X = -5.0;
-static const double ORIG_Y = -1.0;
+static const double ORIG_Y = -0.8;
 static const double ORIG_Z = -2.0;
 
 /* Distance from wheelchair center of rotation to kinect */
