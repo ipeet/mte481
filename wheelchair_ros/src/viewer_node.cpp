@@ -62,6 +62,16 @@ void tick(int value) {
   glutPostRedisplay();
 }
 
+void toggleFullscreen() {
+  static bool isFullscreen = false;
+  if (!isFullscreen) {
+    glutFullScreen();
+  } else {
+    glutReshapeWindow(WIDTH, HEIGHT);
+  }
+  isFullscreen = !isFullscreen;
+}
+
 void toggleDriveEnabled();
 void keyHandler(unsigned char key, int x, int y) {
   switch(key) {
@@ -76,6 +86,9 @@ void keyHandler(unsigned char key, int x, int y) {
       break;
     case 'd': 
       toggleDriveEnabled();
+      break;
+    case 'f':
+      toggleFullscreen();
       break;
       
     default:
