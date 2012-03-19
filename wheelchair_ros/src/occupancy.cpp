@@ -91,12 +91,12 @@ void Occupancy::handleSonar(const Sonar::ConstPtr &msg) {
           *this, msg->ranges[i], j);
       double x = pos.first;
       double z = pos.second;
-      if (x < m_orig_x) continue;
-      if (x >= m_orig_x + m_width) continue;
-      if (z < m_orig_z) continue;
-      if (z >= m_orig_z + m_depth) continue;
       int xi = (x - m_orig_x) / m_resolution + 0.5;
       int zi = (z - m_orig_z) / m_resolution + 0.5;
+      if (xi < 0) continue;
+      if (xi >= m_width) continue;
+      if (zi < 0) continue;
+      if (zi >= m_depth) continue;
       m_sonar2d[zi*w + xi] = 100;
       m_sonar3d[zi*w + xi] = 1;
     }
