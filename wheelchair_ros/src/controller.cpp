@@ -67,8 +67,8 @@ void Controller::handleAuxJs(const Joy::ConstPtr &msg) {
   }
 
   // Wheelchair js is neutral, accept auxiliary joystick command.
-  handleInput(-msg->axes[0] - config::LAT_OFFSET, 
-      msg->axes[1] + config::FWD_OFFSET);
+  handleInput(0.3*(-msg->axes[0] - config::LAT_OFFSET), 
+      0.3*(msg->axes[1] + config::FWD_OFFSET));
 }
 
 void Controller::handleInput(double lateral, double forward) {

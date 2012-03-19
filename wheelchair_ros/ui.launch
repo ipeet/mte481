@@ -5,7 +5,7 @@
     <remap from="map2d" to="map2d_throttle" />
   </node>
   <node pkg="joy" type="joy_node" name="joy_node" output="screen">
-    <param name="dev" value="/dev/input/js0"/>
+    <param name="dev" value="/dev/input/js1"/>
     <remap from="joy" to="wheel_js_aux"/>
   </node>
 </launch>
