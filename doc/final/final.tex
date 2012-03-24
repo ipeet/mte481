@@ -6,7 +6,7 @@
 \usepackage[section]{placeins}
 \usepackage{listings}
 
-\graphicspath{{../report/images/}}
+\graphicspath{{../report/images/} {../../www/mte481/website/static/} {/images/}}
 
 \lstset{language=C++}
 
@@ -39,8 +39,8 @@
 
   Prepared By: \\[0.2cm]
   Iain Peet - 20252201\\
-  Jordan Valentin - xxxxxxxx\\
-  Rowan Head-Marsden - xxxxxxxx\\
+  Jordan Valentin - 20271260\\
+  Rowan Head-Marsden - 20271527\\
   \today
 \end{flushright}
 \clearpage
@@ -85,18 +85,18 @@ Iain Peet \hspace{2cm} Jordan Valentin \hspace{2cm} Rowan Head-Marsden
 
 \chapter{Introduction}
 \section{Background}
-Powered wheelchairs have obvious benefits for the mobility of the physically disabled.  Operation of any relatively heavy powered vehicle carries safety risk.  Operators must be capable of safe operation.
+Powered wheel chairs have obvious benefits for the mobility of the physically disabled. This can add dramatically to the quality of life for a physically disabled person. Operation of any relatively heavy powered vehicle carries certain safety risks and operators must be capable of safe operation. As a result of safety risks, patients in long-term care facilities are routinely denied the use of powered wheel chairs. 
 
-Irene Ruel, a physiotherapist in the employ of the British Columbia Interior Health Authority, who has previously been responsible for powered wheelchair assessments in an extended care facilities, was consulted regarding this problem.  By her account, the risk that powered wheelchair operators will collide with other patients is a serious concern.  This risk frequently results in the denial of requests for powered wheelchairs.
+We spoke with a member of the industy in order to discuss the need for collision-avoidance for powered wheel chairs. Irene Ruel, a physiotherapist in the employ of the British Columbia Interior Health Authority who has previously been responsible for powered wheel chair assessments in an extended care facility, was consulted regarding this problem. By her account, the risk that powered wheelchair operators will collide with other patients is a serious concern and frequently results in the denial of requests for powered wheel chairs for patients living in care facilities. This encouraged our team to develop a wheel chair that helps improve this situation
 
 \section{Need Statement}
-Access to powered wheelchairs may be restricted due to concerns regarding a patient's capability for safe operation.
+Access to powered wheelchairs may be restricted due to concerns regarding a patient's capability for safe operation. A design is needed to assist users in avoiding collisions in order to allow access to powered wheelchairs to a greater number of people.
 
 \section{Objectives and Constraints}
 The objectives of this design problem are as follows:
 
 \begin{itemize}
- \item \emph{Improve safety}.  Safety is a significant concern for powered wheelchair operation.  Effective safety systems will be of great value to those with physical disabilities.
+ \item \emph{Improve safety}.  Realistic operating environments will vary greatly in terms of lighting and types of obstacles encoutered, whether static obstacles or moving people/pets. The usefulness of a safety system will be severely degraded if it depends on a specific, controlled environment to be able to operate.
  \item \emph{Improve accessibility}.  For those who would be denied access to a powered wheelchair, a safety system which permits access will have significant quality-of-life benefits.
  \item \emph{Assist with difficult tasks}. Some tasks, such as precise positioning and movement in constrained spaces, are difficult even for unimpaired operators.   A system which can assist with such tasks would be helpful.
 \end{itemize}
@@ -104,9 +104,10 @@ The objectives of this design problem are as follows:
 The constraints of this design are as follows:
 
 \begin{itemize}
- \item \emph{Insensitive to operating environment}.  Realistic operating environments will be varied, and subject to change.  The usefulness of a safety system will be severely degraded if it depends on a specialized, controlled environment.
- \item \emph{Integrates with existing wheelchairs}.  Powered wheelchairs are expensive, and many are already in existence.  The potential reach of a new safety system will be severely restricted if it may not be integrated with pre-existing wheelchairs.
- \item \emph{Cost kept below \$500}.  The system will be paid for by end users, who will be sensitive to cost.  It will be difficult to market a system which is very expensive relative to the cost of a basic powered wheelchair.
+ \item \emph{Insensitive to operating environment}.  Realistic operating environments will vary greatly in terms of lighting and types of obstacles encoutered, whether static obstacles or moving people/pets. The usefulness of a safety system will be severely degraded if it depends on a specific, controlled environment to be able to operate.
+ \item \emph{Integrates with existsing wheelchairs}.Powered wheelchairs are expensive, but many are already in existence and have been cost-reduced through mass production. Rather than re-inventing the wheel (or wheel-chair in this case) it makes sense to build on existing products by making this an "add-on" feature to an existing chair.
+
+ \item \emph{Cost kept to a minimum}.The system will be paid for by individuals, who will be sensitive to cost. It will be difficult to market a system which is very expensive relative to the cost of a basic powered wheelchair. Initial talks with one pysiotherapist resulted in a suggested cost of not more than \$500 for a system (on top of the base cost of the wheelchair).
 \end{itemize}
 
 \section{Criteria}
@@ -141,9 +142,10 @@ This was selected to distinguish things like sonar which provide simply a distan
 The range for the detection of objects is fairly important to us. While range beyond 7-8 meters is not particularly useful, we want range from about 0 to 8 meters optimally. For this we assume they are working in optimal conditions which we said to be indoors and with normal lighting. Certain sensors we consider have significantly reduced range in other conditions.
 
 \subsection{Precision}
-Precision is fairly important since we are detecting obstacles and we would like to know how far away they are, noise and disturbances are acceptable to a small degree so long as we can identify them as noise and not a fast moving obstacle. In addition to this it�s important that some sensors have decreased precision at increased range. This is noted as a small reduction in their score.
+Precision is fairly important since we are detecting obstacles and we would like to know how far away they are, noise and disturbances are acceptable to a small degree so long as we can identify them as noise and not a fast moving obstacle. In addition to this it is important that some sensors have decreased precision at increased range. This is noted as a small reduction in their score.
 
-\section{Design Review (Post Initial Design Report)}
+\section{Design Review}
+Design review was achieved internally through group meetings, collaboration, and testing prior to implementing a final section of the project.
 
 
 \chapter{Electronics and Firmware}
