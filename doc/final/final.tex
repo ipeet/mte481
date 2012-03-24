@@ -27,7 +27,7 @@
  \end{LARGE}
 
  \begin{large}
-  Faculaty of Mechatronics Engineering\\[4cm]
+  Faculty of Mechatronics Engineering\\[4cm]
  \end{large}
 
  \begin{LARGE}
@@ -202,8 +202,24 @@ Firmware design was straightforward. The parts selected on the PCB were already 
 \chapter{Collision Sensors}
 
 \section{Initial Design}
+The initial selection of sensors was to use a Primesense depth sensor in the form of an Xbox Kinect, and 4 sonar sensors, one of each corner of the wheelchair.
+
+Some early testing was done to verify the positioning of the sensor as shown in Figure \ref{fig:testing}. The Kinect position was found to be very good and kept where it is shown in Figure \ref{fig:testing}. Testing showed the sonar sensors should be swapped for wide-beam sensors and angled as shown in Figure \ref{fig:sonar_config}.
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.5]{testing}
+ \caption{Early Test Setup for Kinect and Sonar Sensors}\label{fig:testing}
+\end{figure}
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.5]{SONAR_Config_Final_Report}
+ \caption{Sonar Sensor Configuration}\label{fig:sonar_config}
+\end{figure}
 
 \section{Final Design}
+The final design implemented the recommendations shown from early testing. The Kinect sensor position was maintained as shown in Figure \ref{fig:testing}, and the sonar sensors were angled as shown in Figure \ref{fig:sonar_config}.
+
+The resulting detectability of obstacles was excellent. The sonars provided a very wide beam width that would alert the wheelchair of any obstacles in the side region of the chair. It was found to work very well for narrow obstacles like table legs as well as wide obstacles such a walls or humans. The Kinect provided very good visibility in front of the wheelchair. Due to its position above the ground there is a small blind spot around the user's feet, but this is solved by not allowing the wheelchair to get within a few feet of an obstacle and proved not to be a large issue.
 
 \chapter{Control Software}
 
