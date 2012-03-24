@@ -6,6 +6,8 @@
 \usepackage[section]{placeins}
 \usepackage{listings}
 
+\graphicspath{{../report/images/}}
+
 \lstset{language=C++}
 
 \oddsidemargin 0in
@@ -82,16 +84,66 @@ Iain Peet \hspace{2cm} Jordan Valentin \hspace{2cm} Rowan Head-Marsden
 \pagestyle{headings}
 
 \chapter{Introduction}
-
 \section{Background}
+Powered wheelchairs have obvious benefits for the mobility of the physically disabled.  Operation of any relatively heavy powered vehicle carries safety risk.  Operators must be capable of safe operation.
 
-\section{Needs Statement}
+Irene Ruel, a physiotherapist in the employ of the British Columbia Interior Health Authority, who has previously been responsible for powered wheelchair assessments in an extended care facilities, was consulted regarding this problem.  By her account, the risk that powered wheelchair operators will collide with other patients is a serious concern.  This risk frequently results in the denial of requests for powered wheelchairs.
 
-\section{Objectives}
+\section{Need Statement}
+Access to powered wheelchairs may be restricted due to concerns regarding a patient's capability for safe operation.
+
+\section{Objectives and Constraints}
+The objectives of this design problem are as follows:
+
+\begin{itemize}
+ \item \emph{Improve safety}.  Safety is a significant concern for powered wheelchair operation.  Effective safety systems will be of great value to those with physical disabilities.
+ \item \emph{Improve accessibility}.  For those who would be denied access to a powered wheelchair, a safety system which permits access will have significant quality-of-life benefits.
+ \item \emph{Assist with difficult tasks}. Some tasks, such as precise positioning and movement in constrained spaces, are difficult even for unimpaired operators.   A system which can assist with such tasks would be helpful.
+\end{itemize}
+
+The constraints of this design are as follows:
+
+\begin{itemize}
+ \item \emph{Insensitive to operating environment}.  Realistic operating environments will be varied, and subject to change.  The usefulness of a safety system will be severely degraded if it depends on a specialized, controlled environment.
+ \item \emph{Integrates with existing wheelchairs}.  Powered wheelchairs are expensive, and many are already in existence.  The potential reach of a new safety system will be severely restricted if it may not be integrated with pre-existing wheelchairs.
+ \item \emph{Cost kept below \$500}.  The system will be paid for by end users, who will be sensitive to cost.  It will be difficult to market a system which is very expensive relative to the cost of a basic powered wheelchair.
+\end{itemize}
 
 \section{Criteria}
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.5]{CriteriaWeighting}
+ \caption{Criteria Weighting} \label{fig:criteria_weighting}
+\end{figure}
 
-\section{Potential Designs}
+\subsection{Weight}
+Weight is an important criterion as a number of powered wheel chairs have weight limitations. This should be as small as possible since the weight capacity of a chair like the Invacare Neutron R51LXP is 300 pounds \cite{wheelchair_data}. This means that for any weight we add on to the wheel chair we reduce the potential carrying load of the wheel chair and with it our potential market.
+
+\subsection{Size}
+Size is a minor criterion we considered, with an excessively large bulky attachment it would reduce the mobility of the wheel chair and decrease the number of places the wheel chair can travel to. It may also get in the way of the user when operating the wheel chair. This made it important to have some size criteria for measuring the strength of a design.
+
+\subsection{Durability}
+While most of the system should not be placed under continuous strain or be at high risk of damage, it is important to consider how durable the design is as there will be wear and tear from use of this system on a wheel chair and damage occurred from movement around the wheel chair.
+
+\subsection{Price}
+Price is an important factor for our consideration since we plan to market it to the end users and not to corporations that may have larger budgets. This then made it the most important ranking and with the very large difference in sensor costs it made for a very important factor in determining which route to take.
+
+\subsection{Power Consumption}
+Power Consumption measure how much an addition will add to the power consumption of the wheel chair. Many of these chairs are run off of an onboard battery and draining this battery quickly will significantly reduce its usefulness to the users. 
+
+\subsection{Processing Requirements}
+The amount of computational intelligence required to handle the data that is coming in from the sensor. This is to make distinction between sensors similar to a Kinect which uses USB and would be plugged into a lab top that will be needed to interpret the data versus something like a sonar sensor that could be tuned and used on FPGA. This will run opposite the Quantity of Useful Data.
+
+\subsection{Quantity of useful Data}
+This was selected to distinguish things like sonar which provide simply a distance mapping for a cone versus something like LIDAR, which provides a high-resolution, narrow-beam distance scan. The more data we get from a sensor the more we can make use of it to recognize and avoid obstacles. This runs as the opposite of processing requirements, since more data requires more processing power to interpret the data.
+
+\subsection{Range}
+The range for the detection of objects is fairly important to us. While range beyond 7-8 meters is not particularly useful, we want range from about 0 to 8 meters optimally. For this we assume they are working in optimal conditions which we said to be indoors and with normal lighting. Certain sensors we consider have significantly reduced range in other conditions.
+
+\subsection{Precision}
+Precision is fairly important since we are detecting obstacles and we would like to know how far away they are, noise and disturbances are acceptable to a small degree so long as we can identify them as noise and not a fast moving obstacle. In addition to this it�s important that some sensors have decreased precision at increased range. This is noted as a small reduction in their score.
+
+\section{Design Review (Post Initial Design Report)}
 
 
 \chapter{Final Design}
