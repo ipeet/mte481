@@ -6,7 +6,7 @@
 \usepackage[section]{placeins}
 \usepackage{listings}
 
-\graphicspath{{../report/images/} {../../www/mte481/website/static/} {/images/}}
+\graphicspath{{../report/images/} {../../www/mte481/website/static/} {./images/}}
 
 \lstset{language=C++}
 
@@ -189,6 +189,12 @@ This node subscribes to collision map and joystick command data.  It does not pu
 
 \section{Final Design}
 The high-level software architecture has changed substantially since the initial design.
+
+\begin{figure}
+ \centering
+ \includegraphics[scale=0.5]{FYDP_Software_Diagram}
+\end{figure}
+
 
 \subsection{ROS Nodes}
 The following ROS nodes were included in the final system:
