@@ -31,7 +31,7 @@
  \end{large}
 
  \begin{LARGE}
-  \textbf{An Obstacle Avoidance System for a}\\
+  \textbf{A Collision Avoidance System for a}\\
   \textbf{Powered Wheelchair}
  \end{LARGE}
 
@@ -147,12 +147,19 @@ Precision is fairly important since we are detecting obstacles and we would like
 \section{Design Review}
 Design review was achieved internally through group meetings, collaboration, and testing prior to implementing a final section of the project.
 
+Group members discussed their ideas with one another prior to implementation. When a certain step of the project was considered to be a risk, such as the selection of the final collision avoidance sensors or the design of a custom control PCB, testing was undertaken first to minimize the risk of proceeding. 
+
+Examples of this are testing the Kinect and sonar sensors, which lead to the selection of wide-beam sensors that were controlled individually by our custom PCB to eliminate crosstalk problems between sensors and also confirmation of the Kinect (Primsense) sensor as an excellent design choice (more details in design section). Another example of testing was bread-boarding sections of our custom PCB to control a single direction of the wheelchair (forward/reverse) to prove it worked before implementing the full joystick interface.
+
+Internal review, accomplished through testing and group discussion, lead to excellent quality of the final product. There was no external review for this project other than review of scheduling provided through regular meetings with one of the MTE 482 professors.
 
 \chapter{Electronics and Firmware}
 
 \section{Initial Design}
 
 \section{Final Design}
+
+\chapter{Obstacle Sensors}
 
 
 \chapter{Control Software}
