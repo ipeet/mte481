@@ -188,19 +188,85 @@ The speed / direction limiter node is responsible for communicating with the mot
 This node subscribes to collision map and joystick command data.  It does not publish anything.
 
 \section{Final Design}
-The high-level software architecture has changed substantially since the initial design.
+The high-level software architecture has changed substantially since the initial design. Figure \ref{final_arch} shows the block diagram for the implemented system.
 
-\begin{figure}
+\begin{figure}[hbt]
  \centering
- \includegraphics[scale=0.5]{FYDP_Software_Diagram}
+ \includegraphics[scale=0.8]{FYDP_Software_Diagram}
+ \caption{Final control software architecture}
+ \label{final_arch}
 \end{figure}
 
 
 \subsection{ROS Nodes}
 The following ROS nodes were included in the final system:
-\begin{itemize}
- \item \emph{Wheelchair Driver} - This node is responsible for all communications with the 
-\end{itemize}
+
+\subsubsection{Wheelchair Driver} 
+This node acts as a simple interface between the microcontroller and other ROS nodes.  It has exclusive access to the serial device file associated with the microcontroller, and implements the serial protocol used to send messages to and receive messages from the device.  This node publishes all ranging and joystick input data received from the microcontroller.  It also subscribes to output command messages, which it passes on to the microcontroller.
+
+\subsubsection{Mapping Node} 
+This node is responsible for interpreting sensor input in order to produce an occupancy map for the region around the wheelchair.  It subscribes to the sonar range data published by the wheelchair driver, and the pointcloud data published by the off-the-shelf Kinect nodes.  Whenever it receives new data, it computes and publishes a new occupancy grid.
+
+\subsubsection{Control Node}
+This node subscribes to the occupancy maps and input commands.  It publishes output commands and trajectory predictions.  It uses a simple model to predict the motion that will result from the input, and checks this path against the occupancy map to predict how soon a collision will occur, if at all.  If the predicted path is safe, the input will be published unmodified as a output command.  If the predicted path is unsafe, the input will be modified in order to prevent collision before being published.
+
+In addition to its normal operation, the control node monitors a parameter value which specifies whether motion is permitted.  If this parameter specifies that motion should be disabled, then the controller node will always publish a zero output.
+
+\subsubsection{Viewer Node}
+This node provides a simple user interface for the sytem.  It subscribes to occupancy maps and trajectory predictions.  It uses OpenGL to draw the occupancy map and predicted trajectory, which provides a simple view into the operation of the system.  The viewer node also provides a mechanism for setting the parameter which enables and disables wheelchair motion.
+
+\subsection{Serial Protocol}
+The microcontroller and wheelchair driver communicate using a simple, message-based binary protocol.  On the wire, messages have the following structure:
+
+\begin{figure}[hbt]
+ \centering
+ \begin{tabular}{|l|c|}
+  \hline
+   Sync Byte 1 & 0xAA \\ \hline
+   Sync Byte 2 & 0x55 \\ \hline
+   Checksum & 1 byte \\ \hline
+   Message Type & 1 byte \\ \hline
+   Message Length & 1 byte \\ \hline
+   Payload & 0-255 bytes \\ \hline
+ \end{tabular}
+\end{figure}
+
+The sync bytes are included at the beginning of every message.  Their purpose is to ensure that the microcontroller and wheelchair driver can synchronize if they begin receiving parway through the message, and recover if they lose synchronization due to lost or corrupted data.  The checksum is simply a cumulative XOR combination of all subsequent bytes in the message.  This provides rudimentary error detection capabilities.  The message type indicates to the receiver how the message should be interpreted.  Finally, the message length encodes the length of the payload, which is used in parsing, and is useful for the support of variable-length message types.
+
+Code used to parse messages of this type is shown in \ref{appendix:serial_parsing}.
+
+\subsection{Occupancy Grid}
+Kinect pointcloud data and sonar range data are combined to produce an occupancy grid.  
+
+Computation of the occupancy grid from the point cloud is straightforward.  A particular volume of interest is set, and points outside that volume are ignored.  Points within that volume are projected onto a horizontal plane.  Whichever cell they lie in is set to the `occupied state'.
+
+Code which projects the pointcloud into a 2D plane is shown in \ref{appendix:pointcloud_flatten}
+
+It is also fairly simple to obtain an occupancy grid from rangefinder data.  The rangefinders have a wide field of view, so there is significant ambiguity as to the specific location of the object detected by the rangefinder.  In order to represent this, an arc is drawn in the occupancy map, covering the full field of view of the sensor.
+
+Code which draws rangefinder argcs is shown in \ref{appendix:range_occupancy}.
+
+The occupancy maps computed from pointcloud and rangefinder data are then merged using an elementwise logical OR.
+
+\subsection{Trajectory Prediction}
+The trajectory of the wheelchair is predicted using an extremely simple motion model, where the forward velocity and angular velocity are taken to be related to the input command by constant coefficients.  This model is described by the following equations:
+
+\begin{equation}
+x_t = x_{t-1} + \Delta T K_f u_f \cos (\theta_{t-1})
+\end{equation}
+\begin{equation}
+y_t = y_{t-1} + \Delta T K_f u_f \sin (\theta_{t-1})
+\end{equation}
+\begin{equation}
+\theta_t = \theta_{t-1} + K_{\theta} u_{\theta}
+\end{equation}
+
+The forward and angular velocity constants were tuned until they provided reasonable path predictions.
+
+See \ref{appendix:trajectory_prediction} for path prediction code.
+
+\subsection{Collision Detection}
+Collision detection is accomplished by checking whether any occupied occupancy grid cells fall within a bounding polygon.  Each of the discrete pose samples along the projected path is tested for collision in this manner.
 
 
 \chapter{Mechanical}
@@ -229,8 +295,237 @@ The following ROS nodes were included in the final system:
 
 \chapter{Conclusions and Recommendations}
 
-\chapter*{Appendix A - Selected Code Listings}
+% Set special section numbering for appendices
+\renewcommand{\thesection}{A\thechapter.\arabic{section}}
+
+\chapter*{Appendix A - Selected Control Software Code Listings}
+Complete source code can be obtained at http://github.com/ipeet/mte481
+
+\setcounter{chapter}{1}
 \addcontentsline{toc}{chapter}{Appendix A - Selected Code Listings}
+\section{Serial Protocol Parsing State Machine}
+Excerpt from common/serial/protocol.c
+\label{appendix:serial_parsing}
+\begin{lstlisting}
+ // Parse a new byte
+enum ParseStatus pr_push(uint8_t byte) {
+  if (_state == DONE) {
+    // start reading a new message
+    pr_init();
+  }
+
+  switch (_state) {
+    case SYNC_1:
+      if (byte == SYNC_BYTE_1) {
+        _state = SYNC_2;
+        return OK;
+      } else {
+        return BAD_SYNC;
+      }
+
+    case SYNC_2:
+      if (byte == SYNC_BYTE_2) {
+        _state = CHECKSUM;
+        return OK;
+      } else {
+        pr_init();
+        return BAD_SYNC;
+      }
+
+    case CHECKSUM:
+      _buf.checksum = byte;
+      _state = TYPE;
+      return OK;
+
+    case TYPE:
+      _buf.type = byte;
+      _state = LENGTH;
+      return OK;
+
+    case LENGTH:
+      _buf.length = byte;
+      if (byte == 0) {
+        _state = DONE;
+        break;
+      } else {
+        _payloadBytes = 0;
+        _state = PAYLOAD;
+        return OK;
+      }
+
+    case PAYLOAD:
+      _buf.raw[_payloadBytes] = byte;
+      _payloadBytes++;
+      if (_payloadBytes < _buf.length) {
+        return OK;
+      } else {
+        _state = DONE;
+        break;
+      }
+    
+    default:
+      pr_init();
+      return INVALID;
+  };
+
+  // Should only fall through for checksum on a complete package
+  if (_state != DONE) return INVALID;
+
+  /* Validate checksum */
+  if (pr_checksum(&_buf) == _buf.checksum) {
+    return COMPLETE;
+  } else {
+    return BAD_CHECKSUM;
+  }
+}
+\end{lstlisting}
+
+\clearpage
+\section{Projection of a Pointcloud Into an Occupancy Grid}
+Excerpt from wheelchair\_ros/src/occupancy.cpp
+\label{appendix:pointcloud_flatten}
+\begin{lstlisting}
+void Occupancy::handlePointcloud(const PointCloud::ConstPtr &msg) {
+  /* Convenience */
+  int w = m_width / m_resolution;
+  int d = m_depth / m_resolution;
+  int h = m_height / m_resolution;
+
+  m_kinect2d.clear();
+  m_kinect2d.resize(w*d);
+
+  m_kinect3d.clear();
+  m_kinect3d.resize(w*d*h);
+
+  for (unsigned i=0; i < msg->points.size(); ++i) {
+    double x = msg->points.at(i).x;
+    double y = -msg->points.at(i).y;
+    double z = msg->points.at(i).z;
+
+    /* Bounds check the point */
+    if (isnan(x) || isnan(y) || isnan(z)) continue;
+    int xi = (x - m_orig_x) / m_resolution;
+    int yi = (y - m_orig_y) / m_resolution;
+    int zi = (z - m_orig_z) / m_resolution;
+    if (xi < 0) continue;
+    if (xi >= w) continue;
+    if (yi < 0) continue;
+    if (yi >= h) continue;
+    if (zi < 0) continue;
+    if (zi >= d) continue;
+    m_kinect2d[zi*w + xi] = 100;
+    m_kinect3d[yi*d*w + zi*w + xi] = 1;
+  }
+}
+\end{lstlisting}
+
+\clearpage
+\section{Computation of an Occupancy Grid from Rangefinder Data}
+\label{appendix:range_occupancy}
+Excerpt from wheelchair\_ros/src/occupancy.cpp
+\begin{lstlisting}
+void Occupancy::handleSonar(const Sonar::ConstPtr &msg) {
+  /* Convenience */
+  int w = m_width / m_resolution;
+  int d = m_depth / m_resolution;
+  int h = m_height / m_resolution;
+
+  m_sonar2d.clear();
+  m_sonar2d.resize(w*d);
+
+  m_sonar3d.clear();
+  m_sonar3d.resize(w*d*h);
+
+  for (int i=0; i<4; ++i) {
+    for (double j=-0.5*config::SONAR_FOV; j < 0.5*config::SONAR_FOV; j+=0.02) {
+      pair<double, double> pos = m_sonars[i].inOccupancy(
+          *this, msg->ranges[i], j);
+      double x = pos.first;
+      double z = pos.second;
+      int xi = (x - m_orig_x) / m_resolution + 0.5;
+      int zi = (z - m_orig_z) / m_resolution + 0.5;
+      if (xi < 0) continue;
+      if (xi >= w) continue;
+      if (zi < 0) continue;
+      if (zi >= d) continue;
+      m_sonar2d[zi*w + xi] = 100;
+      m_sonar3d[zi*w + xi] = 1;
+    }
+    m_ranges[i] = msg->ranges[i];
+  }
+  m_haveSonar = true;
+}
+
+pair<double, double> Occupancy::SonarPose::inOccupancy
+  (const Occupancy &occ, double rad, double ang) 
+{
+  if (rad < 3*config::RESOLUTION) {
+    rad = 3*config::RESOLUTION;
+  }
+  double x = m_x + rad * cos(ang + m_dir);
+  double y = m_y + rad * sin(ang + m_dir);
+  return pair<double, double> (x, y);
+}
+\end{lstlisting}
+
+\clearpage
+\section{Trajectory Prediction}
+\label{appendix:trajectory_prediction}
+Excerpt from wheelchair\_ros/src/controller.cpp
+
+\begin{lstlisting}
+PredictedPath::Ptr Controller::predictPath(const Twist::ConstPtr &input) {
+  PoseStamped::Ptr curState (new PoseStamped);
+  curState->pose.position.x = 0;
+  curState->pose.position.y = 0;
+  curState->pose.position.z = 0;
+  curState->pose.orientation.x = 0;
+  curState->pose.orientation.y = 0;
+  curState->pose.orientation.z = 1;
+  curState->pose.orientation.w = 0.5*M_PI;
+
+  PredictedPath::Ptr ret (new PredictedPath);
+  ret->poses.push_back(*(curState));
+  ret->poseCollides.push_back(false);
+  ret->timestep = config::TIMESTEP;
+  for (double t=0; t <= config::SIM_LENGTH; t += config::TIMESTEP) {
+    curState = predict(curState, input, config::TIMESTEP);
+    ret->poses.push_back(*curState);
+    double curX = curState->pose.position.x;
+    double curY = curState->pose.position.y;
+    bool col = collides(curX, curY, curState->pose.orientation.w);
+    ret->poseCollides.push_back(col);
+    if (col) break;
+  }
+  return ret;
+}
+
+PoseStamped::Ptr Controller::predict(
+    PoseStamped::Ptr prev, const Twist::ConstPtr &input, double step) 
+{
+  PoseStamped::Ptr ret (new PoseStamped);
+
+  // Initialize values from motion-in-plane assumption:
+  ret->pose.position.z = 0;
+  ret->pose.orientation.x = 0;
+  ret->pose.orientation.y = 0;
+  ret->pose.orientation.z = 1;
+
+  // Compute current velocities:
+  double angular = config::K_ROT * (-input->linear.x + config::LAT_OFFSET);
+  double forward = config::K_FWD * (input->linear.y - config::FWD_OFFSET); 
+  double heading = prev->pose.orientation.w; // convenient
+
+  // Forward difference computation of next state:
+  ret->pose.orientation.w = heading + step * angular;
+  ret->pose.position.x = 
+    prev->pose.position.x + forward*cos(heading);
+  ret->pose.position.y =
+    prev->pose.position.y + forward*sin(heading);
+
+  return ret;
+}
+\end{lstlisting}
 
 \begin{thebibliography}{9}
  \addcontentsline{toc}{chapter}{Bibliography}
