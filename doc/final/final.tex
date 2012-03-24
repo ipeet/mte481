@@ -27,11 +27,11 @@
  \end{LARGE}
 
  \begin{large}
-  Faculaty of Mechatronics Engineering\\[4cm]
+  Faculty of Mechatronics Engineering\\[4cm]
  \end{large}
 
  \begin{LARGE}
-  \textbf{An Obstacle Avoidance System for a}\\
+  \textbf{A Collision Avoidance System for a}\\
   \textbf{Powered Wheelchair}
  \end{LARGE}
 
@@ -135,7 +135,7 @@ Power Consumption measure how much an addition will add to the power consumption
 \subsection{Processing Requirements}
 The amount of computational intelligence required to handle the data that is coming in from the sensor. This is to make distinction between sensors similar to a Kinect which uses USB and would be plugged into a lab top that will be needed to interpret the data versus something like a sonar sensor that could be tuned and used on FPGA. This will run opposite the Quantity of Useful Data.
 
-\subsection{Quantity of useful Data}
+\subsection{Quantity of Useful Data}
 This was selected to distinguish things like sonar which provide simply a distance mapping for a cone versus something like LIDAR, which provides a high-resolution, narrow-beam distance scan. The more data we get from a sensor the more we can make use of it to recognize and avoid obstacles. This runs as the opposite of processing requirements, since more data requires more processing power to interpret the data.
 
 \subsection{Range}
@@ -147,13 +147,79 @@ Precision is fairly important since we are detecting obstacles and we would like
 \section{Design Review}
 Design review was achieved internally through group meetings, collaboration, and testing prior to implementing a final section of the project.
 
+Group members discussed their ideas with one another prior to implementation. When a certain step of the project was considered to be a risk, such as the selection of the final collision avoidance sensors or the design of a custom control PCB, testing was undertaken first to minimize the risk of proceeding. 
+
+Examples of this are testing the Kinect and sonar sensors, which lead to the selection of wide-beam sensors that were controlled individually by our custom PCB to eliminate crosstalk problems between sensors and also confirmation of the Kinect (Primsense) sensor as an excellent design choice (more details in design section). Another example of testing was bread-boarding sections of our custom PCB to control a single direction of the wheelchair (forward/reverse) to prove it worked before implementing the full joystick interface.
+
+Internal review, accomplished through testing and group discussion, lead to excellent quality of the final product. There was no external review for this project other than review of scheduling provided through regular meetings with one of the MTE 482 professors.
 
 \chapter{Electronics and Firmware}
 
 \section{Initial Design}
+Electronics and firmware refers to the sections of the project that interface between the wheelchair, the sensors, and the control laptop.
+
+The initial design report discussed that a custom PCB would be designed to manage all of the functions mentioned above. It would be far too messy to wire each sensor individually to the laptop, control the wheelchair through some USB-to-analog box, and then to find power sources for the 12V Kinect sensor and 5V sonar sensors.
+
+The high level design for the control PCB was decided early on and is shown in Figure \ref{fig:hardware_diag}. The PCB would be responsible for powering each of the sensors, controlling the wheelchair (based on laptop commands coming in over USB), and passing user input via joystick/sensor data into a single USB stream to send to the laptop.
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.5]{FYDP_PCB_Diagram}
+ \caption{PCB Design}\label{fig:hardware_diag}
+\end{figure}
+
+In the initial report this was deliberately left at a high level and no detailed schematics were provided. This was due to the problem of controlling the wheelchair and gathering user input via the joystick, the "Analog Wheelchair Interface" section of Figure \ref{fig:hardware_diag}. The joystick module communicates with the motor controllor via a proprietary protocol that is similar to CANbus, but with some small changes. One route we could have taken would be to reverse-engineer the protocol and replace the wheelchair's joystick module entirely with our own PCB and a USB joystick meant for gaming. Our other option was to keep the existing joystick module, and just add a custom PCB and an interposer between the analog signals on the physical joystick and the joystick module PCB that sends serial data to the motor controller. This was as far as discussed in the design report because more testing was needed before we could find the best way to proceed.
 
 \section{Final Design}
+The final design filled in all the details that were missing in the initial design. 
 
+The biggest detail was, as mentioned in the previous section, how the wheelchair was going to actually be controlled by the control PCB. To this end, the joystick module was opened up and examined in detail. The joystick was inductively linked to the joystick module's control PCB and the control signals were shown to be sinusoids of approximately 20 kHz. The amplitude of the sine wave increased with as the joystick was moved further from the "home" position, and the phase could be either in-phase with the joystick reference signal (for example in forward/left directions) or 180 degrees out of phase with the reference signal for rear/right stick movement. It was decided this type of control could be relatively easily duplicated on a custom PCB, using a reference sine wave taken from the joystick module and two digital potentiometers (one for each channel) that could modify the amplitude of these waves. By creating a copy of the reference wave and then its inverse and placing these signal at either ends of the digital pots, the signal could be varied from negative full-scale (180 degree phase shift) to DC (joystick home position) to full-scale (in phase with reference signal) in small increments. Also, the existing joystick could be used as an input by using an analog-to-digital converted on our custom PCB and trigging it on the peak of the reference signal input. This saved us the expense of hassle of integrating a USB gaming joystick into the system to allow user control.
+
+Since there was some risk in this control method and by designing a PCB from scratch, a test board was completed as shown in Figure \ref{fig:test_joystick}. This board acted as an interposer between the forward/reverse signals on the physical joystick, and the signals that were sent to the joystick control module. By twisting the analog potentiometer with a screwdriver (the blue component in Figure \ref{fig:test_joystick}) the wheechair was able to be moved forwards and reversed. With this circuit proven out the only risk that was added by a custom PCB was the digital pot versus the analog one, which was really almost no risk at all.
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.5]{test_circuit}
+ \caption{PCB Design}\label{fig:test_joystick}
+\end{figure}
+
+With that proven out, the final custom PCB could be designed. Please refer to the Appendix for detailed schematics. The PCB implemented all the high-level features mentioned in the initial report, as well as the analog interface for joystick input and motor controller output just previously mentioned. A CAD model of the PCB as designed is shown in Figure \ref{fig:PCB}.
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.5]{PCB_Custom}
+ \caption{PCB CAD Model}\label{fig:PCB}
+\end{figure}
+
+The PCB was designed as a 2-layer board and manufactured externally. Once it arrived the components were soldered entirely by group members. There were no major changes that had to made to the PCB after it was manufactured, due in part to the test circuits and proof-of-concepts mentioned previously. A final view of the PCB mounted to the wheelchair and wired is shown in Figure \ref{fig:PCB_wired}.
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.5]{chair_wired}
+ \caption{Finished PCB Mounted to Wheelchair}\label{fig:PCB_wired}
+\end{figure}
+
+Firmware design was straightforward. The parts selected on the PCB were already familiar to group members and drivers for the digital potentiometers and the analog-to-digital converters was not time consuming. There was some considerable attention spent on the safety of the design: a watchdog timer will trip if the laptop fails to send a command to the PCB every 125 ms, if the PCB firmware itself does not respond every 15 ms, or if a short/open circuit is detected on the user's joystick. Thus in the case of a laptop software, PCB firmware, or joystick wiring fault the wheelchair will come to stop and not risk injury to the user. If there are no errors present the PCB simply relays information to and from the laptop computer.
+
+
+\chapter{Collision Sensors}
+
+\section{Initial Design}
+The initial selection of sensors was to use a Primesense depth sensor in the form of an Xbox Kinect, and 4 sonar sensors, one of each corner of the wheelchair.
+
+Some early testing was done to verify the positioning of the sensor as shown in Figure \ref{fig:testing}. The Kinect position was found to be very good and kept where it is shown in Figure \ref{fig:testing}. Testing showed the sonar sensors should be swapped for wide-beam sensors and angled as shown in Figure \ref{fig:sonar_config}.
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.1]{testing}
+ \caption{Early Test Setup for Kinect and Sonar Sensors}\label{fig:testing}
+\end{figure}
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.55]{SONAR_Config_Final_Report}
+ \caption{Sonar Sensor Configuration}\label{fig:sonar_config}
+\end{figure}
+
+\section{Final Design}
+The final design implemented the recommendations shown from early testing. The Kinect sensor position was maintained as shown in Figure \ref{fig:testing}, and the sonar sensors were angled as shown in Figure \ref{fig:sonar_config}.
+
+The resulting detectability of obstacles was excellent. The sonars provided a very wide beam width that would alert the wheelchair of any obstacles in the side region of the chair. It was found to work very well for narrow obstacles like table legs as well as wide obstacles such a walls or humans. The Kinect provided very good visibility in front of the wheelchair. Due to its position above the ground there is a small blind spot around the user's feet, but this is solved by not allowing the wheelchair to get within a few feet of an obstacle and proved not to be a large issue.
 
 \chapter{Control Software}
 
@@ -280,11 +346,15 @@ Collision detection is accomplished by checking whether any occupied occupancy g
 
 \section{Prototype Construction}
 
-\section{Test Results}
+\section{Testing and Performance}
 
 \chapter{Schedule and Budgeting}
 
 \section{Original Schedule}
+\begin{figure}
+ \centering
+ \includegraphics[scale=0.6]{gantt} \label{fig:gantt}
+\end{figure}
 
 \section{Actual Schedule}
 
@@ -526,6 +596,9 @@ PoseStamped::Ptr Controller::predict(
   return ret;
 }
 \end{lstlisting}
+
+\chapter*{Appendix B - Control PCB Schematics}
+\addcontentsline{toc}{chapter}{Appendix B - Control PCB Schematics}
 
 \begin{thebibliography}{9}
  \addcontentsline{toc}{chapter}{Bibliography}
