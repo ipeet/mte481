@@ -148,11 +148,56 @@ Precision is fairly important since we are detecting obstacles and we would like
 Design review was achieved internally through group meetings, collaboration, and testing prior to implementing a final section of the project.
 
 
-\chapter{Final Design}
+\chapter{Electronics and Firmware}
 
-\section{Design Details}
+\section{Initial Design}
 
-\section{Design Modifications}
+\section{Final Design}
+
+
+\chapter{Control Software}
+
+\section{Initial Design}
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.9]{Software_Diagram}
+ \caption{Software Design}\label{fig:software}
+\end{figure}
+
+Figure \ref{fig:software} shows an overview of the intended software architecture.  Software was intended to be built on the Robot Operating System (ROS) \cite{ROS}, which is a distributed message passing system capable of running on Linux systems.  ROS systems are organized into a network of simple nodes, which co-operate to produce complex aggregate behaviour. 
+
+The following nodes were expected to be required, with the following roles and capabilities:
+
+\subsubsection{Node 1: Ranging}
+The ranging node is responsible with communicating with the micro-controller in order to obtain range data from the ultrasonic rangefinders.  It publishes parsed range data.
+
+\subsubsection{Node 2: Point Cloud}
+The point cloud node communicates with the Kinect, in order to obtain depth map data.  It publishes point cloud data.
+
+\subsubsection{Node 3: Collision Map Generator}
+The collision map generator node is responsible for interpreting poinrt cloud and rangefinder data.  These data are projected into a 2-D occupancy grid in the vehicle frame.  In the simplest case, collision map generation is stateless, and ignores previous data in the interpretation of new sensor data.  If this does not provide sufficient accuracy, the collision map generator might also use state estimates to project old information forward, improving estimates.  
+
+This node subscribes to point cloud and rangefinder data, and publishes collision maps.
+
+\subsubsection{Node 4: Joystick}
+The joystick node is responsible for communicating with the joystick, in order to obtain speed and direction commands from the user.  It publishes joystick state.
+
+\subsubsection{Node 5: Speed / Direction Limiter}
+The speed / direction limiter node is responsible for communicating with the motor controller in order to set wheel velocities.  It uses a collision map and a wheelchair motion model to assess whether a particular command is likely to lead to a collision.  If necessary, it adjusts user commands in order to avert collisions.
+
+This node subscribes to collision map and joystick command data.  It does not publish anything.
+
+\section{Final Design}
+% TODO
+
+\chapter{Mechanical}
+
+\section{Initial Design}
+
+\section{Final Design}
+
+
+\chapter{Project Results}
 
 \section{Prototype Construction}
 
@@ -174,5 +219,51 @@ Design review was achieved internally through group meetings, collaboration, and
 \chapter*{Appendix A - Selected Code Listings}
 \addcontentsline{toc}{chapter}{Appendix A - Selected Code Listings}
 
+\begin{thebibliography}{9}
+ \addcontentsline{toc}{chapter}{Bibliography}
+ \bibitem{patent:computer_controlled}
+  L. Fehr, S. Skaar, G. Del Castillo. \\
+  \emph{Computer Controlled Power Wheelchair Navigation System.} \\
+  U.S. Patent 2008/7383107B2, Jun. 3, 2008.
+ \bibitem{patent:power_wheelchair}
+  G. Griggs, T. Dutta, G. Fernie. \emph{Powered Wheelchair},\\
+  U.S. Patent 2010/0082182A1, Apr. 1, 2010.
+ \bibitem{patent:wheelchair_method}
+  T. Smithers, U. Urriticoechea, U. Campos. \\
+  \emph{Wheelchair and Method for Correcting the Guidance of a Wheelchair.} \\
+  U.S. Patent 2011/0130940A1, Jun. 2, 2011.
+ \bibitem{NASA}
+  NASA. \emph{NASA-STD-3000. Anthropometry and Biomechanics.}\\
+  http://msis.jsc.nasa.gov/sections/section03.htm, Jul. 1995.
+\bibitem{primesense}
+  \emph{Our Full 3D Sensing Solution}, \\
+  \mbox{http://www.primesense.com/en/technology/115-the-primesense-3d-sensing-solution} \\
+  2011.
+ \bibitem{OpenNI}
+  http://www.openni.org/
+ \bibitem{ROS}
+  http://www.ros.org/
+ \bibitem{point_clouds}
+  http://pointclouds.org/
+ \bibitem{wheelchair_data}
+  Invacare. \emph{Nutron R51LXP. Invacare Product Catalogue.} \\
+  http://www.invacare.ca/cgi-bin/imhqprd/inv\_catalog/prod\_cat\_detail.jsp?s=0\&prodID=R51LXP\\
+ Jan. 2011.
+\bibitem{kinect_prec}
+  L. Yiping. \\
+  \emph{openni\_kinect/kinect\_accuracy}, http://www.ros.org/wiki/openni\_kinect/kinect\_accuracy\\
+  Jun. 27, 2011.
+ \bibitem{lv-ez4}
+  MaxBotix Inc, \emph{LV-EZ4 Datasheet},  2011
+ \bibitem{lv-ez0}
+  MaxBotix Inc, \emph{LV-EZ0 Datasheet},  2011
+ \bibitem{kinect_power}
+  M. Wise.  \emph{Adding a Kinect to an iRobot Create} \\
+  http://www.ros.org/wiki/kinect/Tutorials/Adding\%20a\%20Kinect\%20to\%20an\%20iRobot\%20Create\\
+  May 2, 2011.
+ \bibitem{MSP430_USB}
+  A. Dannenberg. (2006, October). \emph{MSP430 Connectivity Using TUSB3410},\\
+  http://www.ti.com/lit/an/slaa276a/slaa276a.pdf
+\end{thebibliography}
 
 \end{document}
