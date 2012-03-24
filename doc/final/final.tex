@@ -164,13 +164,40 @@ The high level design for the control PCB was decided early on and is shown in F
 
 \begin{figure}[hbt]
  \centering
- \includegraphics[scale=0.9]{FYDP_PCB_Diagram}
+ \includegraphics[scale=0.5]{FYDP_PCB_Diagram}
  \caption{PCB Design}\label{fig:hardware_diag}
 \end{figure}
 
 In the initial report this was deliberately left at a high level and no detailed schematics were provided. This was due to the problem of controlling the wheelchair and gathering user input via the joystick, the "Analog Wheelchair Interface" section of Figure \ref{fig:hardware_diag}. The joystick module communicates with the motor controllor via a proprietary protocol that is similar to CANbus, but with some small changes. One route we could have taken would be to reverse-engineer the protocol and replace the wheelchair's joystick module entirely with our own PCB and a USB joystick meant for gaming. Our other option was to keep the existing joystick module, and just add a custom PCB and an interposer between the analog signals on the physical joystick and the joystick module PCB that sends serial data to the motor controller. This was as far as discussed in the design report because more testing was needed before we could find the best way to proceed.
 
 \section{Final Design}
+The final design filled in all the details that were missing in the initial design. 
+
+The biggest detail was, as mentioned in the previous section, how the wheelchair was going to actually be controlled by the control PCB. To this end, the joystick module was opened up and examined in detail. The joystick was inductively linked to the joystick module's control PCB and the control signals were shown to be sinusoids of approximately 20 kHz. The amplitude of the sine wave increased with as the joystick was moved further from the "home" position, and the phase could be either in-phase with the joystick reference signal (for example in forward/left directions) or 180 degrees out of phase with the reference signal for rear/right stick movement. It was decided this type of control could be relatively easily duplicated on a custom PCB, using a reference sine wave taken from the joystick module and two digital potentiometers (one for each channel) that could modify the amplitude of these waves. By creating a copy of the reference wave and then its inverse and placing these signal at either ends of the digital pots, the signal could be varied from negative full-scale (180 degree phase shift) to DC (joystick home position) to full-scale (in phase with reference signal) in small increments. Also, the existing joystick could be used as an input by using an analog-to-digital converted on our custom PCB and trigging it on the peak of the reference signal input. This saved us the expense of hassle of integrating a USB gaming joystick into the system to allow user control.
+
+Since there was some risk in this control method and by designing a PCB from scratch, a test board was completed as shown in Figure \ref{fig:test_joystick}. This board acted as an interposer between the forward/reverse signals on the physical joystick, and the signals that were sent to the joystick control module. By twisting the analog potentiometer with a screwdriver (the blue component in Figure \ref{fig:test_joystick}) the wheechair was able to be moved forwards and reversed. With this circuit proven out the only risk that was added by a custom PCB was the digital pot versus the analog one, which was really almost no risk at all.
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.5]{test_circuit}
+ \caption{PCB Design}\label{fig:test_joystick}
+\end{figure}
+
+With that proven out, the final custom PCB could be designed. Please refer to the Appendix for detailed schematics. The PCB implemented all the high-level features mentioned in the initial report, as well as the analog interface for joystick input and motor controller output just previously mentioned. A CAD model of the PCB as designed is shown in Figure \ref{fig:PCB}.
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.5]{PCB_Custom}
+ \caption{PCB CAD Model}\label{fig:PCB}
+\end{figure}
+
+The PCB was designed as a 2-layer board and manufactured externally. Once it arrived the components were soldered entirely by group members. There were no major changes that had to made to the PCB after it was manufactured, due in part to the test circuits and proof-of-concepts mentioned previously. A final view of the PCB mounted to the wheelchair and wired is shown in Figure \ref{fig:PCB_wired}.
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.5]{chair_wired}
+ \caption{Finished PCB Mounted to Wheelchair}\label{fig:PCB_wired}
+\end{figure}
+
+Firmware design was straightforward. The parts selected on the PCB were already familiar to group members and drivers for the digital potentiometers and the analog-to-digital converters was not time consuming. There was some considerable attention spent on the safety of the design: a watchdog timer will trip if the laptop fails to send a command to the PCB every 125 ms, if the PCB firmware itself does not respond every 15 ms, or if a short/open circuit is detected on the user's joystick. Thus in the case of a laptop software, PCB firmware, or joystick wiring fault the wheelchair will come to stop and not risk injury to the user. If there are no errors present the PCB simply relays information to and from the laptop computer.
+
 
 \chapter{Collision Sensors}
 
@@ -237,7 +264,7 @@ The following ROS nodes were included in the final system:
 
 \section{Prototype Construction}
 
-\section{Test Results}
+\section{Testing and Performance}
 
 \chapter{Schedule and Budgeting}
 
