@@ -68,7 +68,7 @@ int main (int argc, char *argv[]) {
   ros::Subscriber sonar = node.subscribe<Sonar> (
       "sonar", 1, sonarCallback);
 
-  ros::Rate loopRate (10);
+  ros::Rate loopRate (50);
   while (ros::ok()) {
     ros::spinOnce();
     repeater.spinOnce();
