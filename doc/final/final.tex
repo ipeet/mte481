@@ -156,11 +156,27 @@ Internal review, accomplished through testing and group discussion, lead to exce
 \chapter{Electronics and Firmware}
 
 \section{Initial Design}
+Electronics and firmware refers to the sections of the project that interface between the wheelchair, the sensors, and the control laptop.
+
+The initial design report discussed that a custom PCB would be designed to manage all of the functions mentioned above. It would be far too messy to wire each sensor individually to the laptop, control the wheelchair through some USB-to-analog box, and then to find power sources for the 12V Kinect sensor and 5V sonar sensors.
+
+The high level design for the control PCB was decided early on and is shown in Figure \ref{fig:hardware_diag}. The PCB would be responsible for powering each of the sensors, controlling the wheelchair (based on laptop commands coming in over USB), and passing user input via joystick/sensor data into a single USB stream to send to the laptop.
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.9]{FYDP_PCB_Diagram}
+ \caption{PCB Design}\label{fig:hardware_diag}
+\end{figure}
+
+In the initial report this was deliberately left at a high level and no detailed schematics were provided. This was due to the problem of controlling the wheelchair and gathering user input via the joystick, the "Analog Wheelchair Interface" section of Figure \ref{fig:hardware_diag}. The joystick module communicates with the motor controllor via a proprietary protocol that is similar to CANbus, but with some small changes. One route we could have taken would be to reverse-engineer the protocol and replace the wheelchair's joystick module entirely with our own PCB and a USB joystick meant for gaming. Our other option was to keep the existing joystick module, and just add a custom PCB and an interposer between the analog signals on the physical joystick and the joystick module PCB that sends serial data to the motor controller. This was as far as discussed in the design report because more testing was needed before we could find the best way to proceed.
 
 \section{Final Design}
 
-\chapter{Obstacle Sensors}
+\chapter{Collision Sensors}
 
+\section{Initial Design}
+
+\section{Final Design}
 
 \chapter{Control Software}
 
