@@ -1,0 +1,124 @@
+\documentclass[oneside,final,a4paper]{report}
+
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage[parfill]{parskip}
+\usepackage[section]{placeins}
+\usepackage{listings}
+
+\lstset{language=C++}
+
+\oddsidemargin 0in
+\evensidemargin 0in
+\textwidth 6.5in 
+
+\begin{document}
+
+% ================ Front Matter ================
+% Suppress page number for title page and letter of submittal
+\pagestyle{empty}
+
+% ==== Title Page
+\begin{flushright}
+ \begin{LARGE}
+  \textbf{UNIVERSITY OF WATERLOO}
+ \end{LARGE}
+
+ \begin{large}
+  Faculaty of Mechatronics Engineering\\[4cm]
+ \end{large}
+
+ \begin{LARGE}
+  \textbf{An Obstacle Avoidance System for a}\\
+  \textbf{Powered Wheelchair}
+ \end{LARGE}
+
+ \vfill
+
+  Prepared By: \\[0.2cm]
+  Iain Peet - 20252201\\
+  Jordan Valentin - xxxxxxxx\\
+  Rowan Head-Marsden - xxxxxxxx\\
+  \today
+\end{flushright}
+\clearpage
+
+% ==== Letter of Transmittal
+\today \\[0.5cm]
+
+Faculty of Mechatronics Engineering \\
+University of Waterloo \\
+Waterloo, Ontario \\
+
+To Whom It May Concern:
+
+Blah, blah, blah.
+
+Sincerely, \\[1cm]
+
+Iain Peet \hspace{2cm} Jordan Valentin \hspace{2cm} Rowan Head-Marsden
+\clearpage
+
+% Resume page numbering
+\pagestyle{plain}
+\setcounter{page}{1}
+\pagenumbering{roman}
+
+% ==== Table of Contents
+\setcounter{tocdepth}{1}
+\tableofcontents
+
+% ==== List of Figures
+\listoffigures
+\addcontentsline{toc}{chapter}{List of Tables and Figures}
+
+\chapter*{Executive Summary}
+\addcontentsline{toc}{chapter}{Summary}
+
+% ====================== Report Body =================================
+\clearpage
+\setcounter{page}{1}
+\pagenumbering{arabic}
+\pagestyle{headings}
+
+\chapter{Introduction}
+
+\section{Background}
+
+\section{Needs Statement}
+
+\section{Objectives}
+
+\section{Criteria}
+
+\section{Potential Designs}
+
+
+\chapter{Final Design}
+
+\section{Design Details}
+
+\section{Design Modifications}
+
+\section{Prototype Construction}
+
+\section{Test Results}
+
+\chapter{Schedule and Budgeting}
+
+\section{Original Schedule}
+
+\section{Actual Schedule}
+
+\section{Budget}
+
+\section{Actual Cost}
+
+
+\chapter{Conclusions and Recommendations}
+
+\chapter*{Appendix A - Selected Code Listings}
+\addcontentsline{toc}{chapter}{Appendix A - Selected Code Listings}
+
+
+\end{document}
