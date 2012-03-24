@@ -146,11 +146,56 @@ Precision is fairly important since we are detecting obstacles and we would like
 \section{Design Review (Post Initial Design Report)}
 
 
-\chapter{Final Design}
+\chapter{Electronics and Firmware}
 
-\section{Design Details}
+\section{Initial Design}
 
-\section{Design Modifications}
+\section{Final Design}
+
+
+\chapter{Control Software}
+
+\section{Initial Design}
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.9]{Software_Diagram}
+ \caption{Software Design}\label{fig:software}
+\end{figure}
+
+Figure \ref{fig:software} shows an overview of the intended software architecture.  Software was intended to be built on the Robot Operating System (ROS) \cite{ROS}, which is a distributed message passing system capable of running on Linux systems.  ROS systems are organized into a network of simple nodes, which co-operate to produce complex aggregate behaviour. 
+
+The following nodes were expected to be required, with the following roles and capabilities:
+
+\subsubsection{Node 1: Ranging}
+The ranging node is responsible with communicating with the micro-controller in order to obtain range data from the ultrasonic rangefinders.  It publishes parsed range data.
+
+\subsubsection{Node 2: Point Cloud}
+The point cloud node communicates with the Kinect, in order to obtain depth map data.  It publishes point cloud data.
+
+\subsubsection{Node 3: Collision Map Generator}
+The collision map generator node is responsible for interpreting poinrt cloud and rangefinder data.  These data are projected into a 2-D occupancy grid in the vehicle frame.  In the simplest case, collision map generation is stateless, and ignores previous data in the interpretation of new sensor data.  If this does not provide sufficient accuracy, the collision map generator might also use state estimates to project old information forward, improving estimates.  
+
+This node subscribes to point cloud and rangefinder data, and publishes collision maps.
+
+\subsubsection{Node 4: Joystick}
+The joystick node is responsible for communicating with the joystick, in order to obtain speed and direction commands from the user.  It publishes joystick state.
+
+\subsubsection{Node 5: Speed / Direction Limiter}
+The speed / direction limiter node is responsible for communicating with the motor controller in order to set wheel velocities.  It uses a collision map and a wheelchair motion model to assess whether a particular command is likely to lead to a collision.  If necessary, it adjusts user commands in order to avert collisions.
+
+This node subscribes to collision map and joystick command data.  It does not publish anything.
+
+\section{Final Design}
+% TODO
+
+\chapter{Mechanical}
+
+\section{Initial Design}
+
+\section{Final Design}
+
+
+\chapter{Project Results}
 
 \section{Prototype Construction}
 
