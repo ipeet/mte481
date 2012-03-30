@@ -334,6 +334,27 @@ See \ref{appendix:trajectory_prediction} for path prediction code.
 \subsection{Collision Detection}
 Collision detection is accomplished by checking whether any occupied occupancy grid cells fall within a bounding polygon.  Each of the discrete pose samples along the projected path is tested for collision in this manner.
 
+This collision detection technique is built on the use intersection of half spaces to test whether a convex polygon contains particular points.  Figure \ref{fig:point-in-poly} should help to illustrate how this technique works.
+
+\begin{figure}
+ \centering
+ \includegraphics[scale=0.9]{point-in-poly}
+ \caption{Illustration of point-in-polygon testing}
+ \label{fig:point-inpoly}
+\end{figure}
+
+Given a polygon with $M$ vertices, and under the assumption that the polygon is convex and planar, a given point $Q$ is part of the polygon iff 
+\begin{equation}
+ (Q-P_i) \cdot B_{i,i+1} \ge 0 \forall i = 1, 2, \cdots M-1
+\end{equation}
+Where $B_{i,i+1}$ is the binormal along the segment from $P_i$ to $P_{i+1}$, which is defined as
+\begin{equation}
+ B_{i,i+1} = N \times (P_{i+1} - P_{i})
+\end{equation}
+Where $N$ is the normal to the plane of the polygon, which can be found by taking the cross product of any counter-clockwise pair of polygon edges.
+
+
+ 
 
 \chapter{Mechanical}
 
