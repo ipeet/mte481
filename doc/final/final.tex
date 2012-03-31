@@ -417,13 +417,13 @@ This special-case control law is applied prior to path prediction and applicatio
 \chapter{Conclusions and Recommendations}
 
 % Set special section numbering for appendices
-\renewcommand{\thesection}{A\thechapter.\arabic{section}}
+\renewcommand{\thesection}{\Alph{chapter}.\arabic{section}}
 
 \chapter*{Appendix A - Selected Control Software Code Listings}
-Complete source code can be obtained at http://github.com/ipeet/mte481
-
 \setcounter{chapter}{1}
 \addcontentsline{toc}{chapter}{Appendix A - Selected Code Listings}
+Complete source code can be obtained at http://github.com/ipeet/mte481
+
 \section{Serial Protocol Parsing State Machine}
 Excerpt from common/serial/protocol.c
 \label{appendix:serial_parsing}
