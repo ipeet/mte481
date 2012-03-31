@@ -52,11 +52,14 @@ Faculty of Mechatronics Engineering \\
 University of Waterloo \\
 Waterloo, Ontario \\
 
-To Whom It May Concern:
+Dear Professor Fathy Ismail:
 
-Blah, blah, blah.
+This report, entitled \emph{A Collision Avoidance System for a Powered Wheelchair}, was prepared as part of our fourth year Mechatronics design project.  The purpose of this report is to describe the final design for our project, and to discuss the results obtained in the construction and testing of a prototype.
 
-Sincerely, \\[1cm]
+This report was written entirely by us, and has not received any previous academic credit at this or any other institution.  We would like to thank Professir Amir Khajepour, who provided the powered wheelchair which was used in the construction and testing of our prototype.  We have received no other assistance.
+\\[0.5cm]
+
+Sincerely, \\[1.5cm]
 
 Iain Peet \hspace{2cm} Jordan Valentin \hspace{2cm} Rowan Head-Marsden
 \clearpage
@@ -75,7 +78,16 @@ Iain Peet \hspace{2cm} Jordan Valentin \hspace{2cm} Rowan Head-Marsden
 \addcontentsline{toc}{chapter}{List of Tables and Figures}
 
 \chapter*{Executive Summary}
-\addcontentsline{toc}{chapter}{Summary}
+\addcontentsline{toc}{chapter}{Executive Summary}
+The purpose of this project has been the design of an affordable obstacle avoidance system for powered wheelchairs.  The intent of this system is to significantly improve the safety of powered wheelchairs, which would allow patients with compromised motor control or perception access to these wheelchairs.
+
+A prototype has been built, and the details of the design implemented for the prototype are described.  
+
+The performance of the protype is evaluated.  Overall, the system is found to be very functional.  A few weaknesses, such as the inability to remember and avoid specific types of obstacles which leave sensor field of view, are identified.
+
+A number of improvements relating to the efficiency and intelligence of the control software are proposed.  These include the use of visual simultaneous localization and mapping techniques, and the implementation of  path-planning assisitance.
+
+It is concluded that this is a viable design which satisfies the identified need.
 
 % ====================== Report Body =================================
 \clearpage
@@ -385,6 +397,24 @@ u_\theta^* = \frac{T_{target}}{T_{predicted}(u_\theta)} u_\theta
 \end{equation}
 
 This special-case control law is applied prior to path prediction and application of the first control law.
+
+\section{Potential Improvements}
+The current control software implementation is fairly simplistic, leaving room for a number of potentially significant improvements.
+
+\subsection{More efficient Collision Detection}
+The collision detection method described in \ref{section:collision_detection} is simple and brute-force.  Rather than testing every occupied cell for membership in a relatively small bounding polygon, a polygon-fill algorithm should be implemented to test whether any of the cells contained within the polygon are occupied.  In addition to requiring fewer computations, this would also make it simple to test whether any part of the cell is contained in the polygon, which would provide a more conservative test than the current method, which simply samples the centrepoint.
+
+\subsection{Navigation Assistance}
+The current control law simply restricts input to prevent collision, providing no assistance for navigation around obstacles.  This can be somewhat annoying in tight quarters, where predictions based on instantaneous input show collisions, making it difficult to navigate complex paths.  
+
+In these circumstances, it may be helpful to attempt to plan a collision free path which approximately follows the user input commands.  A simple potential field path planner may be sufficient for this purpose.  Alternatively, a rapidly expanding random tree might be expected to provide good results.   
+
+\subsection{Advanced Mapping}
+The current mapping technique is simple and stateless, discarding old information whenever new information becomes available.  Although this works reasonably well, improved mapping techniques could lead to significant performance improvements.  
+
+Currently, if an obstacle moves out of the field of view of the sensors, it is quickly forgotten.  This is a significant weakness, as it leads the system to fail to avoid collisions with low-lying obstacles.
+
+The Kinect sensor incorporated in this design provides more than sufficient data for a VSLAM approach \cite{kinect_vslam}.  In fact, an implementation of this approach is already available for ROS.  This would allow the wheelchair to build a detailed map and locate itself in a fixed co-ordinate system as it moves, which would allow the system to avoid previously observed obstacles which are outside the current field of view, and would also allow for more effective path planning.
 
 \chapter{Mechanical}
 
@@ -962,6 +992,8 @@ void Controller::handleInput(double lateral, double forward) {
  \bibitem{MSP430_USB}
   A. Dannenberg. (2006, October). \emph{MSP430 Connectivity Using TUSB3410},\\
   http://www.ti.com/lit/an/slaa276a/slaa276a.pdf
+ \bibitem{kinect_vslam}
+  Nicola Fioraio, Kurt Konolige, \emph{Realtime Visual and Point Cloud SLAM}, Willow Garage, 2011
 \end{thebibliography}
 
 \end{document}
