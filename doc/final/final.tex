@@ -83,9 +83,9 @@ The purpose of this project has been the design of an affordable obstacle avoida
 
 A prototype has been built, and the details of the design implemented for the prototype are described.  
 
-The performance of the protype is evaluated.  Overall, the system is found to be very functional.  A few weaknesses, such as the inability to remember and avoid specific types of obstacles which leave sensor field of view, are identified.
+The performance of the prototype is evaluated.  Overall, the system is found to be very functional.  A few weaknesses, such as the inability to remember and avoid specific types of obstacles which leave sensor field of view, are identified.
 
-A number of improvements relating to the efficiency and intelligence of the control software are proposed.  These include the use of visual simultaneous localization and mapping techniques, and the implementation of  path-planning assisitance.
+A number of improvements relating to the efficiency and intelligence of the control software are proposed.  These include the use of visual simultaneous localization and mapping techniques, and the implementation of  path-planning assistance.
 
 It is concluded that this is a viable design which satisfies the identified need.
 
@@ -99,7 +99,7 @@ It is concluded that this is a viable design which satisfies the identified need
 \section{Background}
 Powered wheel chairs have obvious benefits for the mobility of the physically disabled. This can add dramatically to the quality of life for a physically disabled person. Operation of any relatively heavy powered vehicle carries certain safety risks and operators must be capable of safe operation. As a result of safety risks, patients in long-term care facilities are routinely denied the use of powered wheel chairs. 
 
-We spoke with a member of the industy in order to discuss the need for collision-avoidance for powered wheel chairs. Irene Ruel, a physiotherapist in the employ of the British Columbia Interior Health Authority who has previously been responsible for powered wheel chair assessments in an extended care facility, was consulted regarding this problem. By her account, the risk that powered wheelchair operators will collide with other patients is a serious concern and frequently results in the denial of requests for powered wheel chairs for patients living in care facilities. This encouraged our team to develop a wheel chair that helps improve this situation
+We spoke with a member of the industry in order to discuss the need for collision-avoidance for powered wheel chairs. Irene Ruel, a physiotherapist in the employ of the British Columbia Interior Health Authority who has previously been responsible for powered wheel chair assessments in an extended care facility, was consulted regarding this problem. By her account, the risk that powered wheelchair operators will collide with other patients is a serious concern and frequently results in the denial of requests for powered wheel chairs for patients living in care facilities. This encouraged our team to develop a wheel chair that helps improve this situation
 
 \section{Need Statement}
 Access to powered wheelchairs may be restricted due to concerns regarding a patient's capability for safe operation. A design is needed to assist users in avoiding collisions in order to allow access to powered wheelchairs to a greater number of people.
@@ -108,7 +108,7 @@ Access to powered wheelchairs may be restricted due to concerns regarding a pati
 The objectives of this design problem are as follows:
 
 \begin{itemize}
- \item \emph{Improve safety}.  Realistic operating environments will vary greatly in terms of lighting and types of obstacles encoutered, whether static obstacles or moving people/pets. The usefulness of a safety system will be severely degraded if it depends on a specific, controlled environment to be able to operate.
+ \item \emph{Improve safety}.  Realistic operating environments will vary greatly in terms of lighting and types of obstacles encountered, whether static obstacles or moving people/pets. The usefulness of a safety system will be severely degraded if it depends on a specific, controlled environment to be able to operate.
  \item \emph{Improve accessibility}.  For those who would be denied access to a powered wheelchair, a safety system which permits access will have significant quality-of-life benefits.
  \item \emph{Assist with difficult tasks}. Some tasks, such as precise positioning and movement in constrained spaces, are difficult even for unimpaired operators.   A system which can assist with such tasks would be helpful.
 \end{itemize}
@@ -116,10 +116,10 @@ The objectives of this design problem are as follows:
 The constraints of this design are as follows:
 
 \begin{itemize}
- \item \emph{Insensitive to operating environment}.  Realistic operating environments will vary greatly in terms of lighting and types of obstacles encoutered, whether static obstacles or moving people/pets. The usefulness of a safety system will be severely degraded if it depends on a specific, controlled environment to be able to operate.
- \item \emph{Integrates with existsing wheelchairs}.Powered wheelchairs are expensive, but many are already in existence and have been cost-reduced through mass production. Rather than re-inventing the wheel (or wheel-chair in this case) it makes sense to build on existing products by making this an "add-on" feature to an existing chair.
+ \item \emph{Insensitive to operating environment}.  Realistic operating environments will vary greatly in terms of lighting and types of obstacles encountered, whether static obstacles or moving people/pets. The usefulness of a safety system will be severely degraded if it depends on a specific, controlled environment to be able to operate.
+ \item \emph{Integrates with existing wheelchairs}.Powered wheelchairs are expensive, but many are already in existence and have been cost-reduced through mass production. Rather than re-inventing the wheel (or wheel-chair in this case) it makes sense to build on existing products by making this an "add-on" feature to an existing chair.
 
- \item \emph{Cost kept to a minimum}.The system will be paid for by individuals, who will be sensitive to cost. It will be difficult to market a system which is very expensive relative to the cost of a basic powered wheelchair. Initial talks with one pysiotherapist resulted in a suggested cost of not more than \$500 for a system (on top of the base cost of the wheelchair).
+ \item \emph{Cost kept to a minimum}.The system will be paid for by individuals, who will be sensitive to cost. It will be difficult to market a system which is very expensive relative to the cost of a basic powered wheelchair. Initial talks with one physiotherapist resulted in a suggested cost of not more than \$500 for a system (on top of the base cost of the wheelchair).
 \end{itemize}
 
 \section{Criteria}
@@ -180,14 +180,14 @@ The high level design for the control PCB was decided early on and is shown in F
  \caption{PCB Design}\label{fig:hardware_diag}
 \end{figure}
 
-In the initial report this was deliberately left at a high level and no detailed schematics were provided. This was due to the problem of controlling the wheelchair and gathering user input via the joystick, the "Analog Wheelchair Interface" section of Figure \ref{fig:hardware_diag}. The joystick module communicates with the motor controllor via a proprietary protocol that is similar to CANbus, but with some small changes. One route we could have taken would be to reverse-engineer the protocol and replace the wheelchair's joystick module entirely with our own PCB and a USB joystick meant for gaming. Our other option was to keep the existing joystick module, and just add a custom PCB and an interposer between the analog signals on the physical joystick and the joystick module PCB that sends serial data to the motor controller. This was as far as discussed in the design report because more testing was needed before we could find the best way to proceed.
+In the initial report this was deliberately left at a high level and no detailed schematics were provided. This was due to the problem of controlling the wheelchair and gathering user input via the joystick, the "Analog Wheelchair Interface" section of Figure \ref{fig:hardware_diag}. The joystick module communicates with the motor controller via a proprietary protocol that is similar to CANbus, but with some small changes. One route we could have taken would be to reverse-engineer the protocol and replace the wheelchair's joystick module entirely with our own PCB and a USB joystick meant for gaming. Our other option was to keep the existing joystick module, and just add a custom PCB and an interposer between the analog signals on the physical joystick and the joystick module PCB that sends serial data to the motor controller. This was as far as discussed in the design report because more testing was needed before we could find the best way to proceed.
 
 \section{Final Design}
 The final design filled in all the details that were missing in the initial design. 
 
 The biggest detail was, as mentioned in the previous section, how the wheelchair was going to actually be controlled by the control PCB. To this end, the joystick module was opened up and examined in detail. The joystick was inductively linked to the joystick module's control PCB and the control signals were shown to be sinusoids of approximately 20 kHz. The amplitude of the sine wave increased with as the joystick was moved further from the "home" position, and the phase could be either in-phase with the joystick reference signal (for example in forward/left directions) or 180 degrees out of phase with the reference signal for rear/right stick movement. It was decided this type of control could be relatively easily duplicated on a custom PCB, using a reference sine wave taken from the joystick module and two digital potentiometers (one for each channel) that could modify the amplitude of these waves. By creating a copy of the reference wave and then its inverse and placing these signal at either ends of the digital pots, the signal could be varied from negative full-scale (180 degree phase shift) to DC (joystick home position) to full-scale (in phase with reference signal) in small increments. Also, the existing joystick could be used as an input by using an analog-to-digital converted on our custom PCB and trigging it on the peak of the reference signal input. This saved us the expense of hassle of integrating a USB gaming joystick into the system to allow user control.
 
-Since there was some risk in this control method and by designing a PCB from scratch, a test board was completed as shown in Figure \ref{fig:test_joystick}. This board acted as an interposer between the forward/reverse signals on the physical joystick, and the signals that were sent to the joystick control module. By twisting the analog potentiometer with a screwdriver (the blue component in Figure \ref{fig:test_joystick}) the wheechair was able to be moved forwards and reversed. With this circuit proven out the only risk that was added by a custom PCB was the digital pot versus the analog one, which was really almost no risk at all.
+Since there was some risk in this control method and by designing a PCB from scratch, a test board was completed as shown in Figure \ref{fig:test_joystick}. This board acted as an interposer between the forward/reverse signals on the physical joystick, and the signals that were sent to the joystick control module. By twisting the analog potentiometer with a screwdriver (the blue component in Figure \ref{fig:test_joystick}) the wheelchair was able to be moved forwards and reversed. With this circuit proven out the only risk that was added by a custom PCB was the digital pot versus the analog one, which was really almost no risk at all.
 \begin{figure}[hbt]
  \centering
  \includegraphics[scale=0.5]{test_circuit}
@@ -242,7 +242,7 @@ The resulting detectability of obstacles was excellent. The sonars provided a ve
  \caption{Software Design}\label{fig:software}
 \end{figure}
 
-Figure \ref{fig:software} shows an overview of the intended software architecture.  Software was intended to be built on the Robot Operating System (ROS) \cite{ROS}, which is a distributed message passing system capable of running on Linux systems.  ROS systems are organized into a network of simple nodes, which co-operate to produce complex aggregate behaviour. 
+Figure \ref{fig:software} shows an overview of the intended software architecture.  Software was intended to be built on the Robot Operating System (ROS) \cite{ROS}, which is a distributed message passing system capable of running on Linux systems.  ROS systems are organized into a network of simple nodes, which co-operate to produce complex aggregate behavior. 
 
 The following nodes were expected to be required, with the following roles and capabilities:
 
@@ -253,7 +253,7 @@ The ranging node is responsible with communicating with the micro-controller in 
 The point cloud node communicates with the Kinect, in order to obtain depth map data.  It publishes point cloud data.
 
 \subsubsection{Node 3: Collision Map Generator}
-The collision map generator node is responsible for interpreting poinrt cloud and rangefinder data.  These data are projected into a 2-D occupancy grid in the vehicle frame.  In the simplest case, collision map generation is stateless, and ignores previous data in the interpretation of new sensor data.  If this does not provide sufficient accuracy, the collision map generator might also use state estimates to project old information forward, improving estimates.  
+The collision map generator node is responsible for interpreting point cloud and rangefinder data.  These data are projected into a 2-D occupancy grid in the vehicle frame.  In the simplest case, collision map generation is stateless, and ignores previous data in the interpretation of new sensor data.  If this does not provide sufficient accuracy, the collision map generator might also use state estimates to project old information forward, improving estimates.  
 
 This node subscribes to point cloud and rangefinder data, and publishes collision maps.
 
@@ -291,7 +291,7 @@ This node subscribes to the occupancy maps and input commands.  It publishes out
 In addition to its normal operation, the control node monitors a parameter value which specifies whether motion is permitted.  If this parameter specifies that motion should be disabled, then the controller node will always publish a zero output.
 
 \subsubsection{Viewer Node}
-This node provides a simple user interface for the sytem.  It subscribes to occupancy maps and trajectory predictions.  It uses OpenGL to draw the occupancy map and predicted trajectory, which provides a simple view into the operation of the system.  The viewer node also provides a mechanism for setting the parameter which enables and disables wheelchair motion.
+This node provides a simple user interface for the stem.  It subscribes to occupancy maps and trajectory predictions.  It uses OpenGL to draw the occupancy map and predicted trajectory, which provides a simple view into the operation of the system.  The viewer node also provides a mechanism for setting the parameter which enables and disables wheelchair motion.
 
 \subsection{Serial Protocol}
 Code used to parse the serial protocol is shown in \ref{appendix:serial_parsing}.
@@ -311,7 +311,7 @@ The microcontroller and wheelchair driver communicate using a simple, message-ba
  \end{tabular}
 \end{figure}
 
-The sync bytes are included at the beginning of every message.  Their purpose is to ensure that the microcontroller and wheelchair driver can synchronize if they begin receiving parway through the message, and recover if they lose synchronization due to lost or corrupted data.  The checksum is simply a cumulative XOR combination of all subsequent bytes in the message.  This provides rudimentary error detection capabilities.  The message type indicates to the receiver how the message should be interpreted.  Finally, the message length encodes the length of the payload, which is used in parsing, and is useful for the support of variable-length message types.
+The sync bytes are included at the beginning of every message.  Their purpose is to ensure that the microcontroller and wheelchair driver can synchronize if they begin receiving partway through the message, and recover if they lose synchronization due to lost or corrupted data.  The checksum is simply a cumulative XOR combination of all subsequent bytes in the message.  This provides rudimentary error detection capabilities.  The message type indicates to the receiver how the message should be interpreted.  Finally, the message length encodes the length of the payload, which is used in parsing, and is useful for the support of variable-length message types.
 
 \subsection{Occupancy Grid}
 Kinect pointcloud data and sonar range data are combined to produce an occupancy grid.  
@@ -322,7 +322,7 @@ Code which projects the pointcloud into a 2D plane is shown in \ref{appendix:poi
 
 It is also fairly simple to obtain an occupancy grid from rangefinder data.  The rangefinders have a wide field of view, so there is significant ambiguity as to the specific location of the object detected by the rangefinder.  In order to represent this, an arc is drawn in the occupancy map, covering the full field of view of the sensor.
 
-Code which draws rangefinder argcs is shown in \ref{appendix:range_occupancy}.
+Code which draws rangefinder arcs is shown in \ref{appendix:range_occupancy}.
 
 The occupancy maps computed from pointcloud and rangefinder data are then merged using an elementwise logical OR.
 
@@ -358,7 +358,7 @@ This collision detection technique is built on the use of intersection of half s
  \label{fig:point-in-poly}
 \end{figure}
 
-Given a polygon with $M$ vertices, under the assumption that the polygon is convex and planar, and that all points lie in the plane of the polygon, a given point $Q$ is continaed by the polygon iff 
+Given a polygon with $M$ vertices, under the assumption that the polygon is convex and planar, and that all points lie in the plane of the polygon, a given point $Q$ is contained by the polygon iff 
 \begin{equation}
  (Q-P_i) \cdot B_{i,i+1} \ge 0 \quad \forall i = 1, 2, \cdots M-1
 \end{equation}
@@ -374,7 +374,7 @@ Initially, it had been intended that range data would be used to populate the oc
 Unfortunately, it was found that the occupancy grid did not have sufficiently high resolution to adequately detect potential collisions with obstacles which are close to the sides of the wheelchair.  As a consequence, range measurements are used independently from the occupancy grid to detect such obstacles, and to restrict rotation in these situations.
 
 \subsection{Control Law}
-See \ref{appendix:control_law} for code implmenting the control law.
+See \ref{appendix:control_law} for code implementing the control law.
 
 The intent of the controller is to enforce a lower bound on the time to collision.  
 
@@ -436,7 +436,7 @@ The prototype construction was a time-consuming process that was documented with
  \label{fig:testing_PCB}
 \end{figure}
 
-Figure \ref{fig:testing_PCB} shows early tests of controlling the wheelchair via our control PCB. Whereas the final PCB would be computer-controller via a USB link between a laptop and an on-board micro-controller, this demo circuit provided a proof-of-concept of the analog circuitry. Moving the potentiometer (in blue) allowed the wheelchair to be moved forward and reversered, proving that computer-control of the wheelchair could be added simply and risk-free.
+Figure \ref{fig:testing_PCB} shows early tests of controlling the wheelchair via our control PCB. Whereas the final PCB would be computer-controller via a USB link between a laptop and an on-board micro-controller, this demo circuit provided a proof-of-concept of the analog circuitry. Moving the potentiometer (in blue) allowed the wheelchair to be moved forward and reversed, proving that computer-control of the wheelchair could be added simply and risk-free.
 
 \begin{figure}[hbt]
  \centering
@@ -463,7 +463,7 @@ Figure \ref{fig:sonar_mounts_early} shows part of the sonar sensor mounts that w
  \label{fig:PCB_assem}
 \end{figure}
 
-Figure \ref{fig:PCB_assem} shows a PCB that has been recieved and soldered with all the components. The soldering process took about one evening per board.
+Figure \ref{fig:PCB_assem} shows a PCB that has been received and soldered with all the components. The soldering process took about one evening per board.
 
 \begin{figure}[hbt]
  \centering
@@ -490,7 +490,7 @@ Figure \ref{fig:sonar_mount_final} shows the final configuration of the sonar se
  \label{fig:chair_wired}
 \end{figure}
 
-Figure \ref{fig:chair_wired} shows the wiring for the electric wheelchair. The yellow wire provides power from the lead-acid battery pack of the wheelchair, and the other wires on the right provide power to the Kinect and go to a system On/Off switch. The remaining wires are for the 4 sonar sensor inputs, 1 joystick input and 1 joystick ouput (to control the wheelchair itself).
+Figure \ref{fig:chair_wired} shows the wiring for the electric wheelchair. The yellow wire provides power from the lead-acid battery pack of the wheelchair, and the other wires on the right provide power to the Kinect and go to a system On/Off switch. The remaining wires are for the 4 sonar sensor inputs, 1 joystick input and 1 joystick output (to control the wheelchair itself).
 
 \begin{figure}[hbt]
  \centering
@@ -518,7 +518,7 @@ In particular the model of the wheelchair had to be tested and tuned. The wheelc
 
 The sonar sensors also required some testing and tuning, particularly to the angle at which they were positioned and to the timing at which they were sampled. It was important to find the correct balance between sampling the sensors regularly, and waiting for the echo to die down from one sensor before triggering the next. Ample testing time allowed this to be tuned in to give the highest possible sensor bandwidth while still maintaining reliable and almost error-free measurements.
 
-The Kinect sensor worked very well and performed to a surprisingly far distance quite well. There was an issue where the Kinect, because it is mounted above the ground, cannot see obstaces directly in front of it. This was solved by only allowing the chair to approach within a certain distance of obstacles in front of it (in practice only a few feet), and proved to be very reliable once the software was tuned in.
+The Kinect sensor worked very well and performed to a surprisingly far distance quite well. There was an issue where the Kinect, because it is mounted above the ground, cannot see obstacles directly in front of it. This was solved by only allowing the chair to approach within a certain distance of obstacles in front of it (in practice only a few feet), and proved to be very reliable once the software was tuned in.
 
 Due to the large amount of testing conducted pre-symposium, the demonstration during the symposium went off without any major problems and no `blind spots' or constraints on obstacles that would detract from the overall quality of the demonstration. The final product works well on `thin' obstacles and well as `thicker' ones, and reliably in number of environments including dark rooms or bright areas (including the symposium area).
 
@@ -538,7 +538,7 @@ The planned schedule, as included in the last report, is shown above. We will co
  \includegraphics[scale=0.55]{Final_Schedule} \label{fig:final_schel}
 \end{figure}
 
-This is the schedule we tracked on our way to the final design symposium. The start dates were slightly delayed versus the planned dates due to extra tasks (external to the project) that tooks group members' time early the term. The schedule was followed closely enough to allow for the project to be delivered early, ahead of schedule. As shown in the chart this lead to a week of testing and improvement. The extra testing time was critical to producing a good demonstration and poster for the symposium that lead to a tie for second-place overall position in the design symposium.
+This is the schedule we tracked on our way to the final design symposium. The start dates were slightly delayed versus the planned dates due to extra tasks (external to the project) that took group members' time early the term. The schedule was followed closely enough to allow for the project to be delivered early, ahead of schedule. As shown in the chart this lead to a week of testing and improvement. The extra testing time was critical to producing a good demonstration and poster for the symposium that lead to a tie for second-place overall position in the design symposium.
 
 \section{Budget}
 The total cost for the BOM for a single collision-avoidance system has been updated from the previous estimate to be as shown in Figure \ref{fig:BOM_single}.
@@ -550,7 +550,7 @@ The total cost for the BOM for a single collision-avoidance system has been upda
  \label{fig:BOM_single}
 \end{figure}
 
-If you recall from the earlier report, it was estimated that approximately \$500 CAD would be an acceptable cost for a collision-avoidance system (based on consultation with industry members). The BOM shown in Figure \ref{fig:BOM_single} exceeds this cost, but a good portion of the prices shown are non-recurring expenses such as setup for the PCB, shipping and handling fees for the electrical components, and the price of the laptop computer required. Figure \ref{fig:BOM_prod} shows  projected BOM costs for production. Here the laptop has been replaced with a single-board computer (the quoted price of \$35 could be for a Rasberry Pi device, for example), and the PCB costs have been slashed to an estimate of unit cost since the non-recurring engineering feels like tooling and setup can be averaged over 100 or more PCBs.
+If you recall from the earlier report, it was estimated that approximately \$500 CAD would be an acceptable cost for a collision-avoidance system (based on consultation with industry members). The BOM shown in Figure \ref{fig:BOM_single} exceeds this cost, but a good portion of the prices shown are non-recurring expenses such as setup for the PCB, shipping and handling fees for the electrical components, and the price of the laptop computer required. Figure \ref{fig:BOM_prod} shows  projected BOM costs for production. Here the laptop has been replaced with a single-board computer (the quoted price of \$35 could be for a Raspberry Pi device, for example), and the PCB costs have been slashed to an estimate of unit cost since the non-recurring engineering feels like tooling and setup can be averaged over 100 or more PCBs.
 
 \begin{figure}[hbt]
  \centering
