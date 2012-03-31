@@ -282,6 +282,8 @@ In addition to its normal operation, the control node monitors a parameter value
 This node provides a simple user interface for the sytem.  It subscribes to occupancy maps and trajectory predictions.  It uses OpenGL to draw the occupancy map and predicted trajectory, which provides a simple view into the operation of the system.  The viewer node also provides a mechanism for setting the parameter which enables and disables wheelchair motion.
 
 \subsection{Serial Protocol}
+Code used to parse the serial protocol is shown in \ref{appendix:serial_parsing}.
+
 The microcontroller and wheelchair driver communicate using a simple, message-based binary protocol.  On the wire, messages have the following structure:
 
 \begin{figure}[hbt]
@@ -299,8 +301,6 @@ The microcontroller and wheelchair driver communicate using a simple, message-ba
 
 The sync bytes are included at the beginning of every message.  Their purpose is to ensure that the microcontroller and wheelchair driver can synchronize if they begin receiving parway through the message, and recover if they lose synchronization due to lost or corrupted data.  The checksum is simply a cumulative XOR combination of all subsequent bytes in the message.  This provides rudimentary error detection capabilities.  The message type indicates to the receiver how the message should be interpreted.  Finally, the message length encodes the length of the payload, which is used in parsing, and is useful for the support of variable-length message types.
 
-Code used to parse messages of this type is shown in \ref{appendix:serial_parsing}.
-
 \subsection{Occupancy Grid}
 Kinect pointcloud data and sonar range data are combined to produce an occupancy grid.  
 
@@ -315,7 +315,10 @@ Code which draws rangefinder argcs is shown in \ref{appendix:range_occupancy}.
 The occupancy maps computed from pointcloud and rangefinder data are then merged using an elementwise logical OR.
 
 \subsection{Trajectory Prediction}
-The trajectory of the wheelchair is predicted using an extremely simple motion model, where the forward velocity and angular velocity are taken to be related to the input command by constant coefficients.  This model is described by the following equations:
+\label{section:trajectory_prediction}
+See \ref{appendix:trajectory_prediction} for path prediction code.
+
+The trajectory of the wheelchair is predicted using an extremely simplistic motion model, where the forward velocity and angular velocity are taken to be related to the input command by constant coefficients.  This model is described by the following equations:
 
 \begin{equation}
 x_t = x_{t-1} + \Delta T K_f u_f \cos (\theta_{t-1})
@@ -326,35 +329,62 @@ y_t = y_{t-1} + \Delta T K_f u_f \sin (\theta_{t-1})
 \begin{equation}
 \theta_t = \theta_{t-1} + K_{\theta} u_{\theta}
 \end{equation}
-
-The forward and angular velocity constants were tuned until they provided reasonable path predictions.
-
-See \ref{appendix:trajectory_prediction} for path prediction code.
+Where $K_f$ and $K_\theta$ are empirical constants, and $u_f$ and $u_\theta$ are the forward and lateral inputs supplied by the joystick, respectively.
 
 \subsection{Collision Detection}
-Collision detection is accomplished by checking whether any occupied occupancy grid cells fall within a bounding polygon.  Each of the discrete pose samples along the projected path is tested for collision in this manner.
+\label{section:collision_detection}
+See \ref{appendix:collision_detection} for collision detection code.
 
-This collision detection technique is built on the use intersection of half spaces to test whether a convex polygon contains particular points.  Figure \ref{fig:point-in-poly} should help to illustrate how this technique works.
+Primarily, collision detection is accomplished by checking whether the centrepoint any occupied occupancy grid cells fall within a convex bounding polygon for the wheelchair.  Each of the discrete pose samples along the projected path is tested for collision in this manner.
+
+This collision detection technique is built on the use of intersection of half spaces to test whether a convex polygon contains a point.  Figure \ref{fig:point-in-poly} should help to illustrate how this technique works.
 
 \begin{figure}
  \centering
  \includegraphics[scale=0.9]{point-in-poly}
  \caption{Illustration of point-in-polygon testing}
- \label{fig:point-inpoly}
+ \label{fig:point-in-poly}
 \end{figure}
 
-Given a polygon with $M$ vertices, and under the assumption that the polygon is convex and planar, a given point $Q$ is part of the polygon iff 
+Given a polygon with $M$ vertices, under the assumption that the polygon is convex and planar, and that all points lie in the plane of the polygon, a given point $Q$ is continaed by the polygon iff 
 \begin{equation}
- (Q-P_i) \cdot B_{i,i+1} \ge 0 \forall i = 1, 2, \cdots M-1
+ (Q-P_i) \cdot B_{i,i+1} \ge 0 \quad \forall i = 1, 2, \cdots M-1
 \end{equation}
 Where $B_{i,i+1}$ is the binormal along the segment from $P_i$ to $P_{i+1}$, which is defined as
 \begin{equation}
  B_{i,i+1} = N \times (P_{i+1} - P_{i})
 \end{equation}
-Where $N$ is the normal to the plane of the polygon, which can be found by taking the cross product of any counter-clockwise pair of polygon edges.
+Where $N$ is normal to the plane of the polygon.
 
+\subsubsection{Use of Rangefinders}
+Initially, it had been intended that range data would be used to populate the occupancy grid, and that only the above technique would be used to detect collisions.  
 
- 
+Unfortunately, it was found that the occupancy grid did not have sufficiently high resolution to adequately detect potential collisions with obstacles which are close to the sides of the wheelchair.  As a consequence, range measurements are used independently from the occupancy grid to detect such obstacles, and to restrict rotation in these situations.
+
+\subsection{Control Law}
+See \ref{appendix:control_law} for code implmenting the control law.
+
+The intent of the controller is to enforce a lower bound on the time to collision.  
+
+The time to collision is estimated using the techniques described in \ref{section:trajectory_prediction} and \ref{section:collision_detection}.  Using the simple motion model described in \ref{section:trajectory_prediction}, a simple open-loop controller for time to intersect may be derived:
+
+\begin{equation}
+u_f^* = \frac{T_{target}}{T_{predicted}(u_f, u_\theta)} u_f
+\end{equation}
+\begin{equation}
+u_\theta^* = \frac{T_{target}}{T_{predicted}(u_f, u_\theta)} u_\theta
+\end{equation}
+
+Where $u_f$ and $u_\theta$ are the inputs supplied by the user, and $u_f^*$ and $u_\theta^*$ are the adjusted inputs supplied to the motor controller.  This control law is applied only if $T_{predicted} < T_{target}$.
+
+\subsubsection{Use of Rangefinders}
+To handle objects close to the sides of the wheelchair, a similar control law was applied for the lateral input alone:
+
+\begin{equation}
+u_\theta^* = \frac{T_{target}}{T_{predicted}(u_\theta)} u_\theta
+\end{equation}
+
+This special-case control law is applied prior to path prediction and application of the first control law.
 
 \chapter{Mechanical}
 
@@ -415,13 +445,13 @@ This `production' BOM shown in Figure \ref{fig:BOM_prod} comes in under the \$50
 \chapter{Conclusions and Recommendations}
 
 % Set special section numbering for appendices
-\renewcommand{\thesection}{A\thechapter.\arabic{section}}
+\renewcommand{\thesection}{\Alph{chapter}.\arabic{section}}
 
 \chapter*{Appendix A - Selected Control Software Code Listings}
-Complete source code can be obtained at http://github.com/ipeet/mte481
-
 \setcounter{chapter}{1}
 \addcontentsline{toc}{chapter}{Appendix A - Selected Code Listings}
+Complete source code can be obtained at http://github.com/ipeet/mte481
+
 \section{Serial Protocol Parsing State Machine}
 Excerpt from common/serial/protocol.c
 \label{appendix:serial_parsing}
@@ -645,6 +675,115 @@ PoseStamped::Ptr Controller::predict(
   return ret;
 }
 \end{lstlisting}
+
+\clearpage
+\section{Collision Detection}
+\label{appendix:collision_detection}
+
+Excerpt from wheelchair\_ros/src/controller.cpp
+\begin{lstlisting}
+bool Controller::collides(double x, double y, double w) {
+  if (!m_haveMap) return false;
+  Polygon wheel (config::getWheelchairBounds());
+  double res = m_map->info.resolution;
+  double orig_x = m_map->info.origin.position.x;
+  double orig_y = m_map->info.origin.position.y;
+
+  wheel = Matrix4x4::rotation(w, Vector3D(0, 0, 1)) * wheel;
+  wheel = Matrix4x4::translation(Vector3D(
+        x-orig_x, y-orig_y-config::KINECT_OFFSET, 0)) * wheel;
+  wheel = Matrix4x4::scale(1.0/res, 1.0/res, 1.0) * wheel;
+  
+  for (unsigned i=0; i < m_map->info.width; ++i) {
+    for (unsigned j=0; j < m_map->info.height; ++j) {
+      if (m_map->data[i + j*(m_map->info.width)]) {
+        if (wheel.contains(Point3D(i, j, 0))) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+\end{lstlisting}
+
+Excerpt from wheelchair\_ros/src/geometry.cpp
+
+\begin{lstlisting}
+bool Polygon::contains(const Point3D &p) const {
+  if (size() <= 2) return false;
+
+  /* Find the forward normal of the polygon.  */
+  Vector3D norm (
+      (m_vertices[1] - m_vertices[0]).cross(m_vertices[2] - m_vertices[1]));
+  norm = norm.normalized();
+
+  /* Check intersection-of-halfspaces on each edge of the polygon */
+  for (unsigned i=0; i < size(); ++i) {
+    Vector3D tangent (m_vertices[(i+1)%size()] - m_vertices[i]);
+    tangent = tangent.normalized();
+    
+    Vector3D binorm (norm.cross(tangent));
+
+    if ( (p - m_vertices[i]).dot(binorm) < 0 ) {
+      return false;  
+    }
+  }
+  return true;
+}
+\end{lstlisting}
+
+\clearpage
+\section{Control Law}
+\label{appendix:control_law}
+
+Excerpt from wheelchair\_ros/src/controller.cpp
+\begin{lstlisting}
+void Controller::handleInput(double lateral, double forward) {
+  Twist::Ptr cmd (new Twist);
+  cmd->linear.x = lateral;
+  cmd->linear.y = forward;
+
+  /* Check rotation against sonars.  We will modify only
+   * the rotation rate.  Do this before predicting the path, so that
+   * path prediction accounts for the modified angular rate. */
+  if (m_haveSonar) {
+    double minRange = m_sonar->ranges[0];
+    for (int i=1; i<4; ++i) {
+      if (m_sonar->ranges[i] < minRange) {
+        minRange = m_sonar->ranges[i];
+      }
+    }
+    if (minRange < 0.6) {
+      double scale = minRange / 0.6;
+      cmd->linear.x *= scale;
+    }
+  }
+
+  PredictedPath::Ptr path = predictPath(cmd);
+  m_pathPub.publish(path);
+
+  /* Check path against occupancy grid */
+  double tCol = path->timestep * ((*path).poses.size() -1);
+  if ( tCol < config::TIMESTEP ) {
+    cmd->linear.x = config::LAT_OFFSET;
+    cmd->linear.y = config::FWD_OFFSET;
+  } else if (tCol < config::SOFTSTOP_BEGIN) {
+    double scale = tCol / config::SOFTSTOP_BEGIN;
+    cmd->linear.x *= scale;
+    cmd->linear.y *= scale;
+  } 
+
+  /* Check if driving is actually enabled */
+  if (! driveEnabled()) {
+    cmd->linear.x = config::LAT_OFFSET;
+    cmd->linear.y = config::FWD_OFFSET;
+  }
+
+  m_cmdPub.publish(cmd);
+}
+\end{lstlisting}
+
 
 \chapter*{Appendix B - Control PCB Schematics}
 \addcontentsline{toc}{chapter}{Appendix B - Control PCB Schematics}
