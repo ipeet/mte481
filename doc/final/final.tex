@@ -397,7 +397,100 @@ This special-case control law is applied prior to path prediction and applicatio
 
 \section{Prototype Construction}
 
+The prototype construction was a time-consuming process that was documented with pictures on the project website. A selection of the best pictures has been included with this report along with a description of the progress achieved along the way.
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.35]{test_circuit}
+ \caption{Early PCB Testing}
+ \label{fig:testing_PCB}
+\end{figure}
+
+Figure \ref{fig:testing_PCB} shows early tests of controlling the wheelchair via our control PCB. Whereas the final PCB would be computer-controller via a USB link between a laptop and an on-board micro-controller, this demo circuit provided a proof-of-concept of the analog circuitry. Moving the potentiometer (in blue) allowed the wheelchair to be moved forward and reversered, proving that computer-control of the wheelchair could be added simply and risk-free.
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.35]{PCB_render}
+ \caption{Render of the PCB}
+ \label{fig:PCB_Render}
+\end{figure}
+
+Figure \ref{fig:PCB_Render} shows a rendering of the control PCB used for the project. This design was a major portion of the electrical considerations of the project. With the design complete the bare boards and parts were ordered.
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.35]{Sensor_Mount}
+ \caption{Early Sonar Sensor Mounts}
+ \label{fig:sonar_mounts_early}
+\end{figure}
+
+Figure \ref{fig:sonar_mounts_early} shows part of the sonar sensor mounts that were attached to the wheelchair. This was early in the construction process and the mounts had not been painted to match the wheelchair or wired up with the sonar sensors themselves.
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.35]{solder_complete}
+ \caption{PCB Assembled and Soldered}
+ \label{fig:PCB_assem}
+\end{figure}
+
+Figure \ref{fig:PCB_assem} shows a PCB that has been recieved and soldered with all the components. The soldering process took about one evening per board.
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.35]{Kinect_Shelf}
+ \caption{Kinect Sensor Mount, Partially Assembled}
+ \label{fig:kinect_partial}
+\end{figure}
+
+Figure \ref{fig:kinect_partial} shows a partially completed mount for the Kinect sensor. The second side of the mount needs to be completed, and the quick-release mount that actually fastens the Kinect in place is not yet mounted.
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.35]{Sensor_Mount_Final}
+ \caption{Final Sonar Sensor Mounts}
+ \label{fig:sonar_mount_final}
+\end{figure}
+
+Figure \ref{fig:sonar_mount_final} shows the final configuration of the sonar sensor mounts. Note the mounts have been painted to match the wheelchair colour scheme.
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.35]{chair_wired}
+ \caption{Chair Wiring Completed}
+ \label{fig:chair_wired}
+\end{figure}
+
+Figure \ref{fig:chair_wired} shows the wiring for the electric wheelchair. The yellow wire provides power from the lead-acid battery pack of the wheelchair, and the other wires on the right provide power to the Kinect and go to a system On/Off switch. The remaining wires are for the 4 sonar sensor inputs, 1 joystick input and 1 joystick ouput (to control the wheelchair itself).
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.35]{mech_complete}
+ \caption{Kinect Sensor Mount, Partially Assembled}
+ \label{fig:mech_complete}
+\end{figure}
+
+Figure \ref{fig:mech_complete} shows the completed wheelchair. The wiring as seen in Figure \ref{fig:chair_wired} is hidden beneath the user's seat where it is safe from tampering. A power switch is provided next to the Kinect. The Kinect is securely mounted to a non-damaging quick-release mechanism. The entire Kinect mount can pivot up to allow the user to easily enter or exit the chair.
+
+\begin{figure}[hbt]
+ \centering
+ \includegraphics[scale=0.2]{avoid_hallway}
+ \caption{Software: Moving Through Hallway}
+ \label{fig:soft_moving}
+\end{figure}
+
+Figure \ref{fig:soft_moving} shows the wheelchair's view of moving down the hallway. The image is a grid where black represents free space and white is an obstacle. In the hallway environment the sonar sensor ranges are close the wheelchair, and the view in the front (top portion) of the image is provided by the Kinect sensor. The green is the plotted (predicted) path of the wheelchair over the next few seconds, and the red box shows a predicted collision. As a result of the predicted collision the system is limiting the speed of the electric wheelchair.
+
+
 \section{Testing and Performance}
+Some of testing performed can be seen above in Figure \ref{fig:soft_moving}. Since the project was completed approximately one week ahead of schedule there was ample time for testing and improvement of the project.
+
+In particular the model of the wheelchair had to be tested and tuned. The wheelchair predicted its path over the next few seconds based on user joystick input, and this needed some testing and tuning in order to work properly.
+
+The sonar sensors also required some testing and tuning, particularly to the angle at which they were positioned and to the timing at which they were sampled. It was important to find the correct balance between sampling the sensors regularly, and waiting for the echo to die down from one sensor before triggering the next. Ample testing time allowed this to be tuned in to give the highest possible sensor bandwidth while still maintaining reliable and almost error-free measurements.
+
+The Kinect sensor worked very well and performed to a surprisingly far distance quite well. There was an issue where the Kinect, because it is mounted above the ground, cannot see obstaces directly in front of it. This was solved by only allowing the chair to approach within a certain distance of obstacles in front of it (in practice only a few feet), and proved to be very reliable once the software was tuned in.
+
+Due to the large amount of testing conducted pre-symposium, the demonstration during the symposium went off without any major problems and no `blind spots' or constraints on obstacles that would detract from the overall quality of the demonstration. The final product works well on `thin' obstacles and well as `thicker' ones, and reliably in number of environments including dark rooms or bright areas (including the symposium area).
 
 \chapter{Schedule and Budgeting}
 
@@ -422,7 +515,7 @@ The total cost for the BOM for a single collision-avoidance system has been upda
 
 \begin{figure}[hbt]
  \centering
- \includegraphics[scale=0.8]{BOM_single}
+ \includegraphics[scale=1]{BOM_single}
  \caption{BOM Cost for a Single Unit}
  \label{fig:BOM_single}
 \end{figure}
@@ -431,7 +524,7 @@ If you recall from the earlier report, it was estimated that approximately \$500
 
 \begin{figure}[hbt]
  \centering
- \includegraphics[scale=0.8]{BOM_production}
+ \includegraphics[scale=1]{BOM_production}
  \caption{Production BOM Cost Estimate}
  \label{fig:BOM_prod}
 \end{figure}
