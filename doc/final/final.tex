@@ -397,6 +397,13 @@ The current control law simply restricts input to prevent collision, providing n
 
 In these circumstances, it may be helpful to attempt to plan a collision free path which approximately follows the user input commands.  A simple potential field path planner may be sufficient for this purpose.  Alternatively, a rapidly expanding random tree might be expected to provide good results.   
 
+\subsection{Advanced Mapping}
+The current mapping technique is simple and stateless, discarding old information whenever new information becomes available.  Although this works reasonably well, improved mapping techniques could lead to significant performance improvements.  
+
+Currently, if an obstacle moves out of the field of view of the sensors, it is quickly forgotten.  This is a significant weakness, as it leads the system to fail to avoid collisions with low-lying obstacles.
+
+The Kinect sensor incorporated in this design provides more than sufficient data for a VSLAM approach \cite{kinect_vslam}.  In fact, an implementation of this approach is already available for ROS.  This would allow the wheelchair to build a detailed map and locate itself in a fixed co-ordinate system as it moves, which would allow the system to avoid previously observed obstacles which are outside the current field of view, and would also allow for more effective path planning.
+
 \chapter{Mechanical}
 
 \section{Initial Design}
@@ -880,6 +887,8 @@ void Controller::handleInput(double lateral, double forward) {
  \bibitem{MSP430_USB}
   A. Dannenberg. (2006, October). \emph{MSP430 Connectivity Using TUSB3410},\\
   http://www.ti.com/lit/an/slaa276a/slaa276a.pdf
+ \bibitem{kinect_vslam}
+  Nicola Fioraio, Kurt Konolige, \emph{Realtime Visual and Point Cloud SLAM}, Willow Garage, 2011
 \end{thebibliography}
 
 \end{document}
